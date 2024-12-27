@@ -27,6 +27,29 @@ export const GalleryImageItem = ({
   onReorderClick,
   onFilterClick,
 }: GalleryImageItemProps) => {
+  const mediaUrl = `${
+    import.meta.env.VITE_SUPABASE_URL
+  }/storage/v1/object/public/gallery_images/${image.file_path}`;
+
+  const renderMedia = () => {
+    if (image.media_type === 'video') {
+      return (
+        <video 
+          src={mediaUrl}
+          className="w-full h-full object-cover"
+          controls
+        />
+      );
+    }
+    return (
+      <img
+        src={mediaUrl}
+        alt={image.title || "Gallery media"}
+        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+      />
+    );
+  };
+
   return (
     <div
       className={cn(
@@ -35,13 +58,7 @@ export const GalleryImageItem = ({
       )}
       onClick={onImageClick}
     >
-      <img
-        src={`${
-          import.meta.env.VITE_SUPABASE_URL
-        }/storage/v1/object/public/gallery_images/${image.file_path}`}
-        alt={image.title || "Gallery image"}
-        className="w-full h-full object-cover transition-transform group-hover:scale-105"
-      />
+      {renderMedia()}
       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
         {isSelectionMode ? (
           <div className="absolute top-2 right-2">
@@ -77,30 +94,31 @@ export const GalleryImageItem = ({
           </div>
         )}
         {!isSelectionMode && (
-          <>
-            <div className="absolute bottom-0 left-0 right-0 p-4">
-              {(image.title || image.description) && (
-                <div className="bg-gradient-to-t from-black/80 to-transparent p-4">
-                  {image.title && (
-                    <h3 className="text-white font-semibold">{image.title}</h3>
-                  )}
-                  {image.description && (
-                    <p className="text-white/80 text-sm line-clamp-2">
-                      {image.description}
-                    </p>
-                  )}
-                </div>
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <div className="bg-gradient-to-t from-black/80 to-transparent p-4">
+              {image.title && (
+                <h3 className="text-white font-semibold">{image.title}</h3>
               )}
-              <div className="mt-2">
-                <GalleryImageActions
-                  image={image}
-                  onStartSlideshow={onStartSlideshow}
-                  onReorderClick={onReorderClick}
-                  onFilterClick={onFilterClick}
-                />
-              </div>
+              {image.description && (
+                <p className="text-white/80 text-sm line-clamp-2">
+                  {image.description}
+                </p>
+              )}
+              {image.price && (
+                <p className="text-white font-semibold mt-2">
+                  ${image.price.toFixed(2)}
+                </p>
+              )}
             </div>
-          </>
+            <div className="mt-2">
+              <GalleryImageActions
+                image={image}
+                onStartSlideshow={onStartSlideshow}
+                onReorderClick={onReorderClick}
+                onFilterClick={onFilterClick}
+              />
+            </div>
+          </div>
         )}
       </div>
     </div>
