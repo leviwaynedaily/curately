@@ -21,7 +21,6 @@ export const GalleryContent = ({
 }: GalleryContentProps) => {
   const { session } = useAuth();
   
-  // Query to check if user has admin access to this gallery
   const { data: hasAccess } = useQuery({
     queryKey: ["galleryAccess", galleryId, session?.user?.id],
     queryFn: async () => {
@@ -38,7 +37,6 @@ export const GalleryContent = ({
     enabled: !!session?.user?.id,
   });
 
-  // Create dynamic styles based on gallery settings
   const headerStyle = {
     backgroundColor: gallery.primary_color || '#141413',
     color: gallery.secondary_color || '#E6E4DD',
@@ -49,13 +47,12 @@ export const GalleryContent = ({
     color: gallery.primary_color || '#141413',
   };
 
-  // Get the public URL for the logo
   const logoUrl = gallery.logo 
-    ? supabase.storage.from('gallery_images').getPublicUrl(gallery.logo).data.publicUrl
+    ? supabase.storage.from("gallery_images").getPublicUrl(gallery.logo).data.publicUrl
     : null;
 
-  console.log('Gallery logo path:', gallery.logo);
-  console.log('Constructed logo URL:', logoUrl);
+  console.log('Gallery content logo path:', gallery.logo);
+  console.log('Gallery content logo URL:', logoUrl);
 
   return (
     <div style={containerStyle} className="min-h-screen">

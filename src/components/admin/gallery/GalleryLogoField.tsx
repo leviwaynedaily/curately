@@ -28,7 +28,7 @@ export const GalleryLogoField = ({ form }: GalleryLogoFieldProps) => {
       const filePath = `gallery-logos/${crypto.randomUUID()}.${fileExt}`;
 
       console.log("Uploading logo to storage...");
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from("gallery_images")
         .upload(filePath, file);
 
@@ -37,12 +37,8 @@ export const GalleryLogoField = ({ form }: GalleryLogoFieldProps) => {
         throw uploadError;
       }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from("gallery_images")
-        .getPublicUrl(filePath);
-
-      console.log("Logo uploaded successfully:", publicUrl);
-      form.setValue("logo", publicUrl);
+      console.log("Logo uploaded successfully, file path:", filePath);
+      form.setValue("logo", filePath);
       toast({ description: "Logo uploaded successfully" });
     } catch (error) {
       console.error("Logo upload failed:", error);
@@ -70,7 +66,7 @@ export const GalleryLogoField = ({ form }: GalleryLogoFieldProps) => {
             {field.value ? (
               <div className="relative w-40 h-40">
                 <img
-                  src={field.value}
+                  src={supabase.storage.from("gallery_images").getPublicUrl(field.value).data.publicUrl}
                   alt="Gallery logo"
                   className="w-full h-full object-contain rounded-lg border"
                 />

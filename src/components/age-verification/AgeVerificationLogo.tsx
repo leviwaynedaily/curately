@@ -1,3 +1,5 @@
+import { supabase } from "@/integrations/supabase/client";
+
 interface AgeVerificationLogoProps {
   logo?: string;
 }
@@ -5,10 +7,14 @@ interface AgeVerificationLogoProps {
 export const AgeVerificationLogo = ({ logo }: AgeVerificationLogoProps) => {
   if (!logo) return null;
   
+  const logoUrl = supabase.storage.from("gallery_images").getPublicUrl(logo).data.publicUrl;
+  console.log("Age verification logo path:", logo);
+  console.log("Age verification logo URL:", logoUrl);
+  
   return (
     <div className="flex justify-center">
       <img 
-        src={logo} 
+        src={logoUrl} 
         alt="Gallery Logo" 
         className="h-24 w-auto object-contain"
       />
