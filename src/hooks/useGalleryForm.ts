@@ -17,6 +17,14 @@ type UseGalleryFormProps = {
     business_id?: string;
     logo?: string;
     description?: string;
+    primary_color?: string;
+    secondary_color?: string;
+    accent_color?: string;
+    heading_text?: string;
+    subheading_text?: string;
+    age_verification_text?: string;
+    button_text?: string;
+    age_verification_enabled?: boolean;
   };
 };
 
@@ -34,6 +42,14 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       business_id: gallery?.business_id || businessId || "",
       logo: gallery?.logo || "",
       description: gallery?.description || "",
+      primary_color: gallery?.primary_color || "#FF719A",
+      secondary_color: gallery?.secondary_color || "#FFA99F",
+      accent_color: gallery?.accent_color || "#FFE29F",
+      heading_text: gallery?.heading_text || "Age Verification Required",
+      subheading_text: gallery?.subheading_text || "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content.",
+      age_verification_text: gallery?.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy.",
+      button_text: gallery?.button_text || "Enter Site",
+      age_verification_enabled: gallery?.age_verification_enabled || false,
     },
   });
 
@@ -42,11 +58,19 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       console.log("Resetting form with gallery data:", gallery);
       form.reset({
         name: gallery.name,
-        password: gallery.password,
+        password: gallery.password || "",
         status: gallery.status,
         business_id: gallery.business_id || "",
         logo: gallery.logo || "",
         description: gallery.description || "",
+        primary_color: gallery.primary_color || "#FF719A",
+        secondary_color: gallery.secondary_color || "#FFA99F",
+        accent_color: gallery.accent_color || "#FFE29F",
+        heading_text: gallery.heading_text || "Age Verification Required",
+        subheading_text: gallery.subheading_text || "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content.",
+        age_verification_text: gallery.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy.",
+        button_text: gallery.button_text || "Enter Site",
+        age_verification_enabled: gallery.age_verification_enabled || false,
       });
     }
   }, [gallery, form]);
@@ -66,6 +90,14 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
             business_id: values.business_id,
             logo: values.logo,
             description: values.description,
+            primary_color: values.primary_color,
+            secondary_color: values.secondary_color,
+            accent_color: values.accent_color,
+            heading_text: values.heading_text,
+            subheading_text: values.subheading_text,
+            age_verification_text: values.age_verification_text,
+            button_text: values.button_text,
+            age_verification_enabled: values.age_verification_enabled,
           })
           .eq("id", gallery.id);
 
@@ -82,6 +114,14 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
             business_id: values.business_id,
             logo: values.logo,
             description: values.description,
+            primary_color: values.primary_color,
+            secondary_color: values.secondary_color,
+            accent_color: values.accent_color,
+            heading_text: values.heading_text,
+            subheading_text: values.subheading_text,
+            age_verification_text: values.age_verification_text,
+            button_text: values.button_text,
+            age_verification_enabled: values.age_verification_enabled,
           });
 
         if (error) throw error;
