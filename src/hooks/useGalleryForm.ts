@@ -20,6 +20,9 @@ type UseGalleryFormProps = {
     primary_color?: string;
     secondary_color?: string;
     accent_color?: string;
+    primary_font_color?: string;
+    secondary_font_color?: string;
+    accent_font_color?: string;
     heading_text?: string;
     subheading_text?: string;
     age_verification_text?: string;
@@ -42,9 +45,12 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       business_id: gallery?.business_id || businessId || "",
       logo: gallery?.logo || "",
       description: gallery?.description || "",
-      primary_color: gallery?.primary_color || "#FF719A",
-      secondary_color: gallery?.secondary_color || "#FFA99F",
-      accent_color: gallery?.accent_color || "#FFE29F",
+      primary_color: gallery?.primary_color || "#141413",
+      secondary_color: gallery?.secondary_color || "#E6E4DD",
+      accent_color: gallery?.accent_color || "#9b87f5",
+      primary_font_color: gallery?.primary_font_color || "#000000",
+      secondary_font_color: gallery?.secondary_font_color || "#6E59A5",
+      accent_font_color: gallery?.accent_font_color || "#8B5CF6",
       heading_text: gallery?.heading_text || "Age Verification Required",
       subheading_text: gallery?.subheading_text || "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content.",
       age_verification_text: gallery?.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy.",
@@ -63,9 +69,12 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
         business_id: gallery.business_id || "",
         logo: gallery.logo || "",
         description: gallery.description || "",
-        primary_color: gallery.primary_color || "#FF719A",
-        secondary_color: gallery.secondary_color || "#FFA99F",
-        accent_color: gallery.accent_color || "#FFE29F",
+        primary_color: gallery.primary_color || "#141413",
+        secondary_color: gallery.secondary_color || "#E6E4DD",
+        accent_color: gallery.accent_color || "#9b87f5",
+        primary_font_color: gallery.primary_font_color || "#000000",
+        secondary_font_color: gallery.secondary_font_color || "#6E59A5",
+        accent_font_color: gallery.accent_font_color || "#8B5CF6",
         heading_text: gallery.heading_text || "Age Verification Required",
         subheading_text: gallery.subheading_text || "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content.",
         age_verification_text: gallery.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy.",
@@ -79,26 +88,19 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
     setIsLoading(true);
     console.log("Submitting gallery form...", values);
 
+    // Ensure all color values are strings
+    const sanitizedValues = {
+      ...values,
+      primary_font_color: values.primary_font_color || "#000000",
+      secondary_font_color: values.secondary_font_color || "#6E59A5",
+      accent_font_color: values.accent_font_color || "#8B5CF6",
+    };
+
     try {
       if (gallery?.id) {
         const { error } = await supabase
           .from("galleries")
-          .update({
-            name: values.name,
-            password: values.password,
-            status: values.status,
-            business_id: values.business_id,
-            logo: values.logo,
-            description: values.description,
-            primary_color: values.primary_color,
-            secondary_color: values.secondary_color,
-            accent_color: values.accent_color,
-            heading_text: values.heading_text,
-            subheading_text: values.subheading_text,
-            age_verification_text: values.age_verification_text,
-            button_text: values.button_text,
-            age_verification_enabled: values.age_verification_enabled,
-          })
+          .update(sanitizedValues)
           .eq("id", gallery.id);
 
         if (error) throw error;
@@ -107,22 +109,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       } else {
         const { error } = await supabase
           .from("galleries")
-          .insert({
-            name: values.name,
-            password: values.password,
-            status: values.status,
-            business_id: values.business_id,
-            logo: values.logo,
-            description: values.description,
-            primary_color: values.primary_color,
-            secondary_color: values.secondary_color,
-            accent_color: values.accent_color,
-            heading_text: values.heading_text,
-            subheading_text: values.subheading_text,
-            age_verification_text: values.age_verification_text,
-            button_text: values.button_text,
-            age_verification_enabled: values.age_verification_enabled,
-          });
+          .insert(sanitizedValues);
 
         if (error) throw error;
         console.log("Gallery created successfully");
