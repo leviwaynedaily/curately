@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash } from "lucide-react";
+import { Link } from "react-router-dom";
 
 type GalleryTableProps = {
   galleries: any[];
@@ -34,7 +35,14 @@ export const GalleryTable = ({
       <TableBody>
         {galleries?.map((gallery) => (
           <TableRow key={gallery.id}>
-            <TableCell>{gallery.name}</TableCell>
+            <TableCell>
+              <Link 
+                to={`/gallery/${gallery.id}`}
+                className="text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                {gallery.name}
+              </Link>
+            </TableCell>
             <TableCell>{gallery.businesses?.name || 'No business assigned'}</TableCell>
             <TableCell>{gallery.status}</TableCell>
             <TableCell>
