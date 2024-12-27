@@ -32,7 +32,22 @@ export const useGallery = (galleryId: string | undefined) => {
             media_type,
             price,
             is_featured
-          )
+          ),
+          logo,
+          site_logo,
+          description,
+          primary_color,
+          secondary_color,
+          accent_color,
+          heading_text,
+          subheading_text,
+          age_verification_text,
+          button_text,
+          age_verification_enabled,
+          primary_font_color,
+          secondary_font_color,
+          accent_font_color,
+          password_required
         `)
         .eq("id", galleryId)
         .maybeSingle();
