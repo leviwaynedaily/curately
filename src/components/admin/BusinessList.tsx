@@ -1,29 +1,12 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Search, Trash } from "lucide-react";
-import { BusinessForm } from "./BusinessForm";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Input } from "@/components/ui/input";
+import { BusinessForm } from "./BusinessForm";
+import { BusinessTable } from "./business/BusinessTable";
+import { BusinessSearch } from "./business/BusinessSearch";
+import { BusinessDeleteDialog } from "./business/BusinessDeleteDialog";
 
 export const BusinessList = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -100,55 +83,13 @@ export const BusinessList = () => {
         <Button onClick={() => setIsFormOpen(true)}>Add Business</Button>
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search businesses..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-8"
-        />
-      </div>
+      <BusinessSearch value={searchQuery} onChange={setSearchQuery} />
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {businesses?.map((business) => (
-            <TableRow key={business.id}>
-              <TableCell>{business.name}</TableCell>
-              <TableCell>{business.status}</TableCell>
-              <TableCell>
-                {new Date(business.created_at).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleEdit(business)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setBusinessToDelete(business)}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <BusinessTable
+        businesses={businesses || []}
+        onEdit={handleEdit}
+        onDelete={setBusinessToDelete}
+      />
 
       <BusinessForm
         isOpen={isFormOpen}
@@ -159,24 +100,11 @@ export const BusinessList = () => {
         business={selectedBusiness}
       />
 
-      <AlertDialog
-        open={!!businessToDelete}
-        onOpenChange={() => setBusinessToDelete(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              business and all its associated data.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <BusinessDeleteDialog
+        isOpen={!!businessToDelete}
+        onClose={() => setBusinessToDelete(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };
