@@ -1,86 +1,76 @@
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { AgeVerificationLogo } from "./age-verification/AgeVerificationLogo";
 import { AgeVerificationForm } from "./age-verification/AgeVerificationForm";
+import { AgeVerificationLogo } from "./age-verification/AgeVerificationLogo";
 
-interface AgeVerificationProps {
+type AgeVerificationProps = {
   onVerified: () => void;
   tenantId: string;
   logo?: string;
-}
+};
 
-export const AgeVerification = ({ onVerified, tenantId, logo }: AgeVerificationProps) => {
-  const [isAgeConfirmed, setIsAgeConfirmed] = useState(false);
-  const [password, setPassword] = useState("");
+export const AgeVerification = ({ onVerified, tenantId }: AgeVerificationProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
 
-  const handleVerification = async () => {
-    if (!isAgeConfirmed) {
-      toast({
-        title: "Age Confirmation Required",
-        description: "Please confirm that you are 21 or older.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      console.log("Verifying gallery password...");
+  const { data: gallery } = useQuery({
+    queryKey: ["gallery-verification", tenantId],
+    queryFn: async () => {
+      console.log("Fetching gallery verification settings for ID:", tenantId);
       const { data, error } = await supabase
         .from("galleries")
-        .select("password")
+        .select(`
+          logo,
+          heading_text,
+          subheading_text,
+          age_verification_text,
+          button_text,
+          primary_color,
+          secondary_color
+        `)
         .eq("id", tenantId)
         .single();
 
       if (error) {
-        console.error("Error fetching gallery:", error);
+        console.error("Error fetching gallery verification settings:", error);
         throw error;
       }
 
-      const isCorrect = !data.password || data.password === password;
-      console.log("Password verification result:", isCorrect);
-      
-      if (isCorrect) {
-        localStorage.setItem("age-verified", "true");
-        localStorage.setItem(`gallery-${tenantId}-auth`, "true");
-        onVerified();
-      } else {
-        toast({
-          title: "Incorrect Password",
-          description: "Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Error during verification:", error);
-      toast({
-        title: "Error",
-        description: "An error occurred. Please try again.",
-        variant: "destructive",
-      });
+      console.log("Gallery verification settings:", data);
+      return data;
+    },
+  });
+
+  const handleVerification = async () => {
+    setIsLoading(true);
+    try {
+      localStorage.setItem("age-verified", "true");
+      onVerified();
     } finally {
       setIsLoading(false);
     }
   };
 
+  const containerStyle = {
+    backgroundColor: gallery?.primary_color || '#141413',
+    color: gallery?.secondary_color || '#E6E4DD',
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-lg z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-md w-full p-8 space-y-6 animate-fade-up">
-        <AgeVerificationLogo logo={logo} />
-        
-        <h2 className="text-2xl font-semibold text-center">Age Verification Required</h2>
+    <div 
+      className="fixed inset-0 flex items-center justify-center p-4 backdrop-blur-sm"
+      style={containerStyle}
+    >
+      <div className="w-full max-w-md space-y-8 bg-background/80 backdrop-blur-sm p-6 rounded-lg shadow-xl">
+        {gallery?.logo && <AgeVerificationLogo logo={gallery.logo} />}
         
         <AgeVerificationForm
-          isAgeConfirmed={isAgeConfirmed}
-          setIsAgeConfirmed={setIsAgeConfirmed}
-          password={password}
-          setPassword={setPassword}
-          onSubmit={handleVerification}
           isLoading={isLoading}
+          onVerify={handleVerification}
+          headingText={gallery?.heading_text || "Age Verification Required"}
+          subheadingText={gallery?.subheading_text || "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content."}
+          verificationText={gallery?.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy."}
+          buttonText={gallery?.button_text || "Enter Site"}
         />
       </div>
     </div>
