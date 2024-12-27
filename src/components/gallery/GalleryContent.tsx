@@ -2,6 +2,9 @@ import { Gallery } from "@/types/gallery";
 import { ImageUpload } from "./ImageUpload";
 import { GalleryImageGrid } from "./GalleryImageGrid";
 import { GalleryEmptyState } from "./GalleryEmptyState";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 type GalleryContentProps = {
   gallery: Gallery;
@@ -16,6 +19,25 @@ export const GalleryContent = ({
   onDeleteImage,
   onUploadComplete,
 }: GalleryContentProps) => {
+  const { session } = useAuth();
+  
+  // Query to check if user has admin access to this gallery
+  const { data: hasAccess } = useQuery({
+    queryKey: ["galleryAccess", galleryId, session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return false;
+      
+      const { data } = await supabase
+        .from("galleries")
+        .select("businesses(owner_id)")
+        .eq("id", galleryId)
+        .single();
+      
+      return data?.businesses?.owner_id === session?.user?.id;
+    },
+    enabled: !!session?.user?.id,
+  });
+
   // Create dynamic styles based on gallery settings
   const headerStyle = {
     backgroundColor: gallery.primary_color || '#141413',
@@ -42,16 +64,19 @@ export const GalleryContent = ({
       </div>
       
       <div className="max-w-7xl mx-auto px-4">
-        <ImageUpload
-          galleryId={galleryId}
-          onUploadComplete={onUploadComplete}
-        />
+        {hasAccess && (
+          <ImageUpload
+            galleryId={galleryId}
+            onUploadComplete={onUploadComplete}
+          />
+        )}
         {gallery.gallery_images?.length ? (
           <GalleryImageGrid
             images={gallery.gallery_images}
             galleryId={galleryId}
             onDeleteImage={onDeleteImage}
             accentColor={gallery.accent_color}
+            isAdmin={!!hasAccess}
           />
         ) : (
           <GalleryEmptyState />

@@ -6,6 +6,7 @@ type GalleryImageDetailsProps = {
   onStartSlideshow: () => void;
   onReorderClick: () => void;
   onFilterClick: () => void;
+  isAdmin: boolean;
 };
 
 export const GalleryImageDetails = ({
@@ -13,6 +14,7 @@ export const GalleryImageDetails = ({
   onStartSlideshow,
   onReorderClick,
   onFilterClick,
+  isAdmin,
 }: GalleryImageDetailsProps) => {
   return (
     <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -36,6 +38,7 @@ export const GalleryImageDetails = ({
             onStartSlideshow={onStartSlideshow}
             onReorderClick={onReorderClick}
             onFilterClick={onFilterClick}
+            isAdmin={isAdmin}
           />
         </div>
       </div>

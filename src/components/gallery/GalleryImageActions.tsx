@@ -14,6 +14,7 @@ type GalleryImageActionsProps = {
   onStartSlideshow: () => void;
   onReorderClick: () => void;
   onFilterClick: () => void;
+  isAdmin: boolean;
 };
 
 export const GalleryImageActions = ({
@@ -21,6 +22,7 @@ export const GalleryImageActions = ({
   onStartSlideshow,
   onReorderClick,
   onFilterClick,
+  isAdmin,
 }: GalleryImageActionsProps) => {
   const { toast } = useToast();
 
@@ -76,21 +78,25 @@ export const GalleryImageActions = ({
       <Button variant="outline" size="sm" onClick={handleDownload}>
         <Download className="h-4 w-4" />
       </Button>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4" />
+      {isAdmin && (
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={onFilterClick}>
+                Apply Filters
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button variant="outline" size="sm" onClick={onReorderClick}>
+            <ArrowUpDown className="h-4 w-4" />
           </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem onClick={onFilterClick}>
-            Apply Filters
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <Button variant="outline" size="sm" onClick={onReorderClick}>
-        <ArrowUpDown className="h-4 w-4" />
-      </Button>
+        </>
+      )}
       <Button variant="outline" size="sm" onClick={onStartSlideshow}>
         <Play className="h-4 w-4" />
       </Button>

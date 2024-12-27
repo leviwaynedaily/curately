@@ -14,6 +14,7 @@ type GalleryImageItemProps = {
   onStartSlideshow: () => void;
   onReorderClick: () => void;
   onFilterClick: () => void;
+  isAdmin: boolean;
 };
 
 export const GalleryImageItem = ({
@@ -26,6 +27,7 @@ export const GalleryImageItem = ({
   onStartSlideshow,
   onReorderClick,
   onFilterClick,
+  isAdmin,
 }: GalleryImageItemProps) => {
   const mediaUrl = `${
     import.meta.env.VITE_SUPABASE_URL
@@ -47,18 +49,20 @@ export const GalleryImageItem = ({
       <GalleryMediaDisplay image={image} mediaUrl={mediaUrl} />
       
       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
-        <GalleryImageOverlay
-          isSelectionMode={isSelectionMode}
-          isSelected={isSelected}
-          onEditClick={(e) => {
-            e.stopPropagation();
-            onEditClick();
-          }}
-          onDeleteClick={(e) => {
-            e.stopPropagation();
-            onDeleteClick();
-          }}
-        />
+        {isAdmin && (
+          <GalleryImageOverlay
+            isSelectionMode={isSelectionMode}
+            isSelected={isSelected}
+            onEditClick={(e) => {
+              e.stopPropagation();
+              onEditClick();
+            }}
+            onDeleteClick={(e) => {
+              e.stopPropagation();
+              onDeleteClick();
+            }}
+          />
+        )}
         
         {!isSelectionMode && (
           <GalleryImageDetails
@@ -66,6 +70,7 @@ export const GalleryImageItem = ({
             onStartSlideshow={onStartSlideshow}
             onReorderClick={onReorderClick}
             onFilterClick={onFilterClick}
+            isAdmin={isAdmin}
           />
         )}
       </div>

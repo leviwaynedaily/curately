@@ -11,6 +11,7 @@ type GalleryImageGridProps = {
   galleryId: string;
   onDeleteImage: (image: { id: string; filePath: string }) => void;
   accentColor?: string;
+  isAdmin: boolean;
 };
 
 export const GalleryImageGrid = ({
@@ -18,6 +19,7 @@ export const GalleryImageGrid = ({
   galleryId,
   onDeleteImage,
   accentColor,
+  isAdmin,
 }: GalleryImageGridProps) => {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [imageToEdit, setImageToEdit] = useState<GalleryImage | null>(null);
@@ -71,17 +73,19 @@ export const GalleryImageGrid = ({
 
   return (
     <div className="space-y-8">
-      <GallerySelectionControls
-        isSelectionMode={isSelectionMode}
-        selectedCount={selectedImages.size}
-        onToggleSelectionMode={() => {
-          setIsSelectionMode(!isSelectionMode);
-          if (!isSelectionMode) {
-            clearSelection();
-          }
-        }}
-        onDeleteSelected={handleBatchDelete}
-      />
+      {isAdmin && (
+        <GallerySelectionControls
+          isSelectionMode={isSelectionMode}
+          selectedCount={selectedImages.size}
+          onToggleSelectionMode={() => {
+            setIsSelectionMode(!isSelectionMode);
+            if (!isSelectionMode) {
+              clearSelection();
+            }
+          }}
+          onDeleteSelected={handleBatchDelete}
+        />
+      )}
 
       <div 
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
@@ -112,6 +116,7 @@ export const GalleryImageGrid = ({
             onStartSlideshow={() => handleStartSlideshow(index)}
             onReorderClick={handleReorderClick}
             onFilterClick={handleFilterClick}
+            isAdmin={isAdmin}
           />
         ))}
       </div>
