@@ -10,6 +10,9 @@ export type Gallery = {
   primary_color?: string | null;
   secondary_color?: string | null;
   accent_color?: string | null;
+  primary_font_color?: string | null;
+  secondary_font_color?: string | null;
+  accent_font_color?: string | null;
   heading_text?: string | null;
   subheading_text?: string | null;
   age_verification_text?: string | null;
