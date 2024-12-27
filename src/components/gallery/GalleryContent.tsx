@@ -49,6 +49,14 @@ export const GalleryContent = ({
     color: gallery.primary_color || '#141413',
   };
 
+  // Get the public URL for the logo
+  const logoUrl = gallery.logo 
+    ? supabase.storage.from('gallery_images').getPublicUrl(gallery.logo).data.publicUrl
+    : null;
+
+  console.log('Gallery logo path:', gallery.logo);
+  console.log('Constructed logo URL:', logoUrl);
+
   return (
     <div style={containerStyle} className="min-h-screen">
       <div 
@@ -56,9 +64,9 @@ export const GalleryContent = ({
         className="py-8 px-4 mb-8 shadow-lg"
       >
         <div className="max-w-7xl mx-auto flex justify-center items-center">
-          {gallery.logo ? (
+          {logoUrl ? (
             <img 
-              src={gallery.logo} 
+              src={logoUrl} 
               alt={gallery.name}
               className="h-24 object-contain rounded-lg"
             />
