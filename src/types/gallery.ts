@@ -2,6 +2,8 @@ export type Gallery = {
   id: string;
   name: string;
   password?: string | null;
+  status?: string;
+  created_at?: string;
   businesses?: {
     name: string;
   };
