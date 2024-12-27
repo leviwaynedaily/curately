@@ -2,20 +2,14 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { gallerySchema, type GalleryFormValues } from "@/lib/validations/gallery";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
+import { GalleryNameField } from "./gallery/GalleryNameField";
+import { GalleryPasswordField } from "./gallery/GalleryPasswordField";
+import { GalleryFormActions } from "./gallery/GalleryFormActions";
 
 type GalleryFormProps = {
   isOpen: boolean;
@@ -102,45 +96,9 @@ export const GalleryForm = ({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Gallery name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Password"
-                      {...field}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" type="button" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Saving..." : "Save"}
-              </Button>
-            </div>
+            <GalleryNameField form={form} />
+            <GalleryPasswordField form={form} />
+            <GalleryFormActions isLoading={isLoading} onCancel={onClose} />
           </form>
         </Form>
       </DialogContent>
