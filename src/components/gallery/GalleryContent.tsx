@@ -49,16 +49,27 @@ export const GalleryContent = ({
     color: gallery.primary_color || '#141413',
   };
 
+  const logoUrl = gallery.logo 
+    ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${gallery.logo}`
+    : null;
+
   return (
     <div style={containerStyle} className="min-h-screen">
       <div 
         style={headerStyle}
         className="py-8 px-4 mb-8 shadow-lg"
       >
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold mb-2">{gallery.name}</h1>
-          {gallery.description && (
-            <p className="text-lg opacity-90">{gallery.description}</p>
+        <div className="max-w-7xl mx-auto flex justify-center items-center">
+          {logoUrl ? (
+            <img 
+              src={logoUrl} 
+              alt={gallery.name}
+              className="h-24 object-contain rounded-lg"
+            />
+          ) : (
+            <div className="h-24 w-full max-w-xs bg-accent/10 rounded-lg flex items-center justify-center">
+              <span className="text-accent text-lg opacity-50">No Logo</span>
+            </div>
           )}
         </div>
       </div>
