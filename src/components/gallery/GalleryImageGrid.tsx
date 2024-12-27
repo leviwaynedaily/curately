@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { ImageDetailsDialog } from "./ImageDetailsDialog";
-import { ImageEditDialog } from "./ImageEditDialog";
-import { ImageDeleteDialog } from "./ImageDeleteDialog";
 import { GalleryImage } from "@/types/gallery";
 import { GallerySelectionControls } from "./GallerySelectionControls";
 import { GalleryImageItem } from "./GalleryImageItem";
-import { GallerySlideshowDialog } from "./GallerySlideshowDialog";
+import { useImageSelection } from "@/hooks/useImageSelection";
+import { GalleryDialogs } from "./GalleryDialogs";
 import { useToast } from "@/components/ui/use-toast";
 
 type GalleryImageGridProps = {
@@ -25,22 +23,17 @@ export const GalleryImageGrid = ({
     id: string;
     filePath: string;
   } | null>(null);
-  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
-  const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [isSlideshowOpen, setIsSlideshowOpen] = useState(false);
   const [slideshowStartIndex, setSlideshowStartIndex] = useState(0);
   const { toast } = useToast();
 
-  const toggleImageSelection = (imageId: string, event: React.MouseEvent) => {
-    event.stopPropagation();
-    const newSelection = new Set(selectedImages);
-    if (newSelection.has(imageId)) {
-      newSelection.delete(imageId);
-    } else {
-      newSelection.add(imageId);
-    }
-    setSelectedImages(newSelection);
-  };
+  const {
+    selectedImages,
+    isSelectionMode,
+    setIsSelectionMode,
+    toggleImageSelection,
+    clearSelection,
+  } = useImageSelection();
 
   const handleBatchDelete = () => {
     const imagesToDelete = images
@@ -54,8 +47,7 @@ export const GalleryImageGrid = ({
       onDeleteImage(image);
     });
 
-    setSelectedImages(new Set());
-    setIsSelectionMode(false);
+    clearSelection();
   };
 
   const handleStartSlideshow = (index: number) => {
@@ -83,7 +75,7 @@ export const GalleryImageGrid = ({
         onToggleSelectionMode={() => {
           setIsSelectionMode(!isSelectionMode);
           if (!isSelectionMode) {
-            setSelectedImages(new Set());
+            clearSelection();
           }
         }}
         onDeleteSelected={handleBatchDelete}
@@ -98,7 +90,7 @@ export const GalleryImageGrid = ({
             isSelected={selectedImages.has(image.id)}
             onImageClick={(e: React.MouseEvent) => {
               if (isSelectionMode) {
-                toggleImageSelection(image.id, e);
+                toggleImageSelection(image.id);
               } else {
                 setSelectedImage(image);
               }
@@ -117,39 +109,19 @@ export const GalleryImageGrid = ({
         ))}
       </div>
 
-      {selectedImage && (
-        <ImageDetailsDialog
-          isOpen={!!selectedImage}
-          onClose={() => setSelectedImage(null)}
-          image={selectedImage}
-        />
-      )}
-
-      {imageToEdit && (
-        <ImageEditDialog
-          isOpen={!!imageToEdit}
-          onClose={() => setImageToEdit(null)}
-          image={imageToEdit}
-          galleryId={galleryId}
-        />
-      )}
-
-      <ImageDeleteDialog
-        isOpen={!!imageToDelete}
-        onClose={() => setImageToDelete(null)}
-        onConfirm={() => {
-          if (imageToDelete) {
-            onDeleteImage(imageToDelete);
-            setImageToDelete(null);
-          }
-        }}
-      />
-
-      <GallerySlideshowDialog
-        isOpen={isSlideshowOpen}
-        onClose={() => setIsSlideshowOpen(false)}
+      <GalleryDialogs
+        selectedImage={selectedImage}
+        setSelectedImage={setSelectedImage}
+        imageToEdit={imageToEdit}
+        setImageToEdit={setImageToEdit}
+        imageToDelete={imageToDelete}
+        setImageToDelete={setImageToDelete}
+        isSlideshowOpen={isSlideshowOpen}
+        setIsSlideshowOpen={setIsSlideshowOpen}
+        slideshowStartIndex={slideshowStartIndex}
+        galleryId={galleryId}
         images={images}
-        startIndex={slideshowStartIndex}
+        onDeleteImage={onDeleteImage}
       />
     </div>
   );
