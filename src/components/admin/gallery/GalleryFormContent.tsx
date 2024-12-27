@@ -34,19 +34,21 @@ export const GalleryFormContent = ({
             <TabsTrigger value="customization">Customization</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="basic" className="space-y-4 mt-4">
-            <GalleryNameField form={form} />
-            <GalleryBusinessField form={form} />
-            <GalleryDescriptionField form={form} />
-          </TabsContent>
-          
-          <TabsContent value="verification" className="space-y-4 mt-4">
-            <GalleryVerificationFields form={form} />
-          </TabsContent>
-          
-          <TabsContent value="customization" className="space-y-4 mt-4">
-            <GalleryCustomizationFields form={form} />
-          </TabsContent>
+          <div className="h-[500px] overflow-y-auto mt-4">
+            <TabsContent value="basic" className="space-y-4 mt-0">
+              <GalleryNameField form={form} />
+              <GalleryBusinessField form={form} />
+              <GalleryDescriptionField form={form} />
+            </TabsContent>
+            
+            <TabsContent value="verification" className="space-y-4 mt-0">
+              <GalleryVerificationFields form={form} />
+            </TabsContent>
+            
+            <TabsContent value="customization" className="space-y-4 mt-0">
+              <GalleryCustomizationFields form={form} />
+            </TabsContent>
+          </div>
         </Tabs>
 
         <div className="sticky bottom-0 bg-background pt-4 border-t">
