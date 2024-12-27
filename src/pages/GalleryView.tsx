@@ -10,7 +10,7 @@ const GalleryView = () => {
   const [isAgeVerified, setIsAgeVerified] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { gallery, isGalleryLoading, deleteImage, refetchGallery } = useGallery(id as string);
+  const { gallery, isLoading: isGalleryLoading, deleteImage, refetchGallery } = useGallery(id as string);
 
   useEffect(() => {
     const ageVerified = localStorage.getItem("age-verified") === "true";
