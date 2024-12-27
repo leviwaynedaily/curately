@@ -1,22 +1,19 @@
 import { useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { PasswordProtection } from "@/components/PasswordProtection";
-import { ImageUpload } from "@/components/gallery/ImageUpload";
-import { useToast } from "@/components/ui/use-toast";
-import { GalleryHeader } from "@/components/gallery/GalleryHeader";
-import { GalleryImageGrid } from "@/components/gallery/GalleryImageGrid";
-import { GalleryEmptyState } from "@/components/gallery/GalleryEmptyState";
+import { useGallery } from "@/hooks/useGallery";
+import { useGalleryActions } from "@/hooks/useGalleryActions";
+import { GalleryContent } from "@/components/gallery/GalleryContent";
 
 const GalleryView = () => {
   const params = useParams();
   const galleryId = params.id;
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { data: gallery, isLoading: isGalleryLoading, error } = useGallery(galleryId);
+  const { handleDeleteImage, handleUploadComplete } = useGalleryActions(galleryId);
 
   // Redirect if no id is provided
   useEffect(() => {
@@ -25,53 +22,6 @@ const GalleryView = () => {
       navigate("/");
     }
   }, [galleryId, navigate]);
-
-  const { data: gallery, isLoading: isGalleryLoading, error } = useQuery({
-    queryKey: ["gallery", galleryId],
-    queryFn: async () => {
-      if (!galleryId) {
-        console.log("No gallery ID provided");
-        throw new Error("Gallery ID is required");
-      }
-
-      console.log("Fetching gallery details for ID:", galleryId);
-      const { data, error } = await supabase
-        .from("galleries")
-        .select(`
-          id,
-          name,
-          password,
-          businesses (
-            name
-          ),
-          gallery_images (
-            id,
-            file_path,
-            title,
-            description,
-            media_type,
-            price,
-            is_featured
-          )
-        `)
-        .eq("id", galleryId)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Error fetching gallery:", error);
-        throw error;
-      }
-
-      if (!data) {
-        console.log("No gallery found with ID:", galleryId);
-        throw new Error("Gallery not found");
-      }
-
-      console.log("Fetched gallery:", data);
-      return data;
-    },
-    enabled: !!galleryId,
-  });
 
   useEffect(() => {
     if (gallery) {
@@ -82,42 +32,6 @@ const GalleryView = () => {
       setIsLoading(false);
     }
   }, [gallery]);
-
-  const handleDeleteImage = async (image: { id: string; filePath: string }) => {
-    console.log("Deleting image:", image);
-    try {
-      // Delete from storage
-      const { error: storageError } = await supabase.storage
-        .from("gallery_images")
-        .remove([image.filePath]);
-
-      if (storageError) {
-        console.error("Error deleting from storage:", storageError);
-        throw storageError;
-      }
-
-      // Delete from database
-      const { error: dbError } = await supabase
-        .from("gallery_images")
-        .delete()
-        .eq("id", image.id);
-
-      if (dbError) {
-        console.error("Error deleting from database:", dbError);
-        throw dbError;
-      }
-
-      console.log("Image deleted successfully");
-      toast({ description: "Image deleted successfully" });
-      queryClient.invalidateQueries({ queryKey: ["gallery", galleryId] });
-    } catch (error) {
-      console.error("Delete failed:", error);
-      toast({
-        variant: "destructive",
-        description: "Failed to delete image. Please try again.",
-      });
-    }
-  };
 
   if (error) {
     return (
@@ -169,24 +83,12 @@ const GalleryView = () => {
 
   return (
     <div className="min-h-screen bg-background p-8">
-      <div className="max-w-7xl mx-auto">
-        <GalleryHeader name={gallery.name} />
-        <ImageUpload
-          galleryId={galleryId}
-          onUploadComplete={() =>
-            queryClient.invalidateQueries({ queryKey: ["gallery", galleryId] })
-          }
-        />
-        {gallery.gallery_images?.length ? (
-          <GalleryImageGrid
-            images={gallery.gallery_images}
-            galleryId={galleryId}
-            onDeleteImage={handleDeleteImage}
-          />
-        ) : (
-          <GalleryEmptyState />
-        )}
-      </div>
+      <GalleryContent
+        gallery={gallery}
+        galleryId={galleryId}
+        onDeleteImage={handleDeleteImage}
+        onUploadComplete={handleUploadComplete}
+      />
     </div>
   );
 };
