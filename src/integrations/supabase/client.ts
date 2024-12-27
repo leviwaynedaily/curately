@@ -14,14 +14,15 @@ export const checkSupabaseConnection = async () => {
       .from('galleries')
       .select('id')
       .limit(1)
-      .single();
+      .maybeSingle();
     
     if (error) {
       console.error('Supabase connection check failed:', error);
       return false;
     }
     
-    console.log('Supabase connection successful');
+    // Connection is successful even if no data is found
+    console.log('Supabase connection successful. Data found:', !!data);
     return true;
   } catch (error) {
     console.error('Supabase connection check failed with exception:', error);
