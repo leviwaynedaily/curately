@@ -7,8 +7,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
+import { Edit, Trash, Copy } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 type GalleryTableProps = {
   galleries: any[];
@@ -21,11 +22,21 @@ export const GalleryTable = ({
   onEdit,
   onDelete,
 }: GalleryTableProps) => {
+  const { toast } = useToast();
+
+  const handleCopyId = (id: string) => {
+    navigator.clipboard.writeText(id);
+    toast({
+      description: "Gallery ID copied to clipboard",
+    });
+  };
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
+          <TableHead>ID</TableHead>
           <TableHead>Business</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Created At</TableHead>
@@ -42,6 +53,19 @@ export const GalleryTable = ({
               >
                 {gallery.name}
               </Link>
+            </TableCell>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-sm">{gallery.id}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleCopyId(gallery.id)}
+                  className="h-6 w-6"
+                >
+                  <Copy className="h-3 w-3" />
+                </Button>
+              </div>
             </TableCell>
             <TableCell>{gallery.businesses?.name || 'No business assigned'}</TableCell>
             <TableCell>{gallery.status}</TableCell>
