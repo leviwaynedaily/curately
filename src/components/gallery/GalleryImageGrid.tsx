@@ -95,9 +95,9 @@ export const GalleryImageGrid = ({
               "group relative aspect-square bg-muted rounded-lg overflow-hidden cursor-pointer",
               isSelectionMode && "hover:opacity-90"
             )}
-            onClick={() => {
+            onClick={(e: React.MouseEvent) => {
               if (isSelectionMode) {
-                toggleImageSelection(image.id, event as React.MouseEvent);
+                toggleImageSelection(image.id, e);
               } else {
                 setSelectedImage(image);
               }
