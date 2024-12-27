@@ -15,7 +15,7 @@ export type GalleryImage = {
   file_path: string;
   title?: string | null;
   description?: string | null;
-  media_type?: 'image' | 'video';
+  media_type?: string | null;
   price?: number | null;
-  is_featured?: boolean;
+  is_featured?: boolean | null;
 };

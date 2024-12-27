@@ -10,7 +10,8 @@ import { GalleryImageGrid } from "@/components/gallery/GalleryImageGrid";
 import { GalleryEmptyState } from "@/components/gallery/GalleryEmptyState";
 
 const GalleryView = () => {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams();
+  const galleryId = params.id;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -19,21 +20,21 @@ const GalleryView = () => {
 
   // Redirect if no id is provided
   useEffect(() => {
-    if (!id) {
+    if (!galleryId) {
       console.log("No gallery ID provided, redirecting...");
       navigate("/");
     }
-  }, [id, navigate]);
+  }, [galleryId, navigate]);
 
   const { data: gallery, isLoading: isGalleryLoading, error } = useQuery({
-    queryKey: ["gallery", id],
+    queryKey: ["gallery", galleryId],
     queryFn: async () => {
-      if (!id) {
+      if (!galleryId) {
         console.log("No gallery ID provided");
         throw new Error("Gallery ID is required");
       }
 
-      console.log("Fetching gallery details for ID:", id);
+      console.log("Fetching gallery details for ID:", galleryId);
       const { data, error } = await supabase
         .from("galleries")
         .select(`
@@ -53,7 +54,7 @@ const GalleryView = () => {
             is_featured
           )
         `)
-        .eq("id", id)
+        .eq("id", galleryId)
         .maybeSingle();
 
       if (error) {
@@ -62,14 +63,14 @@ const GalleryView = () => {
       }
 
       if (!data) {
-        console.log("No gallery found with ID:", id);
+        console.log("No gallery found with ID:", galleryId);
         throw new Error("Gallery not found");
       }
 
       console.log("Fetched gallery:", data);
       return data;
     },
-    enabled: !!id,
+    enabled: !!galleryId,
   });
 
   useEffect(() => {
@@ -108,7 +109,7 @@ const GalleryView = () => {
 
       console.log("Image deleted successfully");
       toast({ description: "Image deleted successfully" });
-      queryClient.invalidateQueries({ queryKey: ["gallery", id] });
+      queryClient.invalidateQueries({ queryKey: ["gallery", galleryId] });
     } catch (error) {
       console.error("Delete failed:", error);
       toast({
@@ -171,15 +172,15 @@ const GalleryView = () => {
       <div className="max-w-7xl mx-auto">
         <GalleryHeader name={gallery.name} />
         <ImageUpload
-          galleryId={id}
+          galleryId={galleryId}
           onUploadComplete={() =>
-            queryClient.invalidateQueries({ queryKey: ["gallery", id] })
+            queryClient.invalidateQueries({ queryKey: ["gallery", galleryId] })
           }
         />
         {gallery.gallery_images?.length ? (
           <GalleryImageGrid
             images={gallery.gallery_images}
-            galleryId={id}
+            galleryId={galleryId}
             onDeleteImage={handleDeleteImage}
           />
         ) : (
