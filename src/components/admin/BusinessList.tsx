@@ -5,13 +5,14 @@ import { BusinessDeleteDialog } from "./business/BusinessDeleteDialog";
 import { BusinessListHeader } from "./business/BusinessListHeader";
 import { useBusinesses } from "@/hooks/useBusinesses";
 import { useDeleteBusiness } from "@/hooks/useDeleteBusiness";
+import { useSearch } from "@/hooks/useSearch";
 
 export const BusinessList = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<any>(null);
   const [businessToDelete, setBusinessToDelete] = useState<any>(null);
-  const [searchQuery, setSearchQuery] = useState("");
   
+  const { searchQuery, handleSearchChange } = useSearch("");
   const { data: businesses, isLoading } = useBusinesses(searchQuery);
   const { deleteBusiness } = useDeleteBusiness();
 
@@ -36,7 +37,7 @@ export const BusinessList = () => {
     <div className="space-y-4">
       <BusinessListHeader
         searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        onSearchChange={handleSearchChange}
         onAddClick={() => setIsFormOpen(true)}
       />
 
