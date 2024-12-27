@@ -88,12 +88,25 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
     setIsLoading(true);
     console.log("Submitting gallery form...", values);
 
-    // Ensure all color values are strings
+    // Ensure all required fields are included and color values are strings
     const sanitizedValues = {
-      ...values,
+      name: values.name,
+      password: values.password,
+      status: values.status,
+      business_id: values.business_id,
+      logo: values.logo,
+      description: values.description,
+      primary_color: values.primary_color || "#141413",
+      secondary_color: values.secondary_color || "#E6E4DD",
+      accent_color: values.accent_color || "#9b87f5",
       primary_font_color: values.primary_font_color || "#000000",
       secondary_font_color: values.secondary_font_color || "#6E59A5",
       accent_font_color: values.accent_font_color || "#8B5CF6",
+      heading_text: values.heading_text,
+      subheading_text: values.subheading_text,
+      age_verification_text: values.age_verification_text,
+      button_text: values.button_text,
+      age_verification_enabled: values.age_verification_enabled,
     };
 
     try {
