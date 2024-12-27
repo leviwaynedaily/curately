@@ -5,6 +5,7 @@ export type Gallery = {
   status?: string;
   created_at?: string;
   logo?: string | null;
+  site_logo?: string | null;
   description?: string | null;
   primary_color?: string | null;
   secondary_color?: string | null;
