@@ -24,10 +24,12 @@ export const AgeVerificationForm = ({
 }: AgeVerificationFormProps) => {
   const [isChecked, setIsChecked] = useState(false);
 
-  const buttonStyle = {
+  // Ensure the color is applied without any opacity
+  const buttonStyle = accentColor ? {
     backgroundColor: accentColor,
     color: '#FFFFFF',
-  };
+    opacity: 1, // Force full opacity
+  } : undefined;
 
   return (
     <div className="space-y-6">
@@ -51,7 +53,7 @@ export const AgeVerificationForm = ({
       </div>
 
       <Button
-        className="w-full hover:opacity-90 transition-opacity"
+        className="w-full transition-colors"
         style={buttonStyle}
         disabled={!isChecked || isLoading}
         onClick={onVerify}
