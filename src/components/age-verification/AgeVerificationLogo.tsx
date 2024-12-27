@@ -5,7 +5,10 @@ interface AgeVerificationLogoProps {
 }
 
 export const AgeVerificationLogo = ({ logo }: AgeVerificationLogoProps) => {
-  if (!logo) return null;
+  if (!logo) {
+    console.log("No logo provided to AgeVerificationLogo");
+    return null;
+  }
   
   const logoUrl = supabase.storage.from("gallery_images").getPublicUrl(logo).data.publicUrl;
   console.log("Age verification logo path:", logo);

@@ -25,7 +25,7 @@ export const GalleryLogoField = ({ form }: GalleryLogoFieldProps) => {
 
     try {
       const fileExt = file.name.split(".").pop();
-      const filePath = `gallery-logos/${crypto.randomUUID()}.${fileExt}`;
+      const filePath = `${crypto.randomUUID()}.${fileExt}`;
 
       console.log("Uploading logo to storage...");
       const { error: uploadError } = await supabase.storage
