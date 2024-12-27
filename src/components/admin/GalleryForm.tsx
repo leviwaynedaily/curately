@@ -56,7 +56,11 @@ export const GalleryForm = ({
       if (gallery?.id) {
         const { error } = await supabase
           .from("galleries")
-          .update(values)
+          .update({
+            name: values.name,
+            password: values.password,
+            status: values.status,
+          })
           .eq("id", gallery.id);
 
         if (error) throw error;
@@ -66,7 +70,9 @@ export const GalleryForm = ({
         const { error } = await supabase
           .from("galleries")
           .insert({
-            ...values,
+            name: values.name,
+            password: values.password,
+            status: values.status,
             business_id: businessId,
           });
 

@@ -48,7 +48,10 @@ export const BusinessForm = ({ isOpen, onClose, business }: BusinessFormProps) =
       if (business?.id) {
         const { error } = await supabase
           .from("businesses")
-          .update(values)
+          .update({
+            name: values.name,
+            status: values.status,
+          })
           .eq("id", business.id);
 
         if (error) throw error;
@@ -57,7 +60,10 @@ export const BusinessForm = ({ isOpen, onClose, business }: BusinessFormProps) =
       } else {
         const { error } = await supabase
           .from("businesses")
-          .insert(values);
+          .insert({
+            name: values.name,
+            status: values.status,
+          });
 
         if (error) throw error;
         console.log("Business created successfully");
