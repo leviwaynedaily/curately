@@ -11,7 +11,7 @@ export const checkSupabaseConnection = async () => {
   try {
     console.log('Checking Supabase connection...');
     const { data, error } = await supabase
-      .from('tenants')
+      .from('galleries')
       .select('id')
       .limit(1)
       .single();
