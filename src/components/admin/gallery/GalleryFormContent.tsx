@@ -49,7 +49,9 @@ export const GalleryFormContent = ({
           </TabsContent>
         </Tabs>
 
-        <GalleryFormActions isLoading={isLoading} onCancel={onCancel} />
+        <div className="sticky bottom-0 bg-background pt-4 border-t">
+          <GalleryFormActions isLoading={isLoading} onCancel={onCancel} />
+        </div>
       </form>
     </Form>
   );

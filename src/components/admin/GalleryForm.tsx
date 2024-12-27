@@ -29,16 +29,18 @@ export const GalleryForm = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle>{gallery ? "Edit Gallery" : "Add Gallery"}</DialogTitle>
         </DialogHeader>
-        <GalleryFormContent
-          form={form}
-          isLoading={isLoading}
-          onSubmit={handleSubmit}
-          onCancel={onClose}
-        />
+        <div className="flex-1 overflow-y-auto pr-2">
+          <GalleryFormContent
+            form={form}
+            isLoading={isLoading}
+            onSubmit={handleSubmit}
+            onCancel={onClose}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );
