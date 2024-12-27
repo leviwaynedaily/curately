@@ -16,6 +16,7 @@ type UseGalleryFormProps = {
     password?: string;
     business_id?: string;
     logo?: string;
+    site_logo?: string;
     description?: string;
     primary_color?: string;
     secondary_color?: string;
@@ -45,6 +46,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       status: gallery?.status || "active",
       business_id: gallery?.business_id || businessId || "",
       logo: gallery?.logo || "",
+      site_logo: gallery?.site_logo || gallery?.logo || "", // Use logo as fallback for site_logo
       description: gallery?.description || "",
       primary_color: gallery?.primary_color || "#141413",
       secondary_color: gallery?.secondary_color || "#E6E4DD",
@@ -70,6 +72,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
         status: gallery.status,
         business_id: gallery.business_id || "",
         logo: gallery.logo || "",
+        site_logo: gallery.site_logo || gallery.logo || "", // Use logo as fallback for site_logo
         description: gallery.description || "",
         primary_color: gallery.primary_color || "#141413",
         secondary_color: gallery.secondary_color || "#E6E4DD",
@@ -98,6 +101,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       status: values.status,
       business_id: values.business_id,
       logo: values.logo,
+      site_logo: values.site_logo || values.logo, // Use logo as fallback if no site_logo
       description: values.description,
       primary_color: values.primary_color || "#141413",
       secondary_color: values.secondary_color || "#E6E4DD",

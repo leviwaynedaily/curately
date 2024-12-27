@@ -47,6 +47,7 @@ export const GalleryContent = ({
     color: gallery.primary_color || '#141413',
   };
 
+  // Use site_logo if available, otherwise fall back to logo
   const logoUrl = gallery.site_logo 
     ? supabase.storage.from("gallery_images").getPublicUrl(gallery.site_logo).data.publicUrl
     : gallery.logo 
