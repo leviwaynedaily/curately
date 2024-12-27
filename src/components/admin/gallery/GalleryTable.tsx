@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash, Copy } from "lucide-react";
+import { Edit, Trash, Copy, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -74,6 +74,19 @@ export const GalleryTable = ({
             </TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
+                <a
+                  href={`https://curately-galleries.lovable.app/gallery/${gallery.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                  </Button>
+                </a>
                 <Button
                   variant="ghost"
                   size="icon"
