@@ -2,6 +2,8 @@ import { Form } from "@/components/ui/form";
 import { GalleryNameField } from "./GalleryNameField";
 import { GalleryBusinessField } from "./GalleryBusinessField";
 import { GalleryPasswordField } from "./GalleryPasswordField";
+import { GalleryLogoField } from "./GalleryLogoField";
+import { GalleryDescriptionField } from "./GalleryDescriptionField";
 import { GalleryFormActions } from "./GalleryFormActions";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
@@ -25,6 +27,8 @@ export const GalleryFormContent = ({
         <GalleryNameField form={form} />
         <GalleryBusinessField form={form} />
         <GalleryPasswordField form={form} />
+        <GalleryLogoField form={form} />
+        <GalleryDescriptionField form={form} />
         <GalleryFormActions isLoading={isLoading} onCancel={onCancel} />
       </form>
     </Form>

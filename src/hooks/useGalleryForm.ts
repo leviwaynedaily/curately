@@ -15,6 +15,8 @@ type UseGalleryFormProps = {
     status: string;
     password?: string;
     business_id?: string;
+    logo?: string;
+    description?: string;
   };
 };
 
@@ -30,6 +32,8 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       password: gallery?.password || "",
       status: gallery?.status || "active",
       business_id: gallery?.business_id || businessId || "",
+      logo: gallery?.logo || "",
+      description: gallery?.description || "",
     },
   });
 
@@ -41,6 +45,8 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
         password: gallery.password,
         status: gallery.status,
         business_id: gallery.business_id || "",
+        logo: gallery.logo || "",
+        description: gallery.description || "",
       });
     }
   }, [gallery, form]);
@@ -58,6 +64,8 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
             password: values.password,
             status: values.status,
             business_id: values.business_id,
+            logo: values.logo,
+            description: values.description,
           })
           .eq("id", gallery.id);
 
@@ -72,6 +80,8 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
             password: values.password,
             status: values.status,
             business_id: values.business_id,
+            logo: values.logo,
+            description: values.description,
           });
 
         if (error) throw error;

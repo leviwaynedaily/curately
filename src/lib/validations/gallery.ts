@@ -5,6 +5,8 @@ export const gallerySchema = z.object({
   password: z.string().optional(),
   status: z.string().optional().default("active"),
   business_id: z.string().min(1, "Business is required"),
+  logo: z.string().optional(),
+  description: z.string().optional(),
 });
 
 export type GalleryFormValues = z.infer<typeof gallerySchema>;

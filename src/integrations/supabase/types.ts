@@ -48,7 +48,9 @@ export type Database = {
         Row: {
           business_id: string | null
           created_at: string
+          description: string | null
           id: string
+          logo: string | null
           name: string
           password: string | null
           status: string | null
@@ -57,7 +59,9 @@ export type Database = {
         Insert: {
           business_id?: string | null
           created_at?: string
+          description?: string | null
           id?: string
+          logo?: string | null
           name: string
           password?: string | null
           status?: string | null
@@ -66,7 +70,9 @@ export type Database = {
         Update: {
           business_id?: string | null
           created_at?: string
+          description?: string | null
           id?: string
+          logo?: string | null
           name?: string
           password?: string | null
           status?: string | null
