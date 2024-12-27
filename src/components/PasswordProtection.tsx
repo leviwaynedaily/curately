@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PasswordProtectionProps {
   onAuthenticated: () => void;
@@ -17,12 +18,27 @@ export const PasswordProtection = ({ onAuthenticated, tenantId }: PasswordProtec
     setIsLoading(true);
 
     try {
-      // TODO: Implement actual password verification with Supabase
-      const isCorrect = password === "demo123"; // Temporary demo password
+      console.log("Verifying gallery password...");
+      const { data, error } = await supabase
+        .from("galleries")
+        .select("password")
+        .eq("id", tenantId)
+        .single();
+
+      if (error) {
+        console.error("Error fetching gallery:", error);
+        throw error;
+      }
+
+      const isCorrect = data.password === password;
+      console.log("Password verification result:", isCorrect);
       
       if (isCorrect) {
         localStorage.setItem(`gallery-${tenantId}-auth`, "true");
         onAuthenticated();
+        toast({
+          description: "Access granted",
+        });
       } else {
         toast({
           title: "Incorrect Password",
@@ -31,6 +47,7 @@ export const PasswordProtection = ({ onAuthenticated, tenantId }: PasswordProtec
         });
       }
     } catch (error) {
+      console.error("Error during password verification:", error);
       toast({
         title: "Error",
         description: "An error occurred. Please try again.",
