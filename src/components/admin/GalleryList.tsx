@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
+import { Edit, Search, Trash } from "lucide-react";
 import { GalleryForm } from "./GalleryForm";
 import {
   AlertDialog,
@@ -23,27 +23,34 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
 
 export const GalleryList = ({ businessId }: { businessId?: string }) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedGallery, setSelectedGallery] = useState<any>(null);
   const [galleryToDelete, setGalleryToDelete] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const { data: galleries, isLoading } = useQuery({
-    queryKey: ["galleries", businessId],
+    queryKey: ["galleries", businessId, searchQuery],
     queryFn: async () => {
       console.log("Fetching galleries...");
-      let query = supabase.from("galleries").select("*");
+      let query = supabase
+        .from("galleries")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (businessId) {
         query = query.eq("business_id", businessId);
       }
 
-      const { data, error } = await query.order("created_at", {
-        ascending: false,
-      });
+      if (searchQuery) {
+        query = query.ilike("name", `%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching galleries:", error);
@@ -95,6 +102,16 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Galleries</h2>
         <Button onClick={() => setIsFormOpen(true)}>Add Gallery</Button>
+      </div>
+
+      <div className="relative">
+        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search galleries..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-8"
+        />
       </div>
 
       <Table>

@@ -5,6 +5,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { businessSchema, type BusinessFormValues } from "@/lib/validations/business";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 type BusinessFormProps = {
   isOpen: boolean;
@@ -17,30 +28,33 @@ type BusinessFormProps = {
 };
 
 export const BusinessForm = ({ isOpen, onClose, business }: BusinessFormProps) => {
-  const [name, setName] = useState(business?.name || "");
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<BusinessFormValues>({
+    resolver: zodResolver(businessSchema),
+    defaultValues: {
+      name: business?.name || "",
+    },
+  });
+
+  const handleSubmit = async (values: BusinessFormValues) => {
     setIsLoading(true);
-    console.log("Submitting business form...");
+    console.log("Submitting business form...", values);
 
     try {
       if (business?.id) {
-        // Update existing business
         const { error } = await supabase
           .from("businesses")
-          .update({ name })
+          .update(values)
           .eq("id", business.id);
 
         if (error) throw error;
         console.log("Business updated successfully");
         toast({ description: "Business updated successfully" });
       } else {
-        // Create new business
-        const { error } = await supabase.from("businesses").insert([{ name }]);
+        const { error } = await supabase.from("businesses").insert([values]);
 
         if (error) throw error;
         console.log("Business created successfully");
@@ -66,24 +80,31 @@ export const BusinessForm = ({ isOpen, onClose, business }: BusinessFormProps) =
         <DialogHeader>
           <DialogTitle>{business ? "Edit Business" : "Add Business"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Input
-              placeholder="Business name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Business name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" type="button" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Saving..." : "Save"}
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" type="button" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

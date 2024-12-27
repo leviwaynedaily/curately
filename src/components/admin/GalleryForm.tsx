@@ -5,6 +5,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { gallerySchema, type GalleryFormValues } from "@/lib/validations/gallery";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 type GalleryFormProps = {
   isOpen: boolean;
@@ -24,34 +35,36 @@ export const GalleryForm = ({
   businessId,
   gallery,
 }: GalleryFormProps) => {
-  const [name, setName] = useState(gallery?.name || "");
-  const [password, setPassword] = useState(gallery?.password || "");
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<GalleryFormValues>({
+    resolver: zodResolver(gallerySchema),
+    defaultValues: {
+      name: gallery?.name || "",
+      password: gallery?.password || "",
+    },
+  });
+
+  const handleSubmit = async (values: GalleryFormValues) => {
     setIsLoading(true);
-    console.log("Submitting gallery form...");
+    console.log("Submitting gallery form...", values);
 
     try {
       if (gallery?.id) {
-        // Update existing gallery
         const { error } = await supabase
           .from("galleries")
-          .update({ name, password: password || null })
+          .update(values)
           .eq("id", gallery.id);
 
         if (error) throw error;
         console.log("Gallery updated successfully");
         toast({ description: "Gallery updated successfully" });
       } else {
-        // Create new gallery
         const { error } = await supabase.from("galleries").insert([
           {
-            name,
-            password: password || null,
+            ...values,
             business_id: businessId,
           },
         ]);
@@ -80,32 +93,49 @@ export const GalleryForm = ({
         <DialogHeader>
           <DialogTitle>{gallery ? "Edit Gallery" : "Add Gallery"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Input
-              placeholder="Gallery name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Gallery name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div>
-            <Input
-              type="password"
-              placeholder="Password (optional)"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Password"
+                      {...field}
+                      value={field.value || ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" type="button" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Saving..." : "Save"}
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" type="button" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

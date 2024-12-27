@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
+import { Edit, Search, Trash } from "lucide-react";
 import { BusinessForm } from "./BusinessForm";
 import {
   AlertDialog,
@@ -23,22 +23,30 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
 
 export const BusinessList = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<any>(null);
   const [businessToDelete, setBusinessToDelete] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const { data: businesses, isLoading } = useQuery({
-    queryKey: ["businesses"],
+    queryKey: ["businesses", searchQuery],
     queryFn: async () => {
       console.log("Fetching businesses...");
-      const { data, error } = await supabase
+      let query = supabase
         .from("businesses")
         .select("*")
         .order("created_at", { ascending: false });
+
+      if (searchQuery) {
+        query = query.ilike("name", `%${searchQuery}%`);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching businesses:", error);
@@ -90,6 +98,16 @@ export const BusinessList = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Businesses</h2>
         <Button onClick={() => setIsFormOpen(true)}>Add Business</Button>
+      </div>
+
+      <div className="relative">
+        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search businesses..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-8"
+        />
       </div>
 
       <Table>
