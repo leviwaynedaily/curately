@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PasswordProtection } from "@/components/PasswordProtection";
+import { AgeVerification } from "@/components/AgeVerification";
 import { useGallery } from "@/hooks/useGallery";
 import { useGalleryActions } from "@/hooks/useGalleryActions";
 import { GalleryContent } from "@/components/gallery/GalleryContent";
@@ -9,21 +10,23 @@ const GalleryView = () => {
   const params = useParams();
   const galleryId = params.id;
   const navigate = useNavigate();
+  const [isAgeVerified, setIsAgeVerified] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const { data: gallery, isLoading: isGalleryLoading, error } = useGallery(galleryId);
   const { handleDeleteImage, handleUploadComplete } = useGalleryActions(galleryId);
 
-  // Redirect if no id is provided
   useEffect(() => {
     if (!galleryId) {
       console.log("No gallery ID provided, redirecting...");
       navigate("/");
+      return;
     }
-  }, [galleryId, navigate]);
 
-  useEffect(() => {
+    const ageVerified = localStorage.getItem("age-verified") === "true";
+    setIsAgeVerified(ageVerified);
+
     if (gallery) {
       const authenticated = gallery.password
         ? localStorage.getItem(`gallery-${gallery.id}-auth`) === "true"
@@ -31,7 +34,7 @@ const GalleryView = () => {
       setIsAuthenticated(authenticated);
       setIsLoading(false);
     }
-  }, [gallery]);
+  }, [galleryId, navigate, gallery]);
 
   if (error) {
     return (
@@ -72,11 +75,21 @@ const GalleryView = () => {
     );
   }
 
+  if (!isAgeVerified) {
+    return (
+      <AgeVerification 
+        onVerified={() => setIsAgeVerified(true)}
+        logo="/lovable-uploads/f4ec1abc-56dc-4017-a874-d84566738d7f.png"
+      />
+    );
+  }
+
   if (gallery.password && !isAuthenticated) {
     return (
       <PasswordProtection
         tenantId={gallery.id}
         onAuthenticated={() => setIsAuthenticated(true)}
+        logo="/lovable-uploads/f4ec1abc-56dc-4017-a874-d84566738d7f.png"
       />
     );
   }

@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface PasswordProtectionProps {
   onAuthenticated: () => void;
   tenantId: string;
+  logo?: string;
 }
 
-export const PasswordProtection = ({ onAuthenticated, tenantId }: PasswordProtectionProps) => {
+export const PasswordProtection = ({ onAuthenticated, tenantId, logo }: PasswordProtectionProps) => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -60,22 +62,34 @@ export const PasswordProtection = ({ onAuthenticated, tenantId }: PasswordProtec
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="glass-panel max-w-md w-full p-8 space-y-6 animate-fade-up">
-        <h2 className="text-2xl font-semibold text-center text-white">Enter Gallery Password</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-accent"
-          />
+      <div className="bg-white rounded-lg max-w-md w-full p-8 space-y-6 animate-fade-up">
+        {logo ? (
+          <img src={logo} alt="Gallery Logo" className="h-16 mx-auto mb-6" />
+        ) : (
+          <h2 className="text-2xl font-semibold text-center">Enter Gallery Password</h2>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+              Site Password
+            </label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Enter site password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            />
+          </div>
+
           <Button
             type="submit"
-            className="w-full bg-accent hover:bg-accent/90 text-white"
+            className="w-full bg-pink-500 hover:bg-pink-600 text-white py-6"
             disabled={isLoading}
           >
-            {isLoading ? "Verifying..." : "Enter Gallery"}
+            {isLoading ? "Verifying..." : "Enter Site"}
           </Button>
         </form>
       </div>
