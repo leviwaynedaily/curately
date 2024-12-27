@@ -9,27 +9,100 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      tenants: {
+      businesses: {
         Row: {
           created_at: string
           id: string
           name: string
-          password: string | null
+          owner_id: string | null
           status: string | null
+          updated_at: string
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
-          password?: string | null
+          owner_id?: string | null
           status?: string | null
+          updated_at?: string
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          owner_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "businesses_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      galleries: {
+        Row: {
+          business_id: string | null
+          created_at: string
+          id: string
+          name: string
+          password: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          id?: string
+          name: string
           password?: string | null
           status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          password?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "galleries_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
         }
         Relationships: []
       }
@@ -41,7 +114,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_role: "platform_admin" | "business_admin" | "customer"
     }
     CompositeTypes: {
       [_ in never]: never
