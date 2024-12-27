@@ -1,14 +1,18 @@
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Image as ImageIcon } from "lucide-react";
+import { PasswordProtection } from "@/components/PasswordProtection";
 
 const GalleryView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { data: gallery, isLoading } = useQuery({
+  const { data: gallery, isLoading: isGalleryLoading } = useQuery({
     queryKey: ["gallery", id],
     queryFn: async () => {
       console.log("Fetching gallery details...");
@@ -41,7 +45,17 @@ const GalleryView = () => {
     },
   });
 
-  if (isLoading) {
+  useEffect(() => {
+    if (gallery) {
+      const authenticated = gallery.password 
+        ? localStorage.getItem(`gallery-${gallery.id}-auth`) === "true"
+        : true;
+      setIsAuthenticated(authenticated);
+      setIsLoading(false);
+    }
+  }, [gallery]);
+
+  if (isGalleryLoading || isLoading) {
     return (
       <div className="min-h-screen bg-primary text-secondary p-8">
         <div className="max-w-7xl mx-auto">
@@ -51,6 +65,15 @@ const GalleryView = () => {
           </div>
         </div>
       </div>
+    );
+  }
+
+  if (gallery?.password && !isAuthenticated) {
+    return (
+      <PasswordProtection
+        tenantId={gallery.id}
+        onAuthenticated={() => setIsAuthenticated(true)}
+      />
     );
   }
 
