@@ -80,7 +80,10 @@ export const GalleryContent = ({
           
           {gallery.description && (
             <div className="max-w-3xl text-center">
-              <p className="whitespace-pre-wrap text-lg leading-relaxed">
+              <p 
+                className="whitespace-pre-wrap text-lg leading-relaxed"
+                style={{ color: gallery.primary_font_color || '#000000' }}
+              >
                 {gallery.description}
               </p>
             </div>
