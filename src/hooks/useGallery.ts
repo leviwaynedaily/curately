@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 export const useGallery = (galleryId: string | undefined) => {
   const { toast } = useToast();
 
-  const { data: gallery, isLoading, refetch } = useQuery({
+  const { data: gallery, isLoading, error, refetch } = useQuery({
     queryKey: ["gallery", galleryId],
     queryFn: async () => {
       if (!galleryId) {
@@ -44,13 +44,13 @@ export const useGallery = (galleryId: string | undefined) => {
 
       if (!data) {
         console.log("No gallery found with ID:", galleryId);
-        throw new Error("Gallery not found");
+        return null;
       }
 
-      console.log("Fetched gallery:", data);
+      console.log("Successfully fetched gallery:", data);
       return data as Gallery;
     },
-    enabled: !!galleryId,
+    retry: false, // Don't retry if gallery is not found
   });
 
   const deleteImage = async (image: { id: string; filePath: string }) => {
@@ -95,6 +95,7 @@ export const useGallery = (galleryId: string | undefined) => {
   return {
     gallery,
     isLoading,
+    error,
     deleteImage,
     refetchGallery: refetch,
   };
