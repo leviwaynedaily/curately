@@ -47,11 +47,14 @@ export const GalleryContent = ({
     color: gallery.primary_color || '#141413',
   };
 
-  const logoUrl = gallery.logo 
-    ? supabase.storage.from("gallery_images").getPublicUrl(gallery.logo).data.publicUrl
-    : null;
+  const logoUrl = gallery.site_logo 
+    ? supabase.storage.from("gallery_images").getPublicUrl(gallery.site_logo).data.publicUrl
+    : gallery.logo 
+      ? supabase.storage.from("gallery_images").getPublicUrl(gallery.logo).data.publicUrl
+      : null;
 
   console.log('Gallery content logo path:', gallery.logo);
+  console.log('Gallery content site logo path:', gallery.site_logo);
   console.log('Gallery content logo URL:', logoUrl);
 
   return (
@@ -65,11 +68,11 @@ export const GalleryContent = ({
             <img 
               src={logoUrl} 
               alt={gallery.name}
-              className="h-24 object-contain rounded-lg"
+              className="h-32 object-contain rounded-lg transition-all duration-300 hover:scale-105"
             />
           ) : (
-            <div className="h-24 w-full max-w-xs bg-accent/10 rounded-lg flex items-center justify-center">
-              <span className="text-accent text-lg opacity-50">No Logo</span>
+            <div className="h-32 w-full max-w-sm bg-accent/5 rounded-lg flex items-center justify-center border-2 border-accent/10">
+              <span className="text-accent text-xl font-medium opacity-50">Gallery Logo</span>
             </div>
           )}
         </div>
