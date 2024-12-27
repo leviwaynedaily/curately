@@ -72,7 +72,13 @@ export const AgeVerification = ({ onVerified, tenantId, logo }: AgeVerificationP
     <div className="fixed inset-0 bg-black/80 backdrop-blur-lg z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg max-w-md w-full p-8 space-y-6 animate-fade-up">
         {logo && (
-          <img src={logo} alt="Gallery Logo" className="h-24 mx-auto mb-6" />
+          <div className="flex justify-center">
+            <img 
+              src={logo} 
+              alt="Gallery Logo" 
+              className="h-24 w-auto object-contain"
+            />
+          </div>
         )}
         
         <h2 className="text-2xl font-semibold text-center">Age Verification Required</h2>
