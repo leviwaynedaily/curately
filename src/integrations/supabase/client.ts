@@ -4,58 +4,37 @@ import type { Database } from './types';
 const SUPABASE_URL = "https://kimuizodlerwiullbati.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpbXVpem9kbGVyd2l1bGxiYXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUyNjQyOTksImV4cCI6MjA1MDg0MDI5OX0.c6MQCA1ZbMujCUxtDMFHhfuqqA3XN0szJQK9r-FVBR0";
 
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // 1 second
-
-const createClientWithRetry = () => {
-  console.log('Initializing Supabase client...');
-  
-  const client = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  },
+  global: {
+    headers: {
+      'x-my-custom-header': 'my-app-name',
     },
-    global: {
-      headers: {
-        'x-my-custom-header': 'my-app-name',
-      },
-    },
-  });
-
-  // Wrap the client's methods with retry logic
-  const originalRequest = client.rest.request.bind(client.rest);
-  client.rest.request = async (...args) => {
-    let lastError;
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      try {
-        console.log(`Attempting request (attempt ${attempt}/${MAX_RETRIES})...`);
-        const response = await originalRequest(...args);
-        console.log('Request successful');
-        return response;
-      } catch (error) {
-        lastError = error;
-        console.error(`Request failed (attempt ${attempt}/${MAX_RETRIES}):`, error);
-        
-        if (attempt < MAX_RETRIES) {
-          console.log(`Retrying in ${RETRY_DELAY}ms...`);
-          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-        }
-      }
+  },
+  // Built-in retry configuration
+  db: {
+    schema: 'public'
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10
     }
-    throw lastError;
-  };
-
-  return client;
-};
-
-export const supabase = createClientWithRetry();
+  }
+});
 
 // Add a health check function
 export const checkSupabaseConnection = async () => {
   try {
     console.log('Checking Supabase connection...');
-    const { data, error } = await supabase.from('tenants').select('count').single();
+    const { data, error } = await supabase
+      .from('tenants')
+      .select('id')
+      .limit(1)
+      .single();
     
     if (error) {
       console.error('Supabase connection check failed:', error);
