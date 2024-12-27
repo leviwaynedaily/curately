@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Image as ImageIcon } from "lucide-react";
 import { PasswordProtection } from "@/components/PasswordProtection";
+import { ImageUpload } from "@/components/gallery/ImageUpload";
 
 const GalleryView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -55,6 +57,10 @@ const GalleryView = () => {
     }
   }, [gallery]);
 
+  const handleUploadComplete = () => {
+    queryClient.invalidateQueries({ queryKey: ["gallery", id] });
+  };
+
   if (isGalleryLoading || isLoading) {
     return (
       <div className="min-h-screen bg-primary text-secondary p-8">
@@ -91,6 +97,8 @@ const GalleryView = () => {
           </Button>
           <h1 className="text-4xl font-bold">{gallery?.name}</h1>
         </div>
+
+        <ImageUpload galleryId={id!} onUploadComplete={handleUploadComplete} />
 
         {gallery?.gallery_images?.length ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
