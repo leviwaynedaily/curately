@@ -3,16 +3,20 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Image as ImageIcon, Trash2 } from "lucide-react";
 import { PasswordProtection } from "@/components/PasswordProtection";
 import { ImageUpload } from "@/components/gallery/ImageUpload";
+import { ImageDeleteDialog } from "@/components/gallery/ImageDeleteDialog";
+import { useToast } from "@/components/ui/use-toast";
 
 const GalleryView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [imageToDelete, setImageToDelete] = useState<{ id: string; filePath: string } | null>(null);
 
   const { data: gallery, isLoading: isGalleryLoading } = useQuery({
     queryKey: ["gallery", id],
@@ -61,6 +65,46 @@ const GalleryView = () => {
     queryClient.invalidateQueries({ queryKey: ["gallery", id] });
   };
 
+  const handleDeleteImage = async () => {
+    if (!imageToDelete) return;
+
+    console.log("Deleting image:", imageToDelete);
+    try {
+      // Delete from storage
+      const { error: storageError } = await supabase.storage
+        .from("gallery_images")
+        .remove([imageToDelete.filePath]);
+
+      if (storageError) {
+        console.error("Error deleting from storage:", storageError);
+        throw storageError;
+      }
+
+      // Delete from database
+      const { error: dbError } = await supabase
+        .from("gallery_images")
+        .delete()
+        .eq("id", imageToDelete.id);
+
+      if (dbError) {
+        console.error("Error deleting from database:", dbError);
+        throw dbError;
+      }
+
+      console.log("Image deleted successfully");
+      toast({ description: "Image deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ["gallery", id] });
+    } catch (error) {
+      console.error("Delete failed:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to delete image. Please try again.",
+      });
+    } finally {
+      setImageToDelete(null);
+    }
+  };
+
   if (isGalleryLoading || isLoading) {
     return (
       <div className="min-h-screen bg-primary text-secondary p-8">
@@ -105,7 +149,7 @@ const GalleryView = () => {
             {gallery.gallery_images.map((image) => (
               <div
                 key={image.id}
-                className="aspect-square bg-muted rounded-lg overflow-hidden"
+                className="group relative aspect-square bg-muted rounded-lg overflow-hidden"
               >
                 <img
                   src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${
@@ -114,6 +158,14 @@ const GalleryView = () => {
                   alt={image.title || "Gallery image"}
                   className="w-full h-full object-cover"
                 />
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => setImageToDelete({ id: image.id, filePath: image.file_path })}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
             ))}
           </div>
@@ -123,6 +175,12 @@ const GalleryView = () => {
             <p className="mt-4 text-muted-foreground">No images in this gallery</p>
           </div>
         )}
+
+        <ImageDeleteDialog
+          isOpen={!!imageToDelete}
+          onClose={() => setImageToDelete(null)}
+          onConfirm={handleDeleteImage}
+        />
       </div>
     </div>
   );
