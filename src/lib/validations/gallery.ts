@@ -6,6 +6,7 @@ export const gallerySchema = z.object({
   status: z.string().optional().default("active"),
   business_id: z.string().min(1, "Business is required"),
   logo: z.string().optional(),
+  site_logo: z.string().optional(),
   description: z.string().optional(),
   primary_color: z.string().optional(),
   secondary_color: z.string().optional(),

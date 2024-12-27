@@ -64,6 +64,7 @@ export type Database = {
           primary_font_color: string | null
           secondary_color: string | null
           secondary_font_color: string | null
+          site_logo: string | null
           status: string | null
           subheading_text: string | null
           updated_at: string
@@ -87,6 +88,7 @@ export type Database = {
           primary_font_color?: string | null
           secondary_color?: string | null
           secondary_font_color?: string | null
+          site_logo?: string | null
           status?: string | null
           subheading_text?: string | null
           updated_at?: string
@@ -110,6 +112,7 @@ export type Database = {
           primary_font_color?: string | null
           secondary_color?: string | null
           secondary_font_color?: string | null
+          site_logo?: string | null
           status?: string | null
           subheading_text?: string | null
           updated_at?: string

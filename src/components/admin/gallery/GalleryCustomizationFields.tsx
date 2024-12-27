@@ -2,6 +2,8 @@ import { FormField, FormItem, FormLabel, FormControl } from "@/components/ui/for
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
+import { GalleryLogoField } from "./GalleryLogoField";
+import { GallerySiteLogoField } from "./GallerySiteLogoField";
 
 type GalleryCustomizationFieldsProps = {
   form: UseFormReturn<GalleryFormValues>;
@@ -11,6 +13,12 @@ export const GalleryCustomizationFields = ({ form }: GalleryCustomizationFieldsP
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-4">
+          <h3 className="font-medium">Logos</h3>
+          <GalleryLogoField form={form} />
+          <GallerySiteLogoField form={form} />
+        </div>
+
         <div className="space-y-4">
           <h3 className="font-medium">Background Colors</h3>
           <FormField
