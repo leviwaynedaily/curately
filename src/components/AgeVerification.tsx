@@ -48,7 +48,7 @@ export const AgeVerification = ({ onVerified }: AgeVerificationProps) => {
             type="number"
             placeholder="Enter birth year"
             value={birthYear}
-            onChange={(e) => setBirthValue(e.target.value)}
+            onChange={(e) => setBirthYear(e.target.value)}
             className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-accent"
             maxLength={4}
           />
