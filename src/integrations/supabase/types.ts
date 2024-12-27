@@ -47,6 +47,7 @@ export type Database = {
       galleries: {
         Row: {
           accent_color: string | null
+          accent_font_color: string | null
           age_verification_enabled: boolean | null
           age_verification_text: string | null
           business_id: string | null
@@ -59,13 +60,16 @@ export type Database = {
           name: string
           password: string | null
           primary_color: string | null
+          primary_font_color: string | null
           secondary_color: string | null
+          secondary_font_color: string | null
           status: string | null
           subheading_text: string | null
           updated_at: string
         }
         Insert: {
           accent_color?: string | null
+          accent_font_color?: string | null
           age_verification_enabled?: boolean | null
           age_verification_text?: string | null
           business_id?: string | null
@@ -78,13 +82,16 @@ export type Database = {
           name: string
           password?: string | null
           primary_color?: string | null
+          primary_font_color?: string | null
           secondary_color?: string | null
+          secondary_font_color?: string | null
           status?: string | null
           subheading_text?: string | null
           updated_at?: string
         }
         Update: {
           accent_color?: string | null
+          accent_font_color?: string | null
           age_verification_enabled?: boolean | null
           age_verification_text?: string | null
           business_id?: string | null
@@ -97,7 +104,9 @@ export type Database = {
           name?: string
           password?: string | null
           primary_color?: string | null
+          primary_font_color?: string | null
           secondary_color?: string | null
+          secondary_font_color?: string | null
           status?: string | null
           subheading_text?: string | null
           updated_at?: string
