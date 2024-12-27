@@ -54,36 +54,26 @@ export const AgeVerification = ({ onVerified, tenantId }: AgeVerificationProps) 
     }
   };
 
-  const containerStyle = {
-    backgroundColor: gallery?.primary_color || '#141413',
-    color: gallery?.primary_font_color || '#E6E4DD',
-  };
-
-  const contentStyle = {
-    backgroundColor: gallery?.secondary_color || 'rgba(255, 255, 255, 0.8)',
-    color: gallery?.secondary_font_color || '#000000',
-  };
-
   return (
-    <div 
-      className="fixed inset-0 flex items-center justify-center p-4 backdrop-blur-sm z-50"
-      style={containerStyle}
-    >
-      <div 
-        className="w-full max-w-md space-y-8 backdrop-blur-sm p-6 rounded-lg shadow-xl"
-        style={contentStyle}
-      >
-        {gallery?.logo && <AgeVerificationLogo logo={gallery.logo} />}
-        
-        <AgeVerificationForm
-          isLoading={isLoading}
-          onVerify={handleVerification}
-          headingText={gallery?.heading_text || "Age Verification Required"}
-          subheadingText={gallery?.subheading_text || "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content."}
-          verificationText={gallery?.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy."}
-          buttonText={gallery?.button_text || "Enter Site"}
-          accentColor={gallery?.accent_font_color || '#8B5CF6'}
-        />
+    <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
+      {/* Blurred background overlay */}
+      <div className="absolute inset-0 backdrop-blur-md bg-black/30" />
+      
+      {/* White verification window with border */}
+      <div className="relative w-full max-w-md bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
+        <div className="p-6 space-y-8">
+          {gallery?.logo && <AgeVerificationLogo logo={gallery.logo} />}
+          
+          <AgeVerificationForm
+            isLoading={isLoading}
+            onVerify={handleVerification}
+            headingText={gallery?.heading_text || "Age Verification Required"}
+            subheadingText={gallery?.subheading_text || "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content."}
+            verificationText={gallery?.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy."}
+            buttonText={gallery?.button_text || "Enter Site"}
+            accentColor={gallery?.accent_font_color || '#8B5CF6'}
+          />
+        </div>
       </div>
     </div>
   );
