@@ -7,6 +7,13 @@ export const gallerySchema = z.object({
   business_id: z.string().min(1, "Business is required"),
   logo: z.string().optional(),
   description: z.string().optional(),
+  primary_color: z.string().optional(),
+  secondary_color: z.string().optional(),
+  accent_color: z.string().optional(),
+  heading_text: z.string().optional(),
+  subheading_text: z.string().optional(),
+  age_verification_text: z.string().optional(),
+  button_text: z.string().optional(),
 });
 
 export type GalleryFormValues = z.infer<typeof gallerySchema>;
