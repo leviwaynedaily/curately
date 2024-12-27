@@ -22,7 +22,12 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
       console.log("Fetching galleries...");
       let query = supabase
         .from("galleries")
-        .select("*")
+        .select(`
+          *,
+          businesses (
+            name
+          )
+        `)
         .order("created_at", { ascending: false });
 
       if (businessId) {

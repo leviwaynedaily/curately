@@ -25,6 +25,7 @@ export const GalleryTable = ({
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
+          <TableHead>Business</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Created At</TableHead>
           <TableHead>Actions</TableHead>
@@ -34,6 +35,7 @@ export const GalleryTable = ({
         {galleries?.map((gallery) => (
           <TableRow key={gallery.id}>
             <TableCell>{gallery.name}</TableCell>
+            <TableCell>{gallery.businesses?.name || 'No business assigned'}</TableCell>
             <TableCell>{gallery.status}</TableCell>
             <TableCell>
               {new Date(gallery.created_at).toLocaleDateString()}
