@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2, CheckCircle2 } from "lucide-react";
 import { GalleryImage } from "@/types/gallery";
 import { cn } from "@/lib/utils";
+import { GalleryImageActions } from "./GalleryImageActions";
 
 type GalleryImageItemProps = {
   image: GalleryImage;
@@ -10,6 +11,9 @@ type GalleryImageItemProps = {
   onImageClick: (e: React.MouseEvent) => void;
   onEditClick: () => void;
   onDeleteClick: () => void;
+  onStartSlideshow: () => void;
+  onReorderClick: () => void;
+  onFilterClick: () => void;
 };
 
 export const GalleryImageItem = ({
@@ -19,6 +23,9 @@ export const GalleryImageItem = ({
   onImageClick,
   onEditClick,
   onDeleteClick,
+  onStartSlideshow,
+  onReorderClick,
+  onFilterClick,
 }: GalleryImageItemProps) => {
   return (
     <div
@@ -69,17 +76,31 @@ export const GalleryImageItem = ({
             </Button>
           </div>
         )}
-        {(image.title || image.description) && !isSelectionMode && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-            {image.title && (
-              <h3 className="text-white font-semibold">{image.title}</h3>
-            )}
-            {image.description && (
-              <p className="text-white/80 text-sm line-clamp-2">
-                {image.description}
-              </p>
-            )}
-          </div>
+        {!isSelectionMode && (
+          <>
+            <div className="absolute bottom-0 left-0 right-0 p-4">
+              {(image.title || image.description) && (
+                <div className="bg-gradient-to-t from-black/80 to-transparent p-4">
+                  {image.title && (
+                    <h3 className="text-white font-semibold">{image.title}</h3>
+                  )}
+                  {image.description && (
+                    <p className="text-white/80 text-sm line-clamp-2">
+                      {image.description}
+                    </p>
+                  )}
+                </div>
+              )}
+              <div className="mt-2">
+                <GalleryImageActions
+                  image={image}
+                  onStartSlideshow={onStartSlideshow}
+                  onReorderClick={onReorderClick}
+                  onFilterClick={onFilterClick}
+                />
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -5,6 +5,8 @@ import { ImageDeleteDialog } from "./ImageDeleteDialog";
 import { GalleryImage } from "@/types/gallery";
 import { GallerySelectionControls } from "./GallerySelectionControls";
 import { GalleryImageItem } from "./GalleryImageItem";
+import { GallerySlideshowDialog } from "./GallerySlideshowDialog";
+import { useToast } from "@/components/ui/use-toast";
 
 type GalleryImageGridProps = {
   images: GalleryImage[];
@@ -25,6 +27,9 @@ export const GalleryImageGrid = ({
   } | null>(null);
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
   const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [isSlideshowOpen, setIsSlideshowOpen] = useState(false);
+  const [slideshowStartIndex, setSlideshowStartIndex] = useState(0);
+  const { toast } = useToast();
 
   const toggleImageSelection = (imageId: string, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -53,6 +58,23 @@ export const GalleryImageGrid = ({
     setIsSelectionMode(false);
   };
 
+  const handleStartSlideshow = (index: number) => {
+    setSlideshowStartIndex(index);
+    setIsSlideshowOpen(true);
+  };
+
+  const handleReorderClick = () => {
+    toast({
+      description: "Image reordering feature coming soon!",
+    });
+  };
+
+  const handleFilterClick = () => {
+    toast({
+      description: "Image filtering feature coming soon!",
+    });
+  };
+
   return (
     <div className="space-y-4">
       <GallerySelectionControls
@@ -68,7 +90,7 @@ export const GalleryImageGrid = ({
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {images.map((image) => (
+        {images.map((image, index) => (
           <GalleryImageItem
             key={image.id}
             image={image}
@@ -88,6 +110,9 @@ export const GalleryImageGrid = ({
                 filePath: image.file_path,
               })
             }
+            onStartSlideshow={() => handleStartSlideshow(index)}
+            onReorderClick={handleReorderClick}
+            onFilterClick={handleFilterClick}
           />
         ))}
       </div>
@@ -118,6 +143,13 @@ export const GalleryImageGrid = ({
             setImageToDelete(null);
           }
         }}
+      />
+
+      <GallerySlideshowDialog
+        isOpen={isSlideshowOpen}
+        onClose={() => setIsSlideshowOpen(false)}
+        images={images}
+        startIndex={slideshowStartIndex}
       />
     </div>
   );
