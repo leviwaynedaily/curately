@@ -57,6 +57,7 @@ export const GalleryContent = ({
   console.log('Gallery content logo URL:', logoUrl);
   console.log('Gallery site_logo:', gallery.site_logo);
   console.log('Gallery logo:', gallery.logo);
+  console.log('Gallery description:', gallery.description);
 
   return (
     <div style={containerStyle} className="min-h-screen">
@@ -64,7 +65,7 @@ export const GalleryContent = ({
         style={headerStyle}
         className="py-8 px-4 mb-8 shadow-lg"
       >
-        <div className="max-w-7xl mx-auto flex justify-center items-center">
+        <div className="max-w-7xl mx-auto flex flex-col items-center space-y-6">
           {logoUrl ? (
             <img 
               src={logoUrl} 
@@ -74,6 +75,14 @@ export const GalleryContent = ({
           ) : (
             <div className="h-32 w-full max-w-sm bg-accent/5 rounded-lg flex items-center justify-center border-2 border-accent/10">
               <span className="text-accent text-xl font-medium opacity-50">No Logo</span>
+            </div>
+          )}
+          
+          {gallery.description && (
+            <div className="max-w-3xl text-center">
+              <p className="whitespace-pre-wrap text-lg leading-relaxed">
+                {gallery.description}
+              </p>
             </div>
           )}
         </div>
