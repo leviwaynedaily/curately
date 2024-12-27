@@ -31,6 +31,12 @@ export const GalleryImageItem = ({
     import.meta.env.VITE_SUPABASE_URL
   }/storage/v1/object/public/gallery_images/${image.file_path}`;
 
+  console.log("Rendering media item:", {
+    type: image.media_type,
+    url: mediaUrl,
+    title: image.title,
+  });
+
   const renderMedia = () => {
     if (image.media_type === 'video') {
       return (

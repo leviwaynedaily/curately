@@ -89,6 +89,9 @@ export type Database = {
           file_path: string
           gallery_id: string | null
           id: string
+          is_featured: boolean | null
+          media_type: string | null
+          price: number | null
           title: string | null
           updated_at: string
         }
@@ -98,6 +101,9 @@ export type Database = {
           file_path: string
           gallery_id?: string | null
           id?: string
+          is_featured?: boolean | null
+          media_type?: string | null
+          price?: number | null
           title?: string | null
           updated_at?: string
         }
@@ -107,6 +113,9 @@ export type Database = {
           file_path?: string
           gallery_id?: string | null
           id?: string
+          is_featured?: boolean | null
+          media_type?: string | null
+          price?: number | null
           title?: string | null
           updated_at?: string
         }
