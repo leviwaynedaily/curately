@@ -10,7 +10,7 @@ import { GalleryImageGrid } from "@/components/gallery/GalleryImageGrid";
 import { GalleryEmptyState } from "@/components/gallery/GalleryEmptyState";
 
 const GalleryView = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -47,7 +47,10 @@ const GalleryView = () => {
             id,
             file_path,
             title,
-            description
+            description,
+            media_type,
+            price,
+            is_featured
           )
         `)
         .eq("id", id)
