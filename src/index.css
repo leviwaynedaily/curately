@@ -48,6 +48,12 @@
   .fade-in {
     @apply opacity-0 animate-fade-up;
   }
+
+  /* Custom checkbox styles */
+  [type="checkbox"]:checked {
+    background-color: var(--checkbox-color, theme('colors.accent.DEFAULT'));
+    border-color: var(--checkbox-color, theme('colors.accent.DEFAULT'));
+  }
 }
 
 /* Custom scrollbar */

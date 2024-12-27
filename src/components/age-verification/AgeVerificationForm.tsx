@@ -30,12 +30,15 @@ export const AgeVerificationForm = ({
   const [isChecked, setIsChecked] = useState(false);
   const [password, setPassword] = useState("");
 
-  // Ensure the color is applied without any opacity
   const buttonStyle = accentColor ? {
     backgroundColor: accentColor,
     color: '#FFFFFF',
     opacity: 1,
   } : undefined;
+
+  const checkboxStyle = accentColor ? {
+    "--checkbox-color": accentColor,
+  } as React.CSSProperties : undefined;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +57,8 @@ export const AgeVerificationForm = ({
             id="age-verification"
             checked={isChecked}
             onCheckedChange={(checked) => setIsChecked(checked as boolean)}
+            style={checkboxStyle}
+            className="[--checkbox-color:var(--checkbox-color)]"
           />
           <Label
             htmlFor="age-verification"
