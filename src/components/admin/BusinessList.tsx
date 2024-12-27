@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { BusinessForm } from "./BusinessForm";
 import { BusinessTable } from "./business/BusinessTable";
-import { BusinessSearch } from "./business/BusinessSearch";
 import { BusinessDeleteDialog } from "./business/BusinessDeleteDialog";
+import { BusinessListHeader } from "./business/BusinessListHeader";
 
 export const BusinessList = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -78,12 +77,11 @@ export const BusinessList = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Businesses</h2>
-        <Button onClick={() => setIsFormOpen(true)}>Add Business</Button>
-      </div>
-
-      <BusinessSearch value={searchQuery} onChange={setSearchQuery} />
+      <BusinessListHeader
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onAddClick={() => setIsFormOpen(true)}
+      />
 
       <BusinessTable
         businesses={businesses || []}
