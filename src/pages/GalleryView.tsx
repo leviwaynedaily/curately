@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { PasswordProtection } from "@/components/PasswordProtection";
 import { ImageUpload } from "@/components/gallery/ImageUpload";
@@ -11,15 +11,29 @@ import { GalleryEmptyState } from "@/components/gallery/GalleryEmptyState";
 
 const GalleryView = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { data: gallery, isLoading: isGalleryLoading } = useQuery({
+  // Redirect if no id is provided
+  useEffect(() => {
+    if (!id) {
+      console.log("No gallery ID provided, redirecting...");
+      navigate("/");
+    }
+  }, [id, navigate]);
+
+  const { data: gallery, isLoading: isGalleryLoading, error } = useQuery({
     queryKey: ["gallery", id],
     queryFn: async () => {
-      console.log("Fetching gallery details...");
+      if (!id) {
+        console.log("No gallery ID provided");
+        throw new Error("Gallery ID is required");
+      }
+
+      console.log("Fetching gallery details for ID:", id);
       const { data, error } = await supabase
         .from("galleries")
         .select(`
@@ -37,16 +51,22 @@ const GalleryView = () => {
           )
         `)
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching gallery:", error);
         throw error;
       }
 
+      if (!data) {
+        console.log("No gallery found with ID:", id);
+        throw new Error("Gallery not found");
+      }
+
       console.log("Fetched gallery:", data);
       return data;
     },
+    enabled: !!id,
   });
 
   useEffect(() => {
@@ -95,6 +115,19 @@ const GalleryView = () => {
     }
   };
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background p-8">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-2xl font-bold text-destructive">Error</h2>
+          <p className="text-muted-foreground">
+            {error instanceof Error ? error.message : "Failed to load gallery"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (isGalleryLoading || isLoading) {
     return (
       <div className="min-h-screen bg-background p-8">
@@ -108,7 +141,20 @@ const GalleryView = () => {
     );
   }
 
-  if (gallery?.password && !isAuthenticated) {
+  if (!gallery) {
+    return (
+      <div className="min-h-screen bg-background p-8">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-2xl font-bold">Gallery Not Found</h2>
+          <p className="text-muted-foreground">
+            The gallery you're looking for doesn't exist or has been removed.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (gallery.password && !isAuthenticated) {
     return (
       <PasswordProtection
         tenantId={gallery.id}
@@ -120,17 +166,17 @@ const GalleryView = () => {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
-        <GalleryHeader name={gallery?.name || ""} />
+        <GalleryHeader name={gallery.name} />
         <ImageUpload
-          galleryId={id!}
+          galleryId={id}
           onUploadComplete={() =>
             queryClient.invalidateQueries({ queryKey: ["gallery", id] })
           }
         />
-        {gallery?.gallery_images?.length ? (
+        {gallery.gallery_images?.length ? (
           <GalleryImageGrid
             images={gallery.gallery_images}
-            galleryId={id!}
+            galleryId={id}
             onDeleteImage={handleDeleteImage}
           />
         ) : (
