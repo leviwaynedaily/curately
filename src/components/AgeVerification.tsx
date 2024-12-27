@@ -66,7 +66,7 @@ export const AgeVerification = ({ onVerified, tenantId }: AgeVerificationProps) 
 
   return (
     <div 
-      className="fixed inset-0 flex items-center justify-center p-4 backdrop-blur-sm"
+      className="fixed inset-0 flex items-center justify-center p-4 backdrop-blur-sm z-50"
       style={containerStyle}
     >
       <div 
