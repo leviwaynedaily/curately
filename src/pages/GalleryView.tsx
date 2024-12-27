@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useGallery } from "@/hooks/useGallery";
 import { AgeVerification } from "@/components/AgeVerification";
-import { PasswordProtection } from "@/components/PasswordProtection";
 import { GalleryContent } from "@/components/gallery/GalleryContent";
 import { Button } from "@/components/ui/button";
 import { Home, AlertCircle } from "lucide-react";
@@ -10,8 +9,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const GalleryView = () => {
   const { id } = useParams();
-  const [isAgeVerified, setIsAgeVerified] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { 
     gallery, 
@@ -25,8 +23,7 @@ const GalleryView = () => {
     const ageVerified = localStorage.getItem("age-verified") === "true";
     const authenticated = localStorage.getItem(`gallery-${id}-auth`) === "true";
     
-    setIsAgeVerified(ageVerified);
-    setIsAuthenticated(authenticated);
+    setIsVerified(ageVerified && authenticated);
     setIsLoading(false);
   }, [id]);
 
@@ -74,27 +71,22 @@ const GalleryView = () => {
     );
   }
 
-  if (!isAgeVerified) {
-    return <AgeVerification onVerified={() => setIsAgeVerified(true)} logo={gallery.logo} />;
-  }
-
-  if (!isAuthenticated && gallery.password) {
-    return (
-      <PasswordProtection
-        tenantId={id as string}
-        onAuthenticated={() => setIsAuthenticated(true)}
-        logo={gallery.logo}
-      />
-    );
-  }
-
   return (
-    <GalleryContent
-      gallery={gallery}
-      galleryId={id as string}
-      onDeleteImage={deleteImage}
-      onUploadComplete={refetchGallery}
-    />
+    <>
+      {!isVerified && (
+        <AgeVerification
+          onVerified={() => setIsVerified(true)}
+          tenantId={id as string}
+          logo={gallery.logo}
+        />
+      )}
+      <GalleryContent
+        gallery={gallery}
+        galleryId={id as string}
+        onDeleteImage={deleteImage}
+        onUploadComplete={refetchGallery}
+      />
+    </>
   );
 };
 
