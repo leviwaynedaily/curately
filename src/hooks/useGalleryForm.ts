@@ -28,6 +28,7 @@ type UseGalleryFormProps = {
     age_verification_text?: string;
     button_text?: string;
     age_verification_enabled?: boolean;
+    password_required?: boolean;
   };
 };
 
@@ -56,6 +57,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       age_verification_text: gallery?.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy.",
       button_text: gallery?.button_text || "Enter Site",
       age_verification_enabled: gallery?.age_verification_enabled || false,
+      password_required: gallery?.password_required || false,
     },
   });
 
@@ -80,6 +82,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
         age_verification_text: gallery.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy.",
         button_text: gallery.button_text || "Enter Site",
         age_verification_enabled: gallery.age_verification_enabled || false,
+        password_required: gallery.password_required || false,
       });
     }
   }, [gallery, form]);
@@ -107,6 +110,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       age_verification_text: values.age_verification_text,
       button_text: values.button_text,
       age_verification_enabled: values.age_verification_enabled,
+      password_required: values.password_required,
     };
 
     try {
