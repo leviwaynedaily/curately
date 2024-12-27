@@ -59,6 +59,7 @@ export type Database = {
           logo: string | null
           name: string
           password: string | null
+          password_required: boolean | null
           primary_color: string | null
           primary_font_color: string | null
           secondary_color: string | null
@@ -81,6 +82,7 @@ export type Database = {
           logo?: string | null
           name: string
           password?: string | null
+          password_required?: boolean | null
           primary_color?: string | null
           primary_font_color?: string | null
           secondary_color?: string | null
@@ -103,6 +105,7 @@ export type Database = {
           logo?: string | null
           name?: string
           password?: string | null
+          password_required?: boolean | null
           primary_color?: string | null
           primary_font_color?: string | null
           secondary_color?: string | null

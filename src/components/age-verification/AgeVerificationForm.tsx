@@ -2,15 +2,18 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 type AgeVerificationFormProps = {
   isLoading: boolean;
-  onVerify: () => void;
+  onVerify: (password?: string) => void;
   headingText: string;
   subheadingText: string;
   verificationText: string;
   buttonText: string;
   accentColor?: string;
+  passwordRequired?: boolean;
+  error?: string | null;
 };
 
 export const AgeVerificationForm = ({
@@ -21,8 +24,11 @@ export const AgeVerificationForm = ({
   verificationText,
   buttonText,
   accentColor,
+  passwordRequired,
+  error,
 }: AgeVerificationFormProps) => {
   const [isChecked, setIsChecked] = useState(false);
+  const [password, setPassword] = useState("");
 
   // Ensure the color is applied without any opacity
   const buttonStyle = accentColor ? {
@@ -31,8 +37,13 @@ export const AgeVerificationForm = ({
     opacity: 1, // Force full opacity
   } : undefined;
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onVerify(passwordRequired ? password : undefined);
+  };
+
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold tracking-tight">{headingText}</h2>
         <p className="text-muted-foreground">{subheadingText}</p>
@@ -52,14 +63,31 @@ export const AgeVerificationForm = ({
         </Label>
       </div>
 
+      {passwordRequired && (
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter site password"
+          />
+        </div>
+      )}
+
+      {error && (
+        <p className="text-sm text-red-500">{error}</p>
+      )}
+
       <Button
+        type="submit"
         className="w-full transition-colors"
         style={buttonStyle}
         disabled={!isChecked || isLoading}
-        onClick={onVerify}
       >
         {buttonText}
       </Button>
-    </div>
+    </form>
   );
 };

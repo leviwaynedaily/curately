@@ -12,6 +12,7 @@ type AgeVerificationProps = {
 
 export const AgeVerification = ({ onVerified, tenantId }: AgeVerificationProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const { data: gallery } = useQuery({
     queryKey: ["gallery-verification", tenantId],
@@ -29,7 +30,9 @@ export const AgeVerification = ({ onVerified, tenantId }: AgeVerificationProps) 
           secondary_color,
           primary_font_color,
           secondary_font_color,
-          accent_font_color
+          accent_font_color,
+          password_required,
+          password
         `)
         .eq("id", tenantId)
         .single();
@@ -44,9 +47,23 @@ export const AgeVerification = ({ onVerified, tenantId }: AgeVerificationProps) 
     },
   });
 
-  const handleVerification = async () => {
+  const handleVerification = async (password?: string) => {
     setIsLoading(true);
+    setError(null);
+    
     try {
+      if (gallery?.password_required && gallery.password) {
+        if (!password) {
+          setError("Password is required");
+          return;
+        }
+        
+        if (password !== gallery.password) {
+          setError("Incorrect password");
+          return;
+        }
+      }
+      
       localStorage.setItem("age-verified", "true");
       onVerified();
     } finally {
@@ -72,6 +89,8 @@ export const AgeVerification = ({ onVerified, tenantId }: AgeVerificationProps) 
             verificationText={gallery?.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy."}
             buttonText={gallery?.button_text || "Enter Site"}
             accentColor={gallery?.accent_font_color || '#8B5CF6'}
+            passwordRequired={gallery?.password_required || false}
+            error={error}
           />
         </div>
       </div>

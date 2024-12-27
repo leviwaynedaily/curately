@@ -18,6 +18,7 @@ export const gallerySchema = z.object({
   age_verification_text: z.string().optional(),
   button_text: z.string().optional(),
   age_verification_enabled: z.boolean().optional().default(false),
+  password_required: z.boolean().optional().default(false),
 });
 
 export type GalleryFormValues = z.infer<typeof gallerySchema>;
