@@ -47,6 +47,7 @@ export type Database = {
       galleries: {
         Row: {
           accent_color: string | null
+          age_verification_enabled: boolean | null
           age_verification_text: string | null
           business_id: string | null
           button_text: string | null
@@ -65,6 +66,7 @@ export type Database = {
         }
         Insert: {
           accent_color?: string | null
+          age_verification_enabled?: boolean | null
           age_verification_text?: string | null
           business_id?: string | null
           button_text?: string | null
@@ -83,6 +85,7 @@ export type Database = {
         }
         Update: {
           accent_color?: string | null
+          age_verification_enabled?: boolean | null
           age_verification_text?: string | null
           business_id?: string | null
           button_text?: string | null

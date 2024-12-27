@@ -1,6 +1,7 @@
 import { FormField, FormItem, FormLabel, FormControl, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
 
@@ -11,6 +12,27 @@ type GalleryCustomizationFieldsProps = {
 export const GalleryCustomizationFields = ({ form }: GalleryCustomizationFieldsProps) => {
   return (
     <div className="space-y-4">
+      <FormField
+        control={form.control}
+        name="age_verification_enabled"
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <FormLabel className="text-base">Age Verification</FormLabel>
+              <FormDescription>
+                Enable age verification prompt before allowing access to the gallery
+              </FormDescription>
+            </div>
+            <FormControl>
+              <Switch
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <FormField
           control={form.control}
