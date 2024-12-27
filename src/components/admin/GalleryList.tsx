@@ -1,29 +1,12 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Search, Trash } from "lucide-react";
-import { GalleryForm } from "./GalleryForm";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Input } from "@/components/ui/input";
+import { GalleryForm } from "./GalleryForm";
+import { GalleryTable } from "./gallery/GalleryTable";
+import { GallerySearch } from "./gallery/GallerySearch";
+import { GalleryDeleteDialog } from "./gallery/GalleryDeleteDialog";
 
 export const GalleryList = ({ businessId }: { businessId?: string }) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -104,55 +87,13 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
         <Button onClick={() => setIsFormOpen(true)}>Add Gallery</Button>
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search galleries..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-8"
-        />
-      </div>
+      <GallerySearch value={searchQuery} onChange={setSearchQuery} />
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {galleries?.map((gallery) => (
-            <TableRow key={gallery.id}>
-              <TableCell>{gallery.name}</TableCell>
-              <TableCell>{gallery.status}</TableCell>
-              <TableCell>
-                {new Date(gallery.created_at).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleEdit(gallery)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setGalleryToDelete(gallery)}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <GalleryTable
+        galleries={galleries || []}
+        onEdit={handleEdit}
+        onDelete={setGalleryToDelete}
+      />
 
       <GalleryForm
         isOpen={isFormOpen}
@@ -164,24 +105,11 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
         gallery={selectedGallery}
       />
 
-      <AlertDialog
-        open={!!galleryToDelete}
-        onOpenChange={() => setGalleryToDelete(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              gallery and all its associated data.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <GalleryDeleteDialog
+        isOpen={!!galleryToDelete}
+        onClose={() => setGalleryToDelete(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };
