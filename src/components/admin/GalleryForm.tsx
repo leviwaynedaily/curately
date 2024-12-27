@@ -1,16 +1,6 @@
-import { useState, useEffect } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { gallerySchema, type GalleryFormValues } from "@/lib/validations/gallery";
-import { Form } from "@/components/ui/form";
-import { GalleryNameField } from "./gallery/GalleryNameField";
-import { GalleryPasswordField } from "./gallery/GalleryPasswordField";
-import { GalleryBusinessField } from "./gallery/GalleryBusinessField";
-import { GalleryFormActions } from "./gallery/GalleryFormActions";
+import { useGalleryForm } from "@/hooks/useGalleryForm";
+import { GalleryFormContent } from "./gallery/GalleryFormContent";
 
 type GalleryFormProps = {
   isOpen: boolean;
@@ -31,79 +21,11 @@ export const GalleryForm = ({
   businessId,
   gallery,
 }: GalleryFormProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  const form = useForm<GalleryFormValues>({
-    resolver: zodResolver(gallerySchema),
-    defaultValues: {
-      name: gallery?.name || "",
-      password: gallery?.password || "",
-      status: gallery?.status || "active",
-      business_id: gallery?.business_id || businessId || "",
-    },
+  const { form, isLoading, handleSubmit } = useGalleryForm({
+    onClose,
+    businessId,
+    gallery,
   });
-
-  // Reset form when gallery prop changes
-  useEffect(() => {
-    if (gallery) {
-      console.log("Resetting form with gallery data:", gallery);
-      form.reset({
-        name: gallery.name,
-        password: gallery.password,
-        status: gallery.status,
-        business_id: gallery.business_id || "",
-      });
-    }
-  }, [gallery, form]);
-
-  const handleSubmit = async (values: GalleryFormValues) => {
-    setIsLoading(true);
-    console.log("Submitting gallery form...", values);
-
-    try {
-      if (gallery?.id) {
-        const { error } = await supabase
-          .from("galleries")
-          .update({
-            name: values.name,
-            password: values.password,
-            status: values.status,
-            business_id: values.business_id,
-          })
-          .eq("id", gallery.id);
-
-        if (error) throw error;
-        console.log("Gallery updated successfully");
-        toast({ description: "Gallery updated successfully" });
-      } else {
-        const { error } = await supabase
-          .from("galleries")
-          .insert({
-            name: values.name,
-            password: values.password,
-            status: values.status,
-            business_id: values.business_id,
-          });
-
-        if (error) throw error;
-        console.log("Gallery created successfully");
-        toast({ description: "Gallery created successfully" });
-      }
-
-      queryClient.invalidateQueries({ queryKey: ["galleries"] });
-      onClose();
-    } catch (error) {
-      console.error("Error saving gallery:", error);
-      toast({
-        variant: "destructive",
-        description: "There was an error saving the gallery",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -111,14 +33,12 @@ export const GalleryForm = ({
         <DialogHeader>
           <DialogTitle>{gallery ? "Edit Gallery" : "Add Gallery"}</DialogTitle>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <GalleryNameField form={form} />
-            <GalleryBusinessField form={form} />
-            <GalleryPasswordField form={form} />
-            <GalleryFormActions isLoading={isLoading} onCancel={onClose} />
-          </form>
-        </Form>
+        <GalleryFormContent
+          form={form}
+          isLoading={isLoading}
+          onSubmit={handleSubmit}
+          onCancel={onClose}
+        />
       </DialogContent>
     </Dialog>
   );
