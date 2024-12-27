@@ -47,7 +47,7 @@ export const GalleryContent = ({
     color: gallery.primary_color || '#141413',
   };
 
-  // Use site_logo if available, otherwise fall back to logo
+  // Get the logo URL
   const displayLogo = gallery.site_logo || gallery.logo;
   const logoUrl = displayLogo
     ? supabase.storage.from("gallery_images").getPublicUrl(displayLogo).data.publicUrl
@@ -55,6 +55,8 @@ export const GalleryContent = ({
 
   console.log('Gallery content display logo:', displayLogo);
   console.log('Gallery content logo URL:', logoUrl);
+  console.log('Gallery site_logo:', gallery.site_logo);
+  console.log('Gallery logo:', gallery.logo);
 
   return (
     <div style={containerStyle} className="min-h-screen">
