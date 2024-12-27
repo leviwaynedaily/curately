@@ -9,6 +9,7 @@ import { gallerySchema, type GalleryFormValues } from "@/lib/validations/gallery
 import { Form } from "@/components/ui/form";
 import { GalleryNameField } from "./gallery/GalleryNameField";
 import { GalleryPasswordField } from "./gallery/GalleryPasswordField";
+import { GalleryBusinessField } from "./gallery/GalleryBusinessField";
 import { GalleryFormActions } from "./gallery/GalleryFormActions";
 
 type GalleryFormProps = {
@@ -20,6 +21,7 @@ type GalleryFormProps = {
     name: string;
     status: string;
     password?: string;
+    business_id?: string;
   };
 };
 
@@ -39,6 +41,7 @@ export const GalleryForm = ({
       name: gallery?.name || "",
       password: gallery?.password || "",
       status: gallery?.status || "active",
+      business_id: gallery?.business_id || businessId || "",
     },
   });
 
@@ -50,6 +53,7 @@ export const GalleryForm = ({
         name: gallery.name,
         password: gallery.password,
         status: gallery.status,
+        business_id: gallery.business_id || "",
       });
     }
   }, [gallery, form]);
@@ -66,6 +70,7 @@ export const GalleryForm = ({
             name: values.name,
             password: values.password,
             status: values.status,
+            business_id: values.business_id,
           })
           .eq("id", gallery.id);
 
@@ -79,7 +84,7 @@ export const GalleryForm = ({
             name: values.name,
             password: values.password,
             status: values.status,
-            business_id: businessId,
+            business_id: values.business_id,
           });
 
         if (error) throw error;
@@ -109,6 +114,7 @@ export const GalleryForm = ({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <GalleryNameField form={form} />
+            <GalleryBusinessField form={form} />
             <GalleryPasswordField form={form} />
             <GalleryFormActions isLoading={isLoading} onCancel={onClose} />
           </form>
