@@ -33,6 +33,17 @@ export const BusinessForm = ({ isOpen, onClose, business }: BusinessFormProps) =
     },
   });
 
+  // Reset form when business prop changes
+  useState(() => {
+    if (business) {
+      console.log("Resetting form with business data:", business);
+      form.reset({
+        name: business.name,
+        status: business.status,
+      });
+    }
+  }, [business, form]);
+
   const handleSubmit = async (values: BusinessFormValues) => {
     setIsLoading(true);
     console.log("Submitting business form...", values);

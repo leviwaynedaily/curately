@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -41,6 +41,18 @@ export const GalleryForm = ({
       status: gallery?.status || "active",
     },
   });
+
+  // Reset form when gallery prop changes
+  useEffect(() => {
+    if (gallery) {
+      console.log("Resetting form with gallery data:", gallery);
+      form.reset({
+        name: gallery.name,
+        password: gallery.password,
+        status: gallery.status,
+      });
+    }
+  }, [gallery, form]);
 
   const handleSubmit = async (values: GalleryFormValues) => {
     setIsLoading(true);
