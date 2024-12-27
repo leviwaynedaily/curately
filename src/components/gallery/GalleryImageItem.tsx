@@ -31,12 +31,6 @@ export const GalleryImageItem = ({
     import.meta.env.VITE_SUPABASE_URL
   }/storage/v1/object/public/gallery_images/${image.file_path}`;
 
-  console.log("Rendering media item:", {
-    type: image.media_type,
-    url: mediaUrl,
-    title: image.title,
-  });
-
   const renderMedia = () => {
     if (image.media_type === 'video') {
       return (
@@ -51,7 +45,7 @@ export const GalleryImageItem = ({
       <img
         src={mediaUrl}
         alt={image.title || "Gallery media"}
-        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+        className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
       />
     );
   };
@@ -59,13 +53,18 @@ export const GalleryImageItem = ({
   return (
     <div
       className={cn(
-        "group relative aspect-square bg-muted rounded-lg overflow-hidden cursor-pointer",
+        "group relative aspect-square rounded-xl overflow-hidden cursor-pointer",
+        "shadow-md hover:shadow-xl transition-all duration-300",
+        "bg-gradient-to-br from-gray-50 to-gray-100",
         isSelectionMode && "hover:opacity-90"
       )}
       onClick={onImageClick}
+      style={{
+        '--tw-ring-color': 'var(--hover-color)',
+      } as React.CSSProperties}
     >
       {renderMedia()}
-      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
         {isSelectionMode ? (
           <div className="absolute top-2 right-2">
             <CheckCircle2
@@ -84,6 +83,7 @@ export const GalleryImageItem = ({
                 e.stopPropagation();
                 onEditClick();
               }}
+              className="backdrop-blur-md bg-white/20 hover:bg-white/30"
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -94,6 +94,7 @@ export const GalleryImageItem = ({
                 e.stopPropagation();
                 onDeleteClick();
               }}
+              className="backdrop-blur-md bg-white/20 hover:bg-white/30"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -101,7 +102,7 @@ export const GalleryImageItem = ({
         )}
         {!isSelectionMode && (
           <div className="absolute bottom-0 left-0 right-0 p-4">
-            <div className="bg-gradient-to-t from-black/80 to-transparent p-4">
+            <div className="bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 rounded-lg backdrop-blur-sm">
               {image.title && (
                 <h3 className="text-white font-semibold">{image.title}</h3>
               )}
@@ -115,14 +116,14 @@ export const GalleryImageItem = ({
                   ${image.price.toFixed(2)}
                 </p>
               )}
-            </div>
-            <div className="mt-2">
-              <GalleryImageActions
-                image={image}
-                onStartSlideshow={onStartSlideshow}
-                onReorderClick={onReorderClick}
-                onFilterClick={onFilterClick}
-              />
+              <div className="mt-2">
+                <GalleryImageActions
+                  image={image}
+                  onStartSlideshow={onStartSlideshow}
+                  onReorderClick={onReorderClick}
+                  onFilterClick={onFilterClick}
+                />
+              </div>
             </div>
           </div>
         )}

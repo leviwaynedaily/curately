@@ -10,12 +10,14 @@ type GalleryImageGridProps = {
   images: GalleryImage[];
   galleryId: string;
   onDeleteImage: (image: { id: string; filePath: string }) => void;
+  accentColor?: string;
 };
 
 export const GalleryImageGrid = ({
   images,
   galleryId,
   onDeleteImage,
+  accentColor,
 }: GalleryImageGridProps) => {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [imageToEdit, setImageToEdit] = useState<GalleryImage | null>(null);
@@ -68,7 +70,7 @@ export const GalleryImageGrid = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       <GallerySelectionControls
         isSelectionMode={isSelectionMode}
         selectedCount={selectedImages.size}
@@ -81,7 +83,12 @@ export const GalleryImageGrid = ({
         onDeleteSelected={handleBatchDelete}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div 
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        style={{
+          '--hover-color': accentColor || '#8989DE',
+        } as React.CSSProperties}
+      >
         {images.map((image, index) => (
           <GalleryImageItem
             key={image.id}

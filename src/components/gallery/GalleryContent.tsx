@@ -1,5 +1,4 @@
 import { Gallery } from "@/types/gallery";
-import { GalleryHeader } from "./GalleryHeader";
 import { ImageUpload } from "./ImageUpload";
 import { GalleryImageGrid } from "./GalleryImageGrid";
 import { GalleryEmptyState } from "./GalleryEmptyState";
@@ -17,22 +16,47 @@ export const GalleryContent = ({
   onDeleteImage,
   onUploadComplete,
 }: GalleryContentProps) => {
+  // Create dynamic styles based on gallery settings
+  const headerStyle = {
+    backgroundColor: gallery.primary_color || '#141413',
+    color: gallery.secondary_color || '#E6E4DD',
+  };
+
+  const containerStyle = {
+    backgroundColor: gallery.secondary_color || '#E6E4DD',
+    color: gallery.primary_color || '#141413',
+  };
+
   return (
-    <div className="max-w-7xl mx-auto">
-      <GalleryHeader name={gallery.name} />
-      <ImageUpload
-        galleryId={galleryId}
-        onUploadComplete={onUploadComplete}
-      />
-      {gallery.gallery_images?.length ? (
-        <GalleryImageGrid
-          images={gallery.gallery_images}
+    <div style={containerStyle} className="min-h-screen">
+      <div 
+        style={headerStyle}
+        className="py-8 px-4 mb-8 shadow-lg"
+      >
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl font-bold mb-2">{gallery.name}</h1>
+          {gallery.description && (
+            <p className="text-lg opacity-90">{gallery.description}</p>
+          )}
+        </div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4">
+        <ImageUpload
           galleryId={galleryId}
-          onDeleteImage={onDeleteImage}
+          onUploadComplete={onUploadComplete}
         />
-      ) : (
-        <GalleryEmptyState />
-      )}
+        {gallery.gallery_images?.length ? (
+          <GalleryImageGrid
+            images={gallery.gallery_images}
+            galleryId={galleryId}
+            onDeleteImage={onDeleteImage}
+            accentColor={gallery.accent_color}
+          />
+        ) : (
+          <GalleryEmptyState />
+        )}
+      </div>
     </div>
   );
 };
