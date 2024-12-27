@@ -1,13 +1,6 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
+import { Table, TableBody } from "@/components/ui/table";
+import { BusinessTableHeader } from "./BusinessTableHeader";
+import { BusinessTableRow } from "./BusinessTableRow";
 
 type BusinessTableProps = {
   businesses: any[];
@@ -22,41 +15,15 @@ export const BusinessTable = ({
 }: BusinessTableProps) => {
   return (
     <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Created At</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
+      <BusinessTableHeader />
       <TableBody>
         {businesses?.map((business) => (
-          <TableRow key={business.id}>
-            <TableCell>{business.name}</TableCell>
-            <TableCell>{business.status}</TableCell>
-            <TableCell>
-              {new Date(business.created_at).toLocaleDateString()}
-            </TableCell>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onEdit(business)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onDelete(business)}
-                >
-                  <Trash className="h-4 w-4" />
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
+          <BusinessTableRow
+            key={business.id}
+            business={business}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
         ))}
       </TableBody>
     </Table>
