@@ -36,6 +36,7 @@ export const BusinessForm = ({ isOpen, onClose, business }: BusinessFormProps) =
     resolver: zodResolver(businessSchema),
     defaultValues: {
       name: business?.name || "",
+      status: business?.status || "active",
     },
   });
 
@@ -54,7 +55,9 @@ export const BusinessForm = ({ isOpen, onClose, business }: BusinessFormProps) =
         console.log("Business updated successfully");
         toast({ description: "Business updated successfully" });
       } else {
-        const { error } = await supabase.from("businesses").insert([values]);
+        const { error } = await supabase
+          .from("businesses")
+          .insert(values);
 
         if (error) throw error;
         console.log("Business created successfully");

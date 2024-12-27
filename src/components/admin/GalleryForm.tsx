@@ -44,6 +44,7 @@ export const GalleryForm = ({
     defaultValues: {
       name: gallery?.name || "",
       password: gallery?.password || "",
+      status: gallery?.status || "active",
     },
   });
 
@@ -62,12 +63,12 @@ export const GalleryForm = ({
         console.log("Gallery updated successfully");
         toast({ description: "Gallery updated successfully" });
       } else {
-        const { error } = await supabase.from("galleries").insert([
-          {
+        const { error } = await supabase
+          .from("galleries")
+          .insert({
             ...values,
             business_id: businessId,
-          },
-        ]);
+          });
 
         if (error) throw error;
         console.log("Gallery created successfully");
