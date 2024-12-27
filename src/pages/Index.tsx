@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { AgeVerification } from "@/components/AgeVerification";
 import { PasswordProtection } from "@/components/PasswordProtection";
+import { GalleryGrid } from "@/components/gallery/GalleryGrid";
 
 const TENANT_ID = "demo"; // This will be dynamic in the full implementation
 
@@ -42,13 +43,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-primary text-secondary p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8 animate-fade-down">Gallery</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Product grid will go here in the next iteration */}
-          <div className="glass-panel hover-card p-6 h-64 flex items-center justify-center">
-            Coming Soon
-          </div>
-        </div>
+        <h1 className="text-4xl font-bold mb-8 animate-fade-down">Galleries</h1>
+        <GalleryGrid />
       </div>
     </div>
   );
