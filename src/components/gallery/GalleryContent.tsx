@@ -48,14 +48,12 @@ export const GalleryContent = ({
   };
 
   // Use site_logo if available, otherwise fall back to logo
-  const logoUrl = gallery.site_logo 
-    ? supabase.storage.from("gallery_images").getPublicUrl(gallery.site_logo).data.publicUrl
-    : gallery.logo 
-      ? supabase.storage.from("gallery_images").getPublicUrl(gallery.logo).data.publicUrl
-      : null;
+  const displayLogo = gallery.site_logo || gallery.logo;
+  const logoUrl = displayLogo
+    ? supabase.storage.from("gallery_images").getPublicUrl(displayLogo).data.publicUrl
+    : null;
 
-  console.log('Gallery content logo path:', gallery.logo);
-  console.log('Gallery content site logo path:', gallery.site_logo);
+  console.log('Gallery content display logo:', displayLogo);
   console.log('Gallery content logo URL:', logoUrl);
 
   return (
@@ -73,7 +71,7 @@ export const GalleryContent = ({
             />
           ) : (
             <div className="h-32 w-full max-w-sm bg-accent/5 rounded-lg flex items-center justify-center border-2 border-accent/10">
-              <span className="text-accent text-xl font-medium opacity-50">Gallery Logo</span>
+              <span className="text-accent text-xl font-medium opacity-50">No Logo</span>
             </div>
           )}
         </div>
