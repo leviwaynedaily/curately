@@ -1,10 +1,11 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Image as ImageIcon, Video, X } from "lucide-react";
 import { Product } from "./types";
+import { MediaUploadButton } from "./media/MediaUploadButton";
+import { MediaGrid } from "./media/MediaGrid";
+import { MediaTypeStatus } from "./media/MediaTypeStatus";
 
 type ProductMediaDialogProps = {
   isOpen: boolean;
@@ -57,24 +58,18 @@ export const ProductMediaDialog = ({
         .from("gallery_images")
         .upload(filePath, file);
 
-      if (uploadError) {
-        console.error("Error uploading file:", uploadError);
-        throw uploadError;
-      }
+      if (uploadError) throw uploadError;
 
       console.log("Creating media record...");
       const { error: dbError } = await supabase.from("product_media").insert({
         product_id: product.id,
         file_path: filePath,
         media_type: mediaType,
-        is_primary: media.length === 0, // First uploaded media is primary
+        is_primary: media.length === 0,
         title: file.name,
       });
 
-      if (dbError) {
-        console.error("Error creating media record:", dbError);
-        throw dbError;
-      }
+      if (dbError) throw dbError;
 
       toast({ description: "Media uploaded successfully" });
       fetchMedia();
@@ -123,13 +118,11 @@ export const ProductMediaDialog = ({
   const setPrimaryMedia = async (mediaId: string) => {
     try {
       console.log("Setting primary media:", mediaId);
-      // First, unset all primary media for this product
       await supabase
         .from("product_media")
         .update({ is_primary: false })
         .eq("product_id", product.id);
 
-      // Then set the selected media as primary
       const { error } = await supabase
         .from("product_media")
         .update({ is_primary: true })
@@ -164,15 +157,14 @@ export const ProductMediaDialog = ({
         </DialogHeader>
 
         <div className="space-y-4">
-          <Button
-            variant="outline"
-            disabled={isUploading}
-            onClick={() => document.getElementById("media-upload")?.click()}
-            className="w-full"
-          >
-            <Upload className="h-4 w-4 mr-2" />
-            {isUploading ? "Uploading..." : "Upload Media"}
-          </Button>
+          <div className="flex justify-between items-center">
+            <MediaTypeStatus media={media} />
+            <MediaUploadButton
+              isUploading={isUploading}
+              onClick={() => document.getElementById("media-upload")?.click()}
+            />
+          </div>
+          
           <input
             id="media-upload"
             type="file"
@@ -182,48 +174,11 @@ export const ProductMediaDialog = ({
             disabled={isUploading}
           />
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {media.map((item) => (
-              <div key={item.id} className="relative group">
-                {item.media_type === "video" ? (
-                  <video
-                    src={supabase.storage.from("gallery_images").getPublicUrl(item.file_path).data.publicUrl}
-                    className="w-full aspect-square object-cover rounded-lg"
-                    controls
-                  />
-                ) : (
-                  <img
-                    src={supabase.storage.from("gallery_images").getPublicUrl(item.file_path).data.publicUrl}
-                    alt=""
-                    className="w-full aspect-square object-cover rounded-lg"
-                  />
-                )}
-                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => handleDelete(item.id, item.file_path)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="absolute bottom-2 right-2 flex gap-2">
-                  {item.media_type === "video" ? (
-                    <Video className="h-4 w-4" />
-                  ) : (
-                    <ImageIcon className="h-4 w-4" />
-                  )}
-                  <Button
-                    variant={item.is_primary ? "default" : "secondary"}
-                    size="sm"
-                    onClick={() => setPrimaryMedia(item.id)}
-                  >
-                    {item.is_primary ? "Primary" : "Set as Primary"}
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
+          <MediaGrid
+            media={media}
+            onDelete={handleDelete}
+            onSetPrimary={setPrimaryMedia}
+          />
         </div>
       </DialogContent>
     </Dialog>
