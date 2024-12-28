@@ -3,12 +3,7 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
-import dynamic from '@vite/dynamic-import';
-
-const Editor = dynamic(() => import('@/components/ui/editor'), {
-  ssr: false,
-  loading: () => <p>Loading editor...</p>
-});
+import Editor from '@/components/ui/editor';
 
 type GalleryInstructionsFieldsProps = {
   form: UseFormReturn<GalleryFormValues>;
