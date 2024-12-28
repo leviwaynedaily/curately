@@ -7,4 +7,10 @@ export type Product = {
   category: string | null;
   stock_quantity: number | null;
   status: string;
+  primary_media?: string | null;
+  product_media?: Array<{
+    id: string;
+    file_path: string;
+    is_primary: boolean;
+  }>;
 };

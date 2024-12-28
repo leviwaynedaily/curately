@@ -1,6 +1,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Filter, SortAscending } from "lucide-react";
+import { Filter } from "lucide-react";
 
 type ProductFiltersProps = {
   searchTerm: string;
