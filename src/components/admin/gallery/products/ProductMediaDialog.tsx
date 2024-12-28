@@ -5,6 +5,7 @@ import { MediaUploadButton } from "./media/MediaUploadButton";
 import { MediaGrid } from "./media/MediaGrid";
 import { MediaTypeStatus } from "./media/MediaTypeStatus";
 import { useProductMedia } from "./media/hooks/useProductMedia";
+import { Loader2 } from "lucide-react";
 
 type ProductMediaDialogProps = {
   isOpen: boolean;
@@ -28,7 +29,7 @@ export const ProductMediaDialog = ({
     setPrimaryMedia,
   } = useProductMedia(product.id, onMediaUpdate);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
       handleFileUpload(files);
@@ -68,11 +69,22 @@ export const ProductMediaDialog = ({
             disabled={isLoading}
           />
 
-          <MediaGrid
-            media={media}
-            onDelete={handleDelete}
-            onSetPrimary={setPrimaryMedia}
-          />
+          <div className="relative">
+            <MediaGrid
+              media={media}
+              onDelete={handleDelete}
+              onSetPrimary={setPrimaryMedia}
+            />
+            
+            {isLoading && (
+              <div className="absolute inset-0 bg-background/80 flex items-center justify-center backdrop-blur-sm rounded-lg">
+                <div className="flex flex-col items-center gap-2">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <p className="text-sm text-muted-foreground">Uploading media...</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>

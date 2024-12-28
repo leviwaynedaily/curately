@@ -3,13 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProductOwnership } from "./useProductOwnership";
-import {
-  uploadMediaFile,
-  createMediaRecord,
-  deleteMediaRecord,
-  deleteMediaFile,
-  updatePrimaryStatus,
-} from "../utils/mediaOperations";
 
 export type ProductMedia = {
   id: string;
@@ -64,8 +57,11 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
       await verifyProductOwnership(productId);
       
       const fileArray = Array.from(files);
+      let uploadedCount = 0;
       
       for (const file of fileArray) {
+        console.log(`Processing file ${uploadedCount + 1} of ${fileArray.length}: ${file.name}`);
+        
         const fileExt = file.name.split(".").pop();
         const filePath = `${productId}/${crypto.randomUUID()}.${fileExt}`;
         const mediaType = file.type.startsWith("video/") ? "video" : "image";
@@ -95,6 +91,9 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
           console.error("Error creating media record:", dbError);
           throw dbError;
         }
+
+        uploadedCount++;
+        console.log(`Successfully uploaded ${uploadedCount} of ${fileArray.length} files`);
       }
 
       toast({ description: `Successfully uploaded ${fileArray.length} files` });
