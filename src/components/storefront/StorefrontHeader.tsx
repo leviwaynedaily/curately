@@ -1,5 +1,5 @@
-import { Storefront } from "@/types/storefront";
 import { supabase } from "@/integrations/supabase/client";
+import { Storefront } from "@/types/storefront";
 
 type StorefrontHeaderProps = {
   storefront: Storefront;
