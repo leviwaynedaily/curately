@@ -60,18 +60,41 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
     console.log(`Starting media upload for ${files.length} files, product:`, productId);
 
     try {
+      // Verify ownership before proceeding with upload
       await verifyProductOwnership(productId);
+      
       const fileArray = Array.from(files);
       
       for (const file of fileArray) {
-        const { filePath, mediaType, fileName } = await uploadMediaFile(file, productId);
-        await createMediaRecord(
-          productId,
-          filePath,
-          mediaType,
-          fileName,
-          media.length === 0 && fileArray.indexOf(file) === 0
-        );
+        const fileExt = file.name.split(".").pop();
+        const filePath = `${productId}/${crypto.randomUUID()}.${fileExt}`;
+        const mediaType = file.type.startsWith("video/") ? "video" : "image";
+
+        console.log(`Uploading ${mediaType} to storage:`, file.name);
+        const { error: uploadError } = await supabase.storage
+          .from("gallery_images")
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error("Error uploading file:", file.name, uploadError);
+          throw uploadError;
+        }
+
+        console.log("Creating media record for:", file.name);
+        const { error: dbError } = await supabase
+          .from("product_media")
+          .insert([{
+            product_id: productId,
+            file_path: filePath,
+            media_type: mediaType,
+            is_primary: media.length === 0 && fileArray.indexOf(file) === 0,
+            title: file.name,
+          }]);
+
+        if (dbError) {
+          console.error("Error creating media record:", dbError);
+          throw dbError;
+        }
       }
 
       toast({ description: `Successfully uploaded ${fileArray.length} files` });
@@ -81,7 +104,7 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
       console.error("Media upload failed:", error);
       toast({
         variant: "destructive",
-        description: "Failed to upload media. Please try again.",
+        description: error.message || "Failed to upload media. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -95,8 +118,20 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
       await verifyProductOwnership(productId);
       
       console.log("Deleting media:", mediaId);
-      await deleteMediaRecord(mediaId);
-      await deleteMediaFile(filePath);
+      const { error: deleteError } = await supabase
+        .from("product_media")
+        .delete()
+        .eq("id", mediaId);
+
+      if (deleteError) throw deleteError;
+
+      const { error: storageError } = await supabase.storage
+        .from("gallery_images")
+        .remove([filePath]);
+
+      if (storageError) {
+        console.error("Error deleting file from storage:", storageError);
+      }
 
       toast({ description: "Media deleted successfully" });
       fetchMedia();
@@ -115,7 +150,22 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
 
     try {
       await verifyProductOwnership(productId);
-      await updatePrimaryStatus(productId, mediaId);
+      
+      // First, set all media for this product to not primary
+      const { error: updateError } = await supabase
+        .from("product_media")
+        .update({ is_primary: false })
+        .eq("product_id", productId);
+
+      if (updateError) throw updateError;
+
+      // Then set the selected media as primary
+      const { error: setPrimaryError } = await supabase
+        .from("product_media")
+        .update({ is_primary: true })
+        .eq("id", mediaId);
+
+      if (setPrimaryError) throw setPrimaryError;
 
       toast({ description: "Primary media updated" });
       fetchMedia();

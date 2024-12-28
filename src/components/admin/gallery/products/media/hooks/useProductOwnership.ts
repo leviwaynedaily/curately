@@ -6,10 +6,13 @@ export const useProductOwnership = () => {
 
   const verifyProductOwnership = async (productId: string) => {
     if (!user) {
+      console.error("No authenticated user found");
       throw new Error("No authenticated user found");
     }
 
     console.log("Verifying product ownership for:", productId);
+    
+    // First, get the product and its related storefront and business
     const { data, error } = await supabase
       .from("products")
       .select(`
@@ -30,11 +33,20 @@ export const useProductOwnership = () => {
       throw new Error("Failed to verify product ownership");
     }
 
-    if (!data || data.storefront.business.owner_id !== user.id) {
+    if (!data) {
+      console.error("Product not found");
+      throw new Error("Product not found");
+    }
+
+    // Check if the authenticated user is the owner of the business
+    const isOwner = data.storefront.business.owner_id === user.id;
+    
+    if (!isOwner) {
       console.error("Unauthorized: User does not own this product");
       throw new Error("Unauthorized: You don't have permission to modify this product");
     }
 
+    console.log("Product ownership verified successfully");
     return true;
   };
 
