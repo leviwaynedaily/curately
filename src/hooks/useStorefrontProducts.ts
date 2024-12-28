@@ -53,7 +53,7 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
           )
         `)
         .eq("storefront_id", storefrontId)
-        .eq("status", "active");
+        .ilike("status", "active");  // Changed from eq to ilike to handle case sensitivity
 
       if (error) {
         console.error("Error fetching products:", error);
