@@ -32,12 +32,21 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
 
       console.log("Storefront verified, fetching products");
 
-      // Now fetch products with their media
+      // First, let's check how many products exist without the media join
+      const { count, error: countError } = await supabase
+        .from("products")
+        .select("*", { count: 'exact', head: true })
+        .eq("storefront_id", storefrontId)
+        .eq("status", "active");
+
+      console.log("Products count check:", { count, error: countError });
+
+      // Now fetch products with their media (optional join)
       const { data, error } = await supabase
         .from("products")
         .select(`
           *,
-          product_media!inner (
+          product_media (
             id,
             file_path,
             is_primary
@@ -51,7 +60,7 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
         throw error;
       }
 
-      console.log("Products query result:", data);
+      console.log("Raw products query result:", data);
 
       // Process the results to include primary media
       const productsWithMedia = data.map((product: any) => ({
