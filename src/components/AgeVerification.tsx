@@ -21,7 +21,8 @@ export const AgeVerification = (props: AgeVerificationProps) => {
   const handleAgeVerified = () => {
     console.log("Age verification completed", {
       instructionsEnabled: props.instructionsEnabled,
-      instructionsContent: props.instructionsContent
+      instructionsContent: props.instructionsContent,
+      showInstructions
     });
     
     if (props.instructionsEnabled) {
@@ -38,13 +39,14 @@ export const AgeVerification = (props: AgeVerificationProps) => {
     props.onVerified();
   };
 
-  // Show instructions if enabled and age is verified
+  // Show instructions if enabled and user has completed age verification
   if (showInstructions && props.instructionsEnabled) {
     console.log("Rendering instructions screen", {
       logo: props.logo,
       content: props.instructionsContent,
       buttonText: props.instructionsButtonText
     });
+    
     return (
       <InstructionsContainer
         logo={props.logo}
