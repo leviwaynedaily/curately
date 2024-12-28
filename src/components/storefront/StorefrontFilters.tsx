@@ -1,6 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Filter } from "lucide-react";
+import { Filter, Grid, List } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type StorefrontFiltersProps = {
   searchTerm: string;
@@ -10,6 +11,8 @@ type StorefrontFiltersProps = {
   categoryFilter: string;
   onCategoryChange: (value: string) => void;
   categories: string[];
+  viewMode: "grid" | "list";
+  onViewModeChange: (mode: "grid" | "list") => void;
 };
 
 export const StorefrontFilters = ({
@@ -20,6 +23,8 @@ export const StorefrontFilters = ({
   categoryFilter,
   onCategoryChange,
   categories,
+  viewMode,
+  onViewModeChange,
 }: StorefrontFiltersProps) => {
   return (
     <div className="bg-white shadow-sm border rounded-lg p-4 mb-8">
@@ -67,6 +72,25 @@ export const StorefrontFilters = ({
                 <SelectItem value="name_desc">Name: Z to A</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              variant={viewMode === "grid" ? "default" : "outline"}
+              size="icon"
+              onClick={() => onViewModeChange("grid")}
+              title="Grid view"
+            >
+              <Grid className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewMode === "list" ? "default" : "outline"}
+              size="icon"
+              onClick={() => onViewModeChange("list")}
+              title="List view"
+            >
+              <List className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>
