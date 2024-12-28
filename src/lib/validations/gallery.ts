@@ -20,6 +20,7 @@ export const gallerySchema = z.object({
   button_text: z.string().optional(),
   age_verification_enabled: z.boolean().optional().default(false),
   password_required: z.boolean().optional().default(false),
+  currentTab: z.string().optional().default("basic"),
 });
 
 export type GalleryFormValues = z.infer<typeof gallerySchema>;

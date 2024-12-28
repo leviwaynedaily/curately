@@ -46,7 +46,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       status: gallery?.status || "active",
       business_id: gallery?.business_id || businessId || "",
       logo: gallery?.logo || "",
-      site_logo: gallery?.site_logo || gallery?.logo || "", // Use logo as fallback for site_logo
+      site_logo: gallery?.site_logo || gallery?.logo || "",
       description: gallery?.description || "",
       primary_color: gallery?.primary_color || "#141413",
       secondary_color: gallery?.secondary_color || "#E6E4DD",
@@ -60,6 +60,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       button_text: gallery?.button_text || "Enter Site",
       age_verification_enabled: gallery?.age_verification_enabled || false,
       password_required: gallery?.password_required || false,
+      currentTab: "basic",
     },
   });
 
@@ -72,7 +73,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
         status: gallery.status,
         business_id: gallery.business_id || "",
         logo: gallery.logo || "",
-        site_logo: gallery.site_logo || gallery.logo || "", // Use logo as fallback for site_logo
+        site_logo: gallery.site_logo || gallery.logo || "",
         description: gallery.description || "",
         primary_color: gallery.primary_color || "#141413",
         secondary_color: gallery.secondary_color || "#E6E4DD",
@@ -86,6 +87,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
         button_text: gallery.button_text || "Enter Site",
         age_verification_enabled: gallery.age_verification_enabled || false,
         password_required: gallery.password_required || false,
+        currentTab: "basic",
       });
     }
   }, [gallery, form]);
@@ -94,28 +96,8 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
     setIsLoading(true);
     console.log("Submitting gallery form...", values);
 
-    // Ensure all required fields are included and color values are strings
-    const sanitizedValues = {
-      name: values.name,
-      password: values.password,
-      status: values.status,
-      business_id: values.business_id,
-      logo: values.logo,
-      site_logo: values.site_logo || values.logo, // Use logo as fallback if no site_logo
-      description: values.description,
-      primary_color: values.primary_color || "#141413",
-      secondary_color: values.secondary_color || "#E6E4DD",
-      accent_color: values.accent_color || "#9b87f5",
-      primary_font_color: values.primary_font_color || "#000000",
-      secondary_font_color: values.secondary_font_color || "#6E59A5",
-      accent_font_color: values.accent_font_color || "#8B5CF6",
-      heading_text: values.heading_text,
-      subheading_text: values.subheading_text,
-      age_verification_text: values.age_verification_text,
-      button_text: values.button_text,
-      age_verification_enabled: values.age_verification_enabled,
-      password_required: values.password_required,
-    };
+    // Remove currentTab from values before sending to API
+    const { currentTab, ...sanitizedValues } = values;
 
     try {
       if (gallery?.id) {
