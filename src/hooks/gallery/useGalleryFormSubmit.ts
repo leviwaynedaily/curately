@@ -9,7 +9,7 @@ export const useGalleryFormSubmit = (
   gallery?: { id: string }
 ) => {
   const handleSubmit = async (values: GalleryFormValues) => {
-    console.log("Starting gallery form submission with PWA icons...", values);
+    console.log("Starting gallery form submission with values:", values);
 
     const { currentTab, ...sanitizedValues } = values;
     const dataToSubmit = {
@@ -25,10 +25,7 @@ export const useGalleryFormSubmit = (
     
     try {
       if (gallery?.id) {
-        console.log("Updating storefront with PWA icons:", {
-          pwa_icon_192: dataToSubmit.pwa_icon_192,
-          pwa_icon_512: dataToSubmit.pwa_icon_512
-        });
+        console.log("Updating storefront with data:", dataToSubmit);
         
         const { data, error } = await supabase
           .from("storefronts")
@@ -38,13 +35,10 @@ export const useGalleryFormSubmit = (
 
         if (error) throw error;
         
-        console.log("Storefront updated successfully with PWA icons. Response:", data);
+        console.log("Storefront updated successfully. Response:", data);
         toast({ description: "Storefront updated successfully" });
       } else {
-        console.log("Creating new storefront with PWA icons:", {
-          pwa_icon_192: dataToSubmit.pwa_icon_192,
-          pwa_icon_512: dataToSubmit.pwa_icon_512
-        });
+        console.log("Creating new storefront with data:", dataToSubmit);
         
         const { data, error } = await supabase
           .from("storefronts")
@@ -53,7 +47,7 @@ export const useGalleryFormSubmit = (
 
         if (error) throw error;
         
-        console.log("Storefront created successfully with PWA icons. Response:", data);
+        console.log("Storefront created successfully. Response:", data);
         toast({ description: "Storefront created successfully" });
       }
 
