@@ -37,11 +37,12 @@ const StorefrontView = () => {
     error: productsError
   } = useStorefrontProducts(storefrontId, isVerified);
 
-  console.log("Products loading state:", {
-    isProductsLoading,
-    productsCount: products?.length,
+  console.log("StorefrontView state:", {
     storefrontId,
-    isVerified
+    isVerified,
+    productsCount: products?.length,
+    isLoading: isProductsLoading,
+    error: productsError
   });
 
   const filteredAndSortedProducts = useProductFiltering(
@@ -60,6 +61,7 @@ const StorefrontView = () => {
   }
 
   if (storefrontError || productsError) {
+    console.error("Error loading storefront:", { storefrontError, productsError });
     return <StorefrontError />;
   }
 
@@ -82,7 +84,6 @@ const StorefrontView = () => {
     );
   }
 
-  // If verification passed or not required, show storefront content
   return (
     <div className="relative">
       <StorefrontContent

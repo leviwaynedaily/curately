@@ -4,7 +4,7 @@ import { Product } from "@/components/admin/gallery/products/types";
 
 export const useStorefrontProducts = (storefrontId: string | undefined, isVerified: boolean) => {
   return useQuery({
-    queryKey: ["storefront-products", storefrontId],
+    queryKey: ["storefront-products", storefrontId, isVerified],
     queryFn: async () => {
       console.log("Starting product fetch with params:", { storefrontId, isVerified });
       
@@ -32,18 +32,19 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
 
       console.log("Storefront verified, fetching products");
 
-      // Fetch products with their media
+      // Fetch active products with their media
       const { data, error } = await supabase
         .from("products")
         .select(`
           *,
-          product_media!inner (
+          product_media (
             id,
             file_path,
             is_primary
           )
         `)
-        .eq("storefront_id", storefrontId);
+        .eq("storefront_id", storefrontId)
+        .eq("status", "active");
 
       if (error) {
         console.error("Error fetching products:", error);
