@@ -5,10 +5,16 @@ import { formatCurrency } from "@/lib/utils";
 import { ProductDetailsDialog } from "./product/ProductDetailsDialog";
 import { ProductMediaCarousel } from "./product/ProductMediaCarousel";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
+import { Edit, MoreVertical, Trash } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type StorefrontProductGridProps = {
   products: Product[];
@@ -40,6 +46,33 @@ export const StorefrontProductGrid = ({
       });
     } else {
       setSelectedProduct(product);
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      console.log("Deleting product:", productId);
+      const { error } = await supabase
+        .from("products")
+        .update({ status: "archived" })
+        .eq("id", productId);
+
+      if (error) throw error;
+
+      toast({
+        description: "Product deleted successfully"
+      });
+
+      // Trigger a page reload after a short delay to ensure the toast is visible
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast({
+        description: "Failed to delete product",
+        variant: "destructive"
+      });
     }
   };
 
@@ -111,6 +144,30 @@ export const StorefrontProductGrid = ({
               Delete Selected ({selectedProducts.size})
             </Button>
           )}
+          {!isEditMode && selectedProduct && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => setSelectedProduct(selectedProduct)}
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => handleDeleteProduct(selectedProduct.id)}
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       )}
 
@@ -120,6 +177,7 @@ export const StorefrontProductGrid = ({
             key={product.id} 
             className={`group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 border-neutral-200 relative
               ${isEditMode && selectedProducts.has(product.id) ? 'ring-2 ring-primary' : ''}
+              ${!isEditMode && selectedProduct?.id === product.id ? 'ring-2 ring-primary' : ''}
             `}
             onClick={() => handleProductClick(product)}
           >
