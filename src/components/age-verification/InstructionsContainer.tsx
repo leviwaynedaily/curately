@@ -14,6 +14,8 @@ export const InstructionsContainer = ({
   buttonText = "Enter Site",
   onConfirm,
 }: InstructionsContainerProps) => {
+  console.log("Rendering InstructionsContainer", { logo, content, buttonText });
+  
   return (
     <div className="fixed inset-0 z-50">
       <div className="absolute inset-0 backdrop-blur-md bg-black/30" />
