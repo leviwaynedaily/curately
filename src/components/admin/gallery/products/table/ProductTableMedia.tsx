@@ -2,48 +2,36 @@ import { TableCell } from "@/components/ui/table";
 import { ImageIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 type ProductTableMediaProps = {
   productId: string;
 };
 
 export const ProductTableMedia = ({ productId }: ProductTableMediaProps) => {
-  const [primaryMedia, setPrimaryMedia] = useState<string | null>(null);
-  const [isLoadingMedia, setIsLoadingMedia] = useState(true);
+  const { data: primaryMedia, isLoading } = useQuery({
+    queryKey: ["product-media", productId],
+    queryFn: async () => {
+      console.log("Fetching primary media for product:", productId);
+      const { data, error } = await supabase
+        .from("product_media")
+        .select("file_path")
+        .eq("product_id", productId)
+        .eq("is_primary", true)
+        .maybeSingle();
 
-  useEffect(() => {
-    const fetchPrimaryMedia = async () => {
-      setIsLoadingMedia(true);
-      try {
-        console.log("Fetching primary media for product:", productId);
-        const { data, error } = await supabase
-          .from("product_media")
-          .select("file_path")
-          .eq("product_id", productId)
-          .eq("is_primary", true)
-          .maybeSingle();
-
-        if (error) {
-          console.error("Error fetching primary media:", error);
-          return;
-        }
-
-        if (data) {
-          setPrimaryMedia(data.file_path);
-        }
-      } catch (error) {
-        console.error("Error in fetchPrimaryMedia:", error);
-      } finally {
-        setIsLoadingMedia(false);
+      if (error) {
+        console.error("Error fetching primary media:", error);
+        throw error;
       }
-    };
 
-    fetchPrimaryMedia();
-  }, [productId]);
+      return data?.file_path || null;
+    },
+  });
 
   return (
     <div className="w-10 h-10">
-      {isLoadingMedia ? (
+      {isLoading ? (
         <div className="w-10 h-10 bg-muted animate-pulse rounded" />
       ) : primaryMedia ? (
         <img
