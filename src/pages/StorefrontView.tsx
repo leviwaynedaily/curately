@@ -78,6 +78,8 @@ const StorefrontView = () => {
           onVerified={() => setIsVerified(true)}
           tenantId={id as string}
           logo={gallery.logo}
+          verificationText={gallery.age_verification_text}
+          buttonText={gallery.button_text}
         />
       )}
       <GalleryContent

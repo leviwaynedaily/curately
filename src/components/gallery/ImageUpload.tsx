@@ -27,26 +27,19 @@ export const ImageUpload = ({ galleryId, onUploadComplete }: ImageUploadProps) =
 
       console.log("Uploading file to storage...");
       const { error: uploadError } = await supabase.storage
-        .from("gallery_images")
+        .from("product_media")
         .upload(filePath, file);
 
-      if (uploadError) {
-        console.error("Error uploading file:", uploadError);
-        throw uploadError;
-      }
+      if (uploadError) throw uploadError;
 
       // Create database record
       console.log("Creating database record...");
-      const { error: dbError } = await supabase.from("gallery_images").insert({
-        gallery_id: galleryId,
+      const { error: dbError } = await supabase.from("product_media").insert({
         file_path: filePath,
         title: file.name,
       });
 
-      if (dbError) {
-        console.error("Error creating database record:", dbError);
-        throw dbError;
-      }
+      if (dbError) throw dbError;
 
       console.log("Upload completed successfully");
       toast({ description: "Image uploaded successfully" });

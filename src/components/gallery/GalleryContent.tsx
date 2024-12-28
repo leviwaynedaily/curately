@@ -1,39 +1,37 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useParams } from "react-router-dom";
-import { GalleryImageGrid } from "./GalleryImageGrid";
 import { GalleryHeader } from "./GalleryHeader";
 import { GalleryControls } from "./GalleryControls";
+import { GalleryImageGrid } from "./GalleryImageGrid";
 import { GalleryDialogs } from "./GalleryDialogs";
 import { useImageSelection } from "@/hooks/useImageSelection";
 import { useGalleryActions } from "@/hooks/useGalleryActions";
+import { Gallery } from "@/types/gallery";
 
-export const GalleryContent = () => {
-  const { id } = useParams();
+type GalleryContentProps = {
+  gallery: Gallery;
+  galleryId: string;
+  onDeleteImage: (image: { id: string; filePath: string }) => Promise<void>;
+  onUploadComplete: () => Promise<void>;
+};
+
+export const GalleryContent = ({
+  gallery,
+  galleryId,
+  onDeleteImage,
+  onUploadComplete,
+}: GalleryContentProps) => {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageToEdit, setImageToEdit] = useState(null);
+  const [imageToDelete, setImageToDelete] = useState(null);
+  const [isSlideshowOpen, setIsSlideshowOpen] = useState(false);
+  const [slideshowStartIndex, setSlideshowStartIndex] = useState(0);
   const { selectedImages, toggleImageSelection, clearSelection } = useImageSelection();
   const { deleteImages } = useGalleryActions();
 
-  const { data: storefront, isLoading: isStorefrontLoading } = useQuery({
-    queryKey: ["storefronts", id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("storefronts")
-        .select(`
-          *,
-          businesses (
-            owner_id
-          )
-        `)
-        .eq("id", id)
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: products, isLoading: isProductsLoading } = useQuery({
-    queryKey: ["products", id],
+  const { data: products } = useQuery({
+    queryKey: ["products", galleryId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
@@ -41,34 +39,46 @@ export const GalleryContent = () => {
           *,
           product_media (*)
         `)
-        .eq("storefront_id", id);
+        .eq("storefront_id", galleryId);
 
       if (error) throw error;
-      return data;
+      return data || [];
     },
   });
 
-  if (isStorefrontLoading || isProductsLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <GalleryHeader storefront={storefront} />
+      <GalleryHeader name={gallery.name} />
       
       <GalleryControls
-        selectedCount={selectedImages.length}
-        onClearSelection={clearSelection}
-        onDelete={() => deleteImages(selectedImages)}
+        sort="date_desc"
+        onSortChange={() => {}}
+        status="all"
+        onStatusChange={() => {}}
       />
 
       <GalleryImageGrid
-        products={products || []}
-        selectedImages={selectedImages}
-        onImageSelect={toggleImageSelection}
+        images={products?.flatMap(p => p.product_media) || []}
+        galleryId={galleryId}
+        onDeleteImage={onDeleteImage}
+        accentColor={gallery.accent_color}
+        isAdmin={true}
       />
 
-      <GalleryDialogs />
+      <GalleryDialogs
+        selectedImage={selectedImage}
+        setSelectedImage={setSelectedImage}
+        imageToEdit={imageToEdit}
+        setImageToEdit={setImageToEdit}
+        imageToDelete={imageToDelete}
+        setImageToDelete={setImageToDelete}
+        isSlideshowOpen={isSlideshowOpen}
+        setIsSlideshowOpen={setIsSlideshowOpen}
+        slideshowStartIndex={slideshowStartIndex}
+        galleryId={galleryId}
+        images={products?.flatMap(p => p.product_media) || []}
+        onDeleteImage={onDeleteImage}
+      />
     </div>
   );
 };
