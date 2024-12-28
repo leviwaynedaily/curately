@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-neutral to-white">
+    <div className="min-h-screen w-full bg-gradient-to-b from-neutral to-white transition-all duration-500">
       {/* Hero Section */}
       <section className="w-full py-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-neutral to-white">
         <div className="max-w-7xl mx-auto w-full">
@@ -12,7 +12,7 @@ const Index = () => {
             <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary tracking-tight mb-2">
               <span className="text-accent">Curately</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary leading-tight mb-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary leading-tight mb-2">
               Your Digital Gallery,{" "}
               <span className="text-primary">Beautifully Curated</span>
             </h1>
@@ -52,9 +52,9 @@ const Index = () => {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 justify-items-center">
             {/* Cloud Feature */}
-            <div className="p-4 sm:p-6 bg-neutral rounded-xl border border-secondary/10 shadow-md hover:shadow-lg hover:bg-light hover:scale-102 transition-all duration-300 w-full max-w-[280px]">
+            <div className="p-4 sm:p-6 bg-neutral/80 backdrop-blur-sm rounded-xl border border-secondary/10 shadow-md hover:shadow-lg hover:bg-light hover:scale-102 transition-all duration-300 w-full max-w-[280px]">
               <Cloud className="h-12 w-12 text-primary mb-4 mx-auto" />
-              <h3 className="text-lg sm:text-xl font-semibold mb-2 text-secondary text-center">
+              <h3 className="text-lg sm:text-xl font-semibold mb-2 text-primary text-center">
                 Cloud-Based
               </h3>
               <p className="text-xs sm:text-sm text-slate text-center leading-relaxed">
@@ -64,9 +64,9 @@ const Index = () => {
             </div>
 
             {/* Gallery Feature */}
-            <div className="p-4 sm:p-6 bg-neutral rounded-xl border border-secondary/10 shadow-md hover:shadow-lg hover:bg-light hover:scale-102 transition-all duration-300 w-full max-w-[280px]">
+            <div className="p-4 sm:p-6 bg-neutral/80 backdrop-blur-sm rounded-xl border border-secondary/10 shadow-md hover:shadow-lg hover:bg-light hover:scale-102 transition-all duration-300 w-full max-w-[280px]">
               <GalleryIcon className="h-12 w-12 text-primary mb-4 mx-auto" />
-              <h3 className="text-lg sm:text-xl font-semibold mb-2 text-secondary text-center">
+              <h3 className="text-lg sm:text-xl font-semibold mb-2 text-primary text-center">
                 Beautiful Display
               </h3>
               <p className="text-xs sm:text-sm text-slate text-center leading-relaxed">
@@ -75,9 +75,9 @@ const Index = () => {
             </div>
 
             {/* Security Feature */}
-            <div className="p-4 sm:p-6 bg-neutral rounded-xl border border-secondary/10 shadow-md hover:shadow-lg hover:bg-light hover:scale-102 transition-all duration-300 w-full max-w-[280px]">
+            <div className="p-4 sm:p-6 bg-neutral/80 backdrop-blur-sm rounded-xl border border-secondary/10 shadow-md hover:shadow-lg hover:bg-light hover:scale-102 transition-all duration-300 w-full max-w-[280px]">
               <Lock className="h-12 w-12 text-primary mb-4 mx-auto" />
-              <h3 className="text-lg sm:text-xl font-semibold mb-2 text-secondary text-center">
+              <h3 className="text-lg sm:text-xl font-semibold mb-2 text-primary text-center">
                 Secure Access
               </h3>
               <p className="text-xs sm:text-sm text-slate text-center leading-relaxed">
