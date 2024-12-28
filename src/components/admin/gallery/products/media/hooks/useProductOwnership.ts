@@ -12,7 +12,7 @@ export const useProductOwnership = () => {
 
     console.log("Verifying product ownership for:", productId);
     
-    // Match the RLS policy structure using JOINs
+    // Exactly match the RLS policy structure
     const { data, error } = await supabase
       .from("products")
       .select(`
