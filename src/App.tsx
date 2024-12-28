@@ -6,7 +6,6 @@ import Index from "@/pages/Index";
 import Login from "@/pages/Login";
 import Admin from "@/pages/Admin";
 import StorefrontView from "@/pages/StorefrontView";
-import ProductManagement from "@/pages/ProductManagement";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -21,10 +20,6 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/admin/*" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
             <Route path="/storefront/:storefrontId" element={<StorefrontView />} />
-            <Route 
-              path="/admin/galleries/:storefrontId/products" 
-              element={<ProtectedRoute><ProductManagement /></ProtectedRoute>} 
-            />
           </Routes>
           <Toaster />
         </AuthProvider>
