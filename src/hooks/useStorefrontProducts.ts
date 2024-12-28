@@ -32,14 +32,12 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
 
       console.log("Storefront verified, fetching products");
 
-      // Fetch products with their media - using the exact same query as admin dashboard
+      // Fetch products with their media
       const { data, error } = await supabase
         .from("products")
-        .select(`
-          *,
-          product_media (*)
-        `)
-        .eq("storefront_id", storefrontId);
+        .select("*, product_media(*)")
+        .eq("storefront_id", storefrontId)
+        .eq("status", "active");
 
       if (error) {
         console.error("Error fetching products:", error);

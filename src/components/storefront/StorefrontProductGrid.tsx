@@ -19,7 +19,7 @@ export const StorefrontProductGrid = ({ products, accentColor }: StorefrontProdu
             <div className="aspect-square overflow-hidden bg-gray-100">
               {product.primary_media ? (
                 <img
-                  src={supabase.storage.from("gallery_images").getPublicUrl(product.primary_media).data.publicUrl}
+                  src={supabase.storage.from("product_media").getPublicUrl(product.primary_media).data.publicUrl}
                   alt={product.name}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
