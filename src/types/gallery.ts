@@ -20,6 +20,8 @@ export type Gallery = {
   button_text?: string | null;
   age_verification_enabled?: boolean;
   password_required?: boolean;
+  page_title?: string | null;
+  favicon?: string | null;
   businesses?: {
     name: string;
   };
