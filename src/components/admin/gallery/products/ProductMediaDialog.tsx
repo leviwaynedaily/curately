@@ -6,6 +6,7 @@ import { MediaGrid } from "./media/MediaGrid";
 import { MediaTypeStatus } from "./media/MediaTypeStatus";
 import { useProductMedia } from "./media/hooks/useProductMedia";
 import { Loader2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 type ProductMediaDialogProps = {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export const ProductMediaDialog = ({
   const {
     media,
     isLoading,
+    uploadProgress,
     fetchMedia,
     handleFileUpload,
     handleDelete,
@@ -78,9 +80,14 @@ export const ProductMediaDialog = ({
             
             {isLoading && (
               <div className="absolute inset-0 bg-background/80 flex items-center justify-center backdrop-blur-sm rounded-lg">
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-4 w-64">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <p className="text-sm text-muted-foreground">Uploading media...</p>
+                  <div className="w-full space-y-2">
+                    <Progress value={uploadProgress.percentage} className="w-full" />
+                    <p className="text-sm text-center text-muted-foreground">
+                      Uploading {uploadProgress.current} of {uploadProgress.total} files ({uploadProgress.percentage}%)
+                    </p>
+                  </div>
                 </div>
               </div>
             )}

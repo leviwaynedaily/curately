@@ -11,9 +11,16 @@ export type ProductMedia = {
   is_primary: boolean;
 };
 
+export type UploadProgress = {
+  current: number;
+  total: number;
+  percentage: number;
+};
+
 export const useProductMedia = (productId: string, onMediaUpdate: () => void) => {
   const [media, setMedia] = useState<ProductMedia[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress>({ current: 0, total: 0, percentage: 0 });
   const { toast } = useToast();
   const { user } = useAuth();
   const { verifyProductOwnership } = useProductOwnership();
@@ -50,10 +57,10 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
     }
 
     setIsLoading(true);
+    setUploadProgress({ current: 0, total: files.length, percentage: 0 });
     console.log(`Starting media upload for ${files.length} files, product:`, productId);
 
     try {
-      // Verify ownership before proceeding with upload
       await verifyProductOwnership(productId);
       
       const fileArray = Array.from(files);
@@ -93,6 +100,11 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
         }
 
         uploadedCount++;
+        setUploadProgress(prev => ({
+          current: uploadedCount,
+          total: files.length,
+          percentage: Math.round((uploadedCount / files.length) * 100)
+        }));
         console.log(`Successfully uploaded ${uploadedCount} of ${fileArray.length} files`);
       }
 
@@ -107,6 +119,7 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
       });
     } finally {
       setIsLoading(false);
+      setUploadProgress({ current: 0, total: 0, percentage: 0 });
     }
   };
 
@@ -150,7 +163,6 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
     try {
       await verifyProductOwnership(productId);
       
-      // First, set all media for this product to not primary
       const { error: updateError } = await supabase
         .from("product_media")
         .update({ is_primary: false })
@@ -158,7 +170,6 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
 
       if (updateError) throw updateError;
 
-      // Then set the selected media as primary
       const { error: setPrimaryError } = await supabase
         .from("product_media")
         .update({ is_primary: true })
@@ -181,6 +192,7 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
   return {
     media,
     isLoading,
+    uploadProgress,
     fetchMedia,
     handleFileUpload,
     handleDelete,
