@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Cloud, Image as GalleryIcon, Lock, LockKeyhole } from "lucide-react";
+import { ArrowRight, Cloud, Image as GalleryIcon, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -11,7 +11,11 @@ const Index = () => {
           {/* Logo and Hero Content */}
           <div className="text-center space-y-4 animate-fade-down">
             <div className="flex flex-col items-center gap-1">
-              <LockKeyhole className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-accent" />
+              <img 
+                src="/lovable-uploads/2e1493f2-d9d7-4ff8-9114-4f21044df0df.png" 
+                alt="Curately Logo" 
+                className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-contain"
+              />
               <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-accent">Curately</span>
             </div>
             
