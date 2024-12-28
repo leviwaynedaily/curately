@@ -103,27 +103,28 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
     console.log("Submitting gallery form...", values);
 
     const { currentTab, ...sanitizedValues } = values;
+    const dataToSubmit = {
+      ...sanitizedValues,
+      name: values.name, // Ensure name is included and required
+      page_title: values.page_title || values.name,
+    };
     
     try {
       if (gallery?.id) {
+        console.log("Updating storefront with data:", dataToSubmit);
         const { error } = await supabase
           .from("storefronts")
-          .update({
-            ...sanitizedValues,
-            page_title: values.page_title || values.name, // Ensure page_title defaults to name if empty
-          })
+          .update(dataToSubmit)
           .eq("id", gallery.id);
 
         if (error) throw error;
         console.log("Storefront updated successfully");
         toast({ description: "Storefront updated successfully" });
       } else {
+        console.log("Creating new storefront with data:", dataToSubmit);
         const { error } = await supabase
           .from("storefronts")
-          .insert({
-            ...sanitizedValues,
-            page_title: values.page_title || values.name, // Ensure page_title defaults to name if empty
-          });
+          .insert(dataToSubmit);
 
         if (error) throw error;
         console.log("Storefront created successfully");
