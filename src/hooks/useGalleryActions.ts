@@ -1,53 +1,40 @@
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
-export const useGalleryActions = (galleryId: string | undefined) => {
+export const useGalleryActions = () => {
+  const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const handleDeleteImage = async (image: { id: string; filePath: string }) => {
-    console.log("Deleting image:", image);
+  const deleteImages = async (imageIds: string[]) => {
+    if (!imageIds.length) return;
+
+    setIsDeleting(true);
     try {
-      // Delete from storage
-      const { error: storageError } = await supabase.storage
-        .from("gallery_images")
-        .remove([image.filePath]);
-
-      if (storageError) {
-        console.error("Error deleting from storage:", storageError);
-        throw storageError;
-      }
-
-      // Delete from database
-      const { error: dbError } = await supabase
-        .from("gallery_images")
+      const { error } = await supabase
+        .from("product_media")
         .delete()
-        .eq("id", image.id);
+        .in("id", imageIds);
 
-      if (dbError) {
-        console.error("Error deleting from database:", dbError);
-        throw dbError;
-      }
+      if (error) throw error;
 
-      console.log("Image deleted successfully");
-      toast({ description: "Image deleted successfully" });
-      queryClient.invalidateQueries({ queryKey: ["gallery", galleryId] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast({ description: "Images deleted successfully" });
     } catch (error) {
-      console.error("Delete failed:", error);
+      console.error("Error deleting images:", error);
       toast({
         variant: "destructive",
-        description: "Failed to delete image. Please try again.",
+        description: "Failed to delete images",
       });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
-  const handleUploadComplete = () => {
-    queryClient.invalidateQueries({ queryKey: ["gallery", galleryId] });
-  };
-
   return {
-    handleDeleteImage,
-    handleUploadComplete,
+    deleteImages,
+    isDeleting,
   };
 };

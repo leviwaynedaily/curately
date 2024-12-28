@@ -1,115 +1,74 @@
-import { Gallery } from "@/types/gallery";
-import { ImageUpload } from "./ImageUpload";
-import { GalleryImageGrid } from "./GalleryImageGrid";
-import { GalleryEmptyState } from "./GalleryEmptyState";
-import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useParams } from "react-router-dom";
+import { GalleryImageGrid } from "./GalleryImageGrid";
+import { GalleryHeader } from "./GalleryHeader";
+import { GalleryControls } from "./GalleryControls";
+import { GalleryDialogs } from "./GalleryDialogs";
+import { useImageSelection } from "@/hooks/useImageSelection";
+import { useGalleryActions } from "@/hooks/useGalleryActions";
 
-type GalleryContentProps = {
-  gallery: Gallery;
-  galleryId: string;
-  onDeleteImage: (image: { id: string; filePath: string }) => void;
-  onUploadComplete: () => void;
-};
+export const GalleryContent = () => {
+  const { id } = useParams();
+  const { selectedImages, toggleImageSelection, clearSelection } = useImageSelection();
+  const { deleteImages } = useGalleryActions();
 
-export const GalleryContent = ({
-  gallery,
-  galleryId,
-  onDeleteImage,
-  onUploadComplete,
-}: GalleryContentProps) => {
-  const { session } = useAuth();
-  
-  const { data: hasAccess } = useQuery({
-    queryKey: ["galleryAccess", galleryId, session?.user?.id],
+  const { data: storefront, isLoading: isStorefrontLoading } = useQuery({
+    queryKey: ["storefronts", id],
     queryFn: async () => {
-      if (!session?.user?.id) return false;
-      
-      const { data } = await supabase
-        .from("galleries")
-        .select("businesses(owner_id)")
-        .eq("id", galleryId)
+      const { data, error } = await supabase
+        .from("storefronts")
+        .select(`
+          *,
+          businesses (
+            owner_id
+          )
+        `)
+        .eq("id", id)
         .single();
-      
-      return data?.businesses?.owner_id === session?.user?.id;
+
+      if (error) throw error;
+      return data;
     },
-    enabled: !!session?.user?.id,
   });
 
-  const headerStyle = {
-    backgroundColor: gallery.primary_color || '#141413',
-    color: gallery.secondary_color || '#E6E4DD',
-  };
+  const { data: products, isLoading: isProductsLoading } = useQuery({
+    queryKey: ["products", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select(`
+          *,
+          product_media (*)
+        `)
+        .eq("storefront_id", id);
 
-  const containerStyle = {
-    backgroundColor: gallery.secondary_color || '#E6E4DD',
-    color: gallery.primary_color || '#141413',
-  };
+      if (error) throw error;
+      return data;
+    },
+  });
 
-  // Get the logo URL
-  const displayLogo = gallery.site_logo || gallery.logo;
-  const logoUrl = displayLogo
-    ? supabase.storage.from("gallery_images").getPublicUrl(displayLogo).data.publicUrl
-    : null;
-
-  console.log('Gallery content display logo:', displayLogo);
-  console.log('Gallery content logo URL:', logoUrl);
-  console.log('Gallery site_logo:', gallery.site_logo);
-  console.log('Gallery logo:', gallery.logo);
-  console.log('Gallery description:', gallery.description);
+  if (isStorefrontLoading || isProductsLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div style={containerStyle} className="min-h-screen">
-      <div 
-        style={headerStyle}
-        className="py-8 px-4 mb-8 shadow-lg"
-      >
-        <div className="max-w-7xl mx-auto flex flex-col items-center space-y-6">
-          {logoUrl ? (
-            <img 
-              src={logoUrl} 
-              alt={gallery.name}
-              className="h-32 object-contain rounded-lg transition-all duration-300 hover:scale-105"
-            />
-          ) : (
-            <div className="h-32 w-full max-w-sm bg-accent/5 rounded-lg flex items-center justify-center border-2 border-accent/10">
-              <span className="text-accent text-xl font-medium opacity-50">No Logo</span>
-            </div>
-          )}
-          
-          {gallery.description && (
-            <div className="max-w-3xl text-center">
-              <p 
-                className="whitespace-pre-wrap text-lg leading-relaxed"
-                style={{ color: gallery.primary_font_color || '#000000' }}
-              >
-                {gallery.description}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+    <div className="container mx-auto p-4 space-y-6">
+      <GalleryHeader storefront={storefront} />
       
-      <div className="max-w-7xl mx-auto px-4">
-        {hasAccess && (
-          <ImageUpload
-            galleryId={galleryId}
-            onUploadComplete={onUploadComplete}
-          />
-        )}
-        {gallery.gallery_images?.length ? (
-          <GalleryImageGrid
-            images={gallery.gallery_images}
-            galleryId={galleryId}
-            onDeleteImage={onDeleteImage}
-            accentColor={gallery.accent_color}
-            isAdmin={!!hasAccess}
-          />
-        ) : (
-          <GalleryEmptyState />
-        )}
-      </div>
+      <GalleryControls
+        selectedCount={selectedImages.length}
+        onClearSelection={clearSelection}
+        onDelete={() => deleteImages(selectedImages)}
+      />
+
+      <GalleryImageGrid
+        products={products || []}
+        selectedImages={selectedImages}
+        onImageSelect={toggleImageSelection}
+      />
+
+      <GalleryDialogs />
     </div>
   );
 };

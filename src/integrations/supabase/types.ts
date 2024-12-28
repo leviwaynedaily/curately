@@ -168,6 +168,7 @@ export type Database = {
           accent_font_color: string | null
           age_verification_enabled: boolean | null
           age_verification_message: string | null
+          age_verification_text: string | null
           business_id: string | null
           button_text: string | null
           created_at: string
@@ -192,6 +193,7 @@ export type Database = {
           accent_font_color?: string | null
           age_verification_enabled?: boolean | null
           age_verification_message?: string | null
+          age_verification_text?: string | null
           business_id?: string | null
           button_text?: string | null
           created_at?: string
@@ -216,6 +218,7 @@ export type Database = {
           accent_font_color?: string | null
           age_verification_enabled?: boolean | null
           age_verification_message?: string | null
+          age_verification_text?: string | null
           business_id?: string | null
           button_text?: string | null
           created_at?: string
