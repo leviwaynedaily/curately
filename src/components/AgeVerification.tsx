@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Shield, Lock } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 interface AgeVerificationProps {
   onVerified: () => void;
@@ -23,6 +25,7 @@ export const AgeVerification = ({
   buttonText
 }: AgeVerificationProps) => {
   const [password, setPassword] = useState("");
+  const [isAgeVerified, setIsAgeVerified] = useState(false);
   const { toast } = useToast();
 
   const { data: storefront, isLoading } = useQuery({
@@ -47,6 +50,13 @@ export const AgeVerification = ({
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAgeVerified) {
+      toast({
+        variant: "destructive",
+        description: "Please confirm you meet the age requirements",
+      });
+      return;
+    }
     if (storefront?.password_required && password !== storefront?.password) {
       toast({
         variant: "destructive",
@@ -99,8 +109,22 @@ export const AgeVerification = ({
             </p>
           </div>
 
-          {storefront?.password_required ? (
-            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+          <form onSubmit={handlePasswordSubmit} className="space-y-6">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="age-verification"
+                checked={isAgeVerified}
+                onCheckedChange={(checked) => setIsAgeVerified(checked as boolean)}
+              />
+              <Label
+                htmlFor="age-verification"
+                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                I confirm that I meet the age requirements
+              </Label>
+            </div>
+
+            {storefront?.password_required && (
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <Lock className="w-4 h-4" />
@@ -113,21 +137,10 @@ export const AgeVerification = ({
                   />
                 </div>
               </div>
-              <Button 
-                type="submit"
-                className="w-full"
-                style={{
-                  backgroundColor: storefront?.accent_color || '#2A6041',
-                  color: storefront?.accent_font_color || '#ffffff'
-                }}
-              >
-                <Shield className="w-4 h-4 mr-2" />
-                {buttonText || storefront?.button_text || "Enter"}
-              </Button>
-            </form>
-          ) : (
+            )}
+
             <Button 
-              onClick={onVerified}
+              type="submit"
               className="w-full"
               style={{
                 backgroundColor: storefront?.accent_color || '#2A6041',
@@ -137,7 +150,7 @@ export const AgeVerification = ({
               <Shield className="w-4 h-4 mr-2" />
               {buttonText || storefront?.button_text || "Enter"}
             </Button>
-          )}
+          </form>
 
           {/* Legal disclaimer moved to bottom */}
           <div className="mt-8 text-center">
