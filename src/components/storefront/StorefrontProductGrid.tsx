@@ -61,16 +61,23 @@ export const StorefrontProductGrid = ({
 
       if (error) throw error;
 
-      toast({
-        description: `Successfully deleted ${selectedProducts.size} product(s)`
-      });
-      
+      // Update the local state to remove deleted products
+      const updatedProducts = products.filter(
+        product => !selectedProducts.has(product.id)
+      );
+
       // Clear selections and exit edit mode
       setSelectedProducts(new Set());
       setIsEditMode(false);
-      
-      // Force reload the page to refresh the products list
-      window.location.reload();
+
+      toast({
+        description: `Successfully deleted ${selectedProducts.size} product(s)`
+      });
+
+      // Trigger a page reload after a short delay to ensure the toast is visible
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error("Error deleting products:", error);
       toast({
@@ -92,7 +99,7 @@ export const StorefrontProductGrid = ({
             }}
           >
             <Edit className="h-4 w-4 mr-2" />
-            {isEditMode ? "Exit Edit Mode" : "Edit Mode"}
+            {isEditMode ? "Exit Edit Multiple Products" : "Edit Multiple Products"}
           </Button>
           {isEditMode && (
             <Button

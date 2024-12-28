@@ -38,35 +38,37 @@ export const StorefrontContent = ({
   return (
     <div className="container mx-auto px-4 py-8">
       <StorefrontHeader storefront={storefront} />
-      <StorefrontFilters
-        searchTerm={searchTerm}
-        onSearchChange={onSearchChange}
-        sortBy={sortBy}
-        onSortChange={onSortChange}
-        categoryFilter={categoryFilter}
-        onCategoryChange={onCategoryChange}
-        categories={categories}
-        viewMode={viewMode}
-        onViewModeChange={onViewModeChange}
-      />
-      {products.length > 0 ? (
-        viewMode === "grid" ? (
-          <StorefrontProductGrid 
-            products={products}
-            accentColor={storefront.accent_color}
-            allowDownload={allowDownload}
-          />
+      <div className="space-y-4">
+        <StorefrontFilters
+          searchTerm={searchTerm}
+          onSearchChange={onSearchChange}
+          sortBy={sortBy}
+          onSortChange={onSortChange}
+          categoryFilter={categoryFilter}
+          onCategoryChange={onCategoryChange}
+          categories={categories}
+          viewMode={viewMode}
+          onViewModeChange={onViewModeChange}
+        />
+        {products.length > 0 ? (
+          viewMode === "grid" ? (
+            <StorefrontProductGrid 
+              products={products}
+              accentColor={storefront.accent_color}
+              allowDownload={allowDownload}
+            />
+          ) : (
+            <StorefrontProductList
+              products={products}
+              accentColor={storefront.accent_color}
+            />
+          )
         ) : (
-          <StorefrontProductList
-            products={products}
-            accentColor={storefront.accent_color}
-          />
-        )
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No products found.</p>
-        </div>
-      )}
+          <div className="text-center py-12">
+            <p className="text-gray-500">No products found.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
