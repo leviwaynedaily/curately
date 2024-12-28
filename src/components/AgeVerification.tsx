@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { Shield, Lock } from "lucide-react";
 
 interface AgeVerificationProps {
   onVerified: () => void;
@@ -64,41 +65,84 @@ export const AgeVerification = ({
     );
   }
 
+  const logoUrl = logo ? supabase.storage.from("gallery_images").getPublicUrl(logo).data.publicUrl : null;
+
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center p-4 space-y-8"
-      style={{
-        backgroundColor: storefront?.primary_color || "#ffffff",
-        color: storefront?.primary_font_color || "#000000",
-      }}
-    >
-      {logo && (
-        <img
-          src={logo}
-          alt="Logo"
-          className="w-32 h-32 object-contain"
-        />
-      )}
+    <div className="fixed inset-0 z-50">
+      {/* Blurred background */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-md"
+        style={{
+          backgroundColor: storefront?.primary_color ? `${storefront.primary_color}80` : 'rgba(0, 0, 0, 0.5)'
+        }}
+      />
 
-      <div className="text-center space-y-4 max-w-md">
-        <h1 className="text-3xl font-bold">{storefront?.heading_text}</h1>
-        <p className="text-xl">{storefront?.subheading_text}</p>
-        <p>{verificationText || storefront?.age_verification_text}</p>
-        <Button onClick={onVerified}>{buttonText || storefront?.button_text || "Enter"}</Button>
+      {/* Content */}
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 space-y-8">
+        <div className="w-full max-w-md bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-2xl space-y-6">
+          {logoUrl && (
+            <div className="flex justify-center mb-8">
+              <img
+                src={logoUrl}
+                alt="Logo"
+                className="w-32 h-32 object-contain"
+              />
+            </div>
+          )}
+
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl font-bold" style={{ color: storefront?.primary_font_color || '#000000' }}>
+              {storefront?.heading_text || "Age Verification Required"}
+            </h1>
+            <p className="text-xl" style={{ color: storefront?.secondary_font_color || '#666666' }}>
+              {storefront?.subheading_text}
+            </p>
+            <p style={{ color: storefront?.secondary_font_color || '#666666' }}>
+              {verificationText || storefront?.age_verification_text}
+            </p>
+          </div>
+
+          {storefront?.password_required ? (
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Lock className="w-4 h-4" />
+                  <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter password"
+                    className="w-full"
+                  />
+                </div>
+              </div>
+              <Button 
+                type="submit"
+                className="w-full"
+                style={{
+                  backgroundColor: storefront?.accent_color || '#2A6041',
+                  color: storefront?.accent_font_color || '#ffffff'
+                }}
+              >
+                <Shield className="w-4 h-4 mr-2" />
+                {buttonText || storefront?.button_text || "Enter"}
+              </Button>
+            </form>
+          ) : (
+            <Button 
+              onClick={onVerified}
+              className="w-full"
+              style={{
+                backgroundColor: storefront?.accent_color || '#2A6041',
+                color: storefront?.accent_font_color || '#ffffff'
+              }}
+            >
+              <Shield className="w-4 h-4 mr-2" />
+              {buttonText || storefront?.button_text || "Enter"}
+            </Button>
+          )}
+        </div>
       </div>
-
-      {storefront?.password_required && (
-        <form onSubmit={handlePasswordSubmit} className="space-y-4">
-          <Input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password"
-            className="w-full"
-          />
-          <Button type="submit">Submit</Button>
-        </form>
-      )}
     </div>
   );
 };
