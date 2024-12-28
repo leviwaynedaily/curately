@@ -71,7 +71,7 @@ const Admin = () => {
           <Tabs defaultValue="businesses">
             <TabsList>
               <TabsTrigger value="businesses">Businesses</TabsTrigger>
-              <TabsTrigger value="galleries">Galleries</TabsTrigger>
+              <TabsTrigger value="galleries">Storefronts</TabsTrigger>
             </TabsList>
             <TabsContent value="businesses" className="mt-6">
               <BusinessList />
