@@ -94,7 +94,7 @@ export const AgeVerificationForm = ({
           {buttonText}
         </Button>
 
-        <p className="text-[13px] text-[#1A1A1A] leading-tight text-center">
+        <p className="text-[13px] text-[#1A1A1A] leading-tight text-justify">
           {subheadingText}
         </p>
       </div>
