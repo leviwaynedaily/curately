@@ -7,7 +7,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const { signOut, user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-neutral/10 to-slate/5">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-neutral/10 to-slate/5">
       <header className="sticky top-0 z-50 w-full border-b bg-white/50 backdrop-blur-sm">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
@@ -35,7 +35,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </header>
       <main className={cn(
-        "container py-6 animate-fade-up",
+        "container py-6 animate-fade-up flex-1",
         "prose prose-slate max-w-none",
         "prose-headings:text-primary prose-headings:font-semibold",
         "prose-p:text-slate prose-p:leading-relaxed",
@@ -44,6 +44,11 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       )}>
         {children}
       </main>
+      <footer className="py-4 border-t bg-white/50 backdrop-blur-sm">
+        <div className="container text-center text-sm text-slate">
+          Copyright © {new Date().getFullYear()} Curately. All rights reserved.
+        </div>
+      </footer>
     </div>
   );
 };
