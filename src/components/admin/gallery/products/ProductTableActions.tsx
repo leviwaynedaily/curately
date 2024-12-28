@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Download, Upload, ExternalLink } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Download, Upload, ExternalLink, X } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 type ProductTableActionsProps = {
   onExport: () => void;
@@ -14,6 +14,16 @@ export const ProductTableActions = ({
   galleryId,
 }: ProductTableActionsProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isFullPage = location.pathname.includes("/admin/galleries/");
+
+  const handlePageToggle = () => {
+    if (isFullPage) {
+      navigate(-1); // Go back to previous page
+    } else {
+      navigate(`/admin/galleries/${galleryId}/products`);
+    }
+  };
 
   return (
     <div className="flex flex-wrap gap-4">
@@ -36,10 +46,19 @@ export const ProductTableActions = ({
       <Button
         variant="outline"
         className="flex items-center gap-2"
-        onClick={() => navigate(`/admin/galleries/${galleryId}/products`)}
+        onClick={handlePageToggle}
       >
-        <ExternalLink className="h-4 w-4" />
-        Open Full Page
+        {isFullPage ? (
+          <>
+            <X className="h-4 w-4" />
+            Close Full Page
+          </>
+        ) : (
+          <>
+            <ExternalLink className="h-4 w-4" />
+            Open Full Page
+          </>
+        )}
       </Button>
     </div>
   );
