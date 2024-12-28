@@ -27,6 +27,8 @@ export const GalleryForm = ({
     gallery,
   });
 
+  console.log("Gallery in form:", gallery); // Added for debugging
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-h-[90vh] overflow-hidden flex flex-col">
@@ -39,6 +41,7 @@ export const GalleryForm = ({
             isLoading={isLoading}
             onSubmit={handleSubmit}
             onCancel={onClose}
+            galleryId={gallery?.id}
           />
         </div>
       </DialogContent>
