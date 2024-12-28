@@ -6,6 +6,8 @@ interface AgeVerificationProps {
   logo?: string | null;
   verificationText?: string | null;
   buttonText?: string | null;
+  error?: string | null;
+  onError?: (error: string | null) => void;
 }
 
 export const AgeVerification = (props: AgeVerificationProps) => {

@@ -10,6 +10,8 @@ interface AgeVerificationContainerProps {
   logo?: string | null;
   verificationText?: string | null;
   buttonText?: string | null;
+  error?: string | null;
+  onError?: (error: string | null) => void;
 }
 
 export const AgeVerificationContainer = ({
@@ -18,8 +20,10 @@ export const AgeVerificationContainer = ({
   logo,
   verificationText,
   buttonText,
+  error: initialError,
+  onError,
 }: AgeVerificationContainerProps) => {
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError || null);
 
   const { data: storefront, isLoading } = useQuery({
     queryKey: ["storefronts", id],
@@ -43,9 +47,13 @@ export const AgeVerificationContainer = ({
 
   const handleVerify = (password?: string) => {
     if (storefront?.password_required && password !== storefront?.password) {
-      setError("Incorrect password");
+      const errorMessage = "Incorrect password";
+      setError(errorMessage);
+      onError?.(errorMessage);
       return;
     }
+    setError(null);
+    onError?.(null);
     onVerified();
   };
 
