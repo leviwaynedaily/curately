@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Download, Upload, ExternalLink, X } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Download, Upload, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type ProductTableActionsProps = {
   onExport: () => void;
@@ -14,19 +14,17 @@ export const ProductTableActions = ({
   galleryId,
 }: ProductTableActionsProps) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const isFullPage = location.pathname.includes("/products");
-
-  const handlePageToggle = () => {
-    if (isFullPage) {
-      navigate("/admin");
-    } else {
-      navigate(`/admin/products/${galleryId}`);
-    }
-  };
 
   return (
     <div className="flex flex-wrap gap-4">
+      <Button 
+        variant="outline" 
+        onClick={() => navigate('/admin')}
+        className="flex items-center gap-2"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Galleries
+      </Button>
       <Button onClick={onExport} className="flex items-center gap-2">
         <Download className="h-4 w-4" />
         Export CSV
@@ -43,23 +41,6 @@ export const ProductTableActions = ({
           Import CSV
         </Button>
       </div>
-      <Button
-        variant="outline"
-        className="flex items-center gap-2"
-        onClick={handlePageToggle}
-      >
-        {isFullPage ? (
-          <>
-            <X className="h-4 w-4" />
-            Close Full Page
-          </>
-        ) : (
-          <>
-            <ExternalLink className="h-4 w-4" />
-            Open Full Page
-          </>
-        )}
-      </Button>
     </div>
   );
 };
