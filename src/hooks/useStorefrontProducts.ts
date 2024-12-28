@@ -7,6 +7,11 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
     queryKey: ["storefront-products", storefrontId],
     queryFn: async () => {
       console.log("Fetching products for storefront view:", storefrontId);
+      
+      if (!storefrontId) {
+        throw new Error("No storefront ID provided");
+      }
+
       const { data, error } = await supabase
         .from("products")
         .select(`

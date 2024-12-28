@@ -34,7 +34,15 @@ const StorefrontView = () => {
   const {
     data: products = [],
     isLoading: isProductsLoading,
+    error: productsError
   } = useStorefrontProducts(storefrontId, isVerified);
+
+  console.log("Products loading state:", {
+    isProductsLoading,
+    productsCount: products?.length,
+    storefrontId,
+    isVerified
+  });
 
   const filteredAndSortedProducts = useProductFiltering(
     products,
@@ -47,19 +55,11 @@ const StorefrontView = () => {
     new Set(products.map(p => p.category).filter(Boolean))
   );
 
-  console.log("Storefront verification state:", {
-    isVerified,
-    isVerificationLoading,
-    storefrontId,
-    hasStorefront: !!storefront,
-    ageVerificationEnabled: storefront?.age_verification_enabled
-  });
-
-  if (isVerificationLoading || isStorefrontLoading) {
+  if (isVerificationLoading || isStorefrontLoading || isProductsLoading) {
     return <StorefrontLoadingSkeleton />;
   }
 
-  if (storefrontError) {
+  if (storefrontError || productsError) {
     return <StorefrontError />;
   }
 
@@ -69,7 +69,6 @@ const StorefrontView = () => {
 
   // If age verification is enabled and user is not verified, show verification screen
   if (storefront.age_verification_enabled && !isVerified) {
-    console.log("Showing age verification screen");
     return (
       <AgeVerification
         onVerified={handleVerified}
