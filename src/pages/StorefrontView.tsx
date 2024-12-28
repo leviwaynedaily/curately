@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useStorefront } from "@/hooks/useStorefront";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { AgeVerification } from "@/components/AgeVerification";
 import { Button } from "@/components/ui/button";
 import { Home, AlertCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
 import { StorefrontHeader } from "@/components/storefront/StorefrontHeader";
 import { StorefrontFilters } from "@/components/storefront/StorefrontFilters";
 import { StorefrontProductGrid } from "@/components/storefront/StorefrontProductGrid";
 import { StorefrontLoadingSkeleton } from "@/components/storefront/StorefrontLoadingSkeleton";
+import { Product } from "@/components/admin/gallery/products/types";
 
 const StorefrontView = () => {
   const { storefrontId } = useParams();
@@ -22,15 +25,76 @@ const StorefrontView = () => {
   const { 
     storefront, 
     isLoading: isStorefrontLoading, 
-    error: storefrontError,
-    deleteImage, 
-    refetchStorefront 
+    error: storefrontError 
   } = useStorefront(storefrontId);
+
+  // Fetch products
+  const { data: products = [], isLoading: isProductsLoading } = useQuery({
+    queryKey: ["products", storefrontId],
+    queryFn: async () => {
+      console.log("Fetching products for storefront:", storefrontId);
+      const { data, error } = await supabase
+        .from("products")
+        .select(`
+          *,
+          product_media (*)
+        `)
+        .eq("storefront_id", storefrontId)
+        .eq("status", "active");
+
+      if (error) {
+        console.error("Error fetching products:", error);
+        throw error;
+      }
+
+      console.log("Products fetched:", data);
+      return data.map((product: Product) => ({
+        ...product,
+        primary_media: product.product_media?.find(media => media.is_primary)?.file_path
+      }));
+    },
+    enabled: !!storefrontId,
+  });
+
+  // Filter and sort products
+  const filteredAndSortedProducts = products.filter(product => {
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        product.name?.toLowerCase().includes(searchLower) ||
+        product.description?.toLowerCase().includes(searchLower) ||
+        product.category?.toLowerCase().includes(searchLower)
+      );
+    }
+    if (categoryFilter !== "all") {
+      return product.category === categoryFilter;
+    }
+    return true;
+  }).sort((a, b) => {
+    switch (sortBy) {
+      case "newest":
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      case "oldest":
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      case "price_asc":
+        return (a.price || 0) - (b.price || 0);
+      case "price_desc":
+        return (b.price || 0) - (a.price || 0);
+      case "name_asc":
+        return a.name.localeCompare(b.name);
+      case "name_desc":
+        return b.name.localeCompare(a.name);
+      default:
+        return 0;
+    }
+  });
+
+  // Get unique categories from products
+  const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean)));
 
   useEffect(() => {
     const ageVerified = localStorage.getItem("age-verified") === "true";
     const authenticated = localStorage.getItem(`gallery-${storefrontId}-auth`) === "true";
-    
     setIsVerified(ageVerified && authenticated);
     setIsLoading(false);
   }, [storefrontId]);
@@ -76,11 +140,7 @@ const StorefrontView = () => {
     setIsVerified(true);
   };
 
-  const handleUploadComplete = async () => {
-    await refetchStorefront();
-  };
-
-  if (isLoading || isStorefrontLoading) {
+  if (isLoading || isStorefrontLoading || isProductsLoading) {
     return <StorefrontLoadingSkeleton />;
   }
 
@@ -130,10 +190,10 @@ const StorefrontView = () => {
           onSortChange={setSortBy}
           categoryFilter={categoryFilter}
           onCategoryChange={setCategoryFilter}
-          categories={[]}
+          categories={categories}
         />
         <StorefrontProductGrid 
-          products={[]}
+          products={filteredAndSortedProducts}
           accentColor={storefront.accent_color}
         />
       </div>
