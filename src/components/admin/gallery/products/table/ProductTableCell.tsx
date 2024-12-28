@@ -11,6 +11,7 @@ type ProductTableCellProps = {
   isEditing: boolean;
   onEdit: () => void;
   onChange: (value: any) => void;
+  onSave?: () => void;  // Added onSave prop
   className?: string;
 };
 
@@ -20,11 +21,19 @@ export const ProductTableCell = ({
   isEditing,
   onEdit,
   onChange,
+  onSave,  // Added onSave prop
   className,
 }: ProductTableCellProps) => {
   const handleDoubleClick = () => {
     if (!isEditing) {
       onEdit();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      onSave?.();
     }
   };
 
@@ -35,6 +44,7 @@ export const ProductTableCell = ({
           <Textarea
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="w-full min-h-[60px]"
           />
         </TableCell>
@@ -48,6 +58,7 @@ export const ProductTableCell = ({
             type="number"
             value={value || ""}
             onChange={(e) => onChange(field === "price" ? parseFloat(e.target.value) : parseInt(e.target.value))}
+            onKeyDown={handleKeyDown}
             className="w-full"
           />
         </TableCell>
@@ -76,6 +87,7 @@ export const ProductTableCell = ({
         <Input
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="w-full"
         />
       </TableCell>

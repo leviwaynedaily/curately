@@ -60,6 +60,7 @@ export const ProductTableRow = ({
             isEditing={isEditing}
             onEdit={handleCellEdit}
             onChange={handleCellChange("name")}
+            onSave={onSave}
             className="flex-1"
           />
         </div>
@@ -73,6 +74,7 @@ export const ProductTableRow = ({
           isEditing={isEditing}
           onEdit={handleCellEdit}
           onChange={handleCellChange(field as keyof Product)}
+          onSave={onSave}
           className={field === "description" ? "max-w-md" : ""}
         />
       ))}
