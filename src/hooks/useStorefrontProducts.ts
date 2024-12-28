@@ -13,24 +13,10 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
         throw new Error("No storefront ID provided");
       }
 
-      // First verify the storefront exists
-      const { data: storefront, error: storefrontError } = await supabase
-        .from("storefronts")
-        .select("id")
-        .eq("id", storefrontId)
-        .maybeSingle();
-
-      if (storefrontError) {
-        console.error("Error verifying storefront:", storefrontError);
-        throw storefrontError;
+      if (!isVerified) {
+        console.log("User not verified yet, skipping product fetch");
+        return [];
       }
-
-      if (!storefront) {
-        console.error("Storefront not found:", storefrontId);
-        throw new Error("Storefront not found");
-      }
-
-      console.log("Storefront verified, fetching products");
 
       // Fetch active products with their media
       const { data, error } = await supabase
@@ -40,6 +26,7 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
           product_media (
             id,
             file_path,
+            media_type,
             is_primary
           )
         `)

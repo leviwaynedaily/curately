@@ -43,7 +43,8 @@ const StorefrontView = () => {
     isVerified,
     productsCount: products?.length,
     isLoading: isProductsLoading,
-    error: productsError
+    error: productsError,
+    products
   });
 
   const filteredAndSortedProducts = useProductFiltering(
@@ -57,7 +58,7 @@ const StorefrontView = () => {
     new Set(products.map(p => p.category).filter(Boolean))
   );
 
-  if (isVerificationLoading || isStorefrontLoading || isProductsLoading) {
+  if (isVerificationLoading || isStorefrontLoading) {
     return <StorefrontLoadingSkeleton />;
   }
 
@@ -86,7 +87,7 @@ const StorefrontView = () => {
   }
 
   return (
-    <div className="relative">
+    <div className="min-h-screen bg-gray-50">
       <StorefrontContent
         storefront={storefront}
         products={filteredAndSortedProducts}
