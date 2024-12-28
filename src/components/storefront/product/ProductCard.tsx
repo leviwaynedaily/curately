@@ -90,9 +90,9 @@ export const ProductCard = ({
               <span 
                 className="inline-block px-2 py-1 text-xs rounded-full whitespace-nowrap"
                 style={{ 
-                  backgroundColor: `${accentColor}15`,
-                  color: accentColor,
-                  border: `1px solid ${accentColor}30`
+                  backgroundColor: `#7E69AB15`,
+                  color: '#7E69AB',
+                  border: `1px solid #7E69AB30`
                 }}
               >
                 {product.category}
