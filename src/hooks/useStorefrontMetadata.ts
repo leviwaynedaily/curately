@@ -6,12 +6,17 @@ export const useStorefrontMetadata = (storefront: Storefront | null) => {
   useEffect(() => {
     if (storefront) {
       console.log("Setting page title and favicon for storefront:", storefront);
+      
+      // Set page title
       document.title = storefront.page_title || storefront.name || "Gallery";
 
+      // Set favicon if available
       if (storefront.favicon) {
         const faviconUrl = supabase.storage
           .from("gallery_images")
           .getPublicUrl(storefront.favicon).data.publicUrl;
+        
+        console.log("Setting favicon URL:", faviconUrl);
         
         const existingFavicon = document.querySelector("link[rel='icon']");
         if (existingFavicon) {
@@ -25,6 +30,7 @@ export const useStorefrontMetadata = (storefront: Storefront | null) => {
       }
 
       return () => {
+        // Cleanup: Reset to default values
         document.title = "Curately - Digital Gallery Platform";
         const existingFavicon = document.querySelector("link[rel='icon']");
         if (existingFavicon) {

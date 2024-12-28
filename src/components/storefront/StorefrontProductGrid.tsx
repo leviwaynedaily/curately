@@ -11,6 +11,13 @@ type StorefrontProductGridProps = {
 export const StorefrontProductGrid = ({ products, accentColor }: StorefrontProductGridProps) => {
   console.log("Rendering product grid with:", { productCount: products.length, products });
   
+  const getImageUrl = (path: string | null) => {
+    if (!path) return null;
+    return supabase.storage
+      .from("gallery_images")
+      .getPublicUrl(path).data.publicUrl;
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product) => (
@@ -19,7 +26,7 @@ export const StorefrontProductGrid = ({ products, accentColor }: StorefrontProdu
             <div className="aspect-square overflow-hidden bg-gray-100">
               {product.primary_media ? (
                 <img
-                  src={supabase.storage.from("product_media").getPublicUrl(product.primary_media).data.publicUrl}
+                  src={getImageUrl(product.primary_media)}
                   alt={product.name}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
