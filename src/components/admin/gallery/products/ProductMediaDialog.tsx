@@ -29,12 +29,16 @@ export const ProductMediaDialog = ({
     handleFileUpload,
     handleDelete,
     setPrimaryMedia,
-  } = useProductMedia(product.id, onMediaUpdate);
+  } = useProductMedia(product.id, () => {
+    // Call onMediaUpdate after any media changes
+    onMediaUpdate();
+    fetchMedia();
+  });
 
   const handleInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
-      handleFileUpload(files);
+      await handleFileUpload(files);
     }
   };
 
