@@ -55,9 +55,18 @@
   }
 
   /* Custom checkbox styles */
+  [type="checkbox"] {
+    @apply h-6 w-6 rounded-sm border-2 cursor-pointer transition-all duration-200;
+  }
+
   [type="checkbox"]:checked {
     background-color: var(--checkbox-color, theme('colors.accent.DEFAULT'));
     border-color: var(--checkbox-color, theme('colors.accent.DEFAULT'));
+  }
+
+  [type="checkbox"]:focus {
+    @apply outline-none ring-2 ring-offset-2;
+    ring-color: var(--checkbox-color, theme('colors.accent.DEFAULT'));
   }
 }
 

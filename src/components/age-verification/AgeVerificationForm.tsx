@@ -52,7 +52,7 @@ export const AgeVerificationForm = ({
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-start space-x-2">
+        <div className="flex items-start space-x-3">
           <Checkbox
             id="age-verification"
             checked={isChecked}
@@ -62,7 +62,7 @@ export const AgeVerificationForm = ({
           />
           <Label
             htmlFor="age-verification"
-            className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="text-sm leading-none pt-1 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             {verificationText}
           </Label>
