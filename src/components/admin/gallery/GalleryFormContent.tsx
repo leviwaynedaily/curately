@@ -1,5 +1,4 @@
 import { Form } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { GalleryNameField } from "./GalleryNameField";
 import { GalleryBusinessField } from "./GalleryBusinessField";
@@ -49,34 +48,6 @@ export const GalleryFormContent = ({
               <GalleryNameField form={form} />
               <GalleryBusinessField form={form} />
               <GalleryDescriptionField form={form} />
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="page_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Page Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter page title" {...field} value={field.value || ''} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="favicon"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Favicon</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter favicon URL" {...field} value={field.value || ''} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
             </TabsContent>
             
             <TabsContent value="verification" className="space-y-4 mt-0">

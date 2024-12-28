@@ -3,6 +3,7 @@ import { GalleryFormValues } from "@/lib/validations/gallery";
 import { GalleryLogosSection } from "./customization/GalleryLogosSection";
 import { GalleryBackgroundColorsSection } from "./customization/GalleryBackgroundColorsSection";
 import { GalleryFontColorsSection } from "./customization/GalleryFontColorsSection";
+import { GallerySiteSettingsSection } from "./customization/GallerySiteSettingsSection";
 
 type GalleryCustomizationFieldsProps = {
   form: UseFormReturn<GalleryFormValues>;
@@ -12,7 +13,10 @@ export const GalleryCustomizationFields = ({ form }: GalleryCustomizationFieldsP
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-2 gap-8">
-        <GalleryLogosSection form={form} />
+        <div className="space-y-8">
+          <GalleryLogosSection form={form} />
+          <GallerySiteSettingsSection form={form} />
+        </div>
         <div className="space-y-8">
           <GalleryBackgroundColorsSection form={form} />
           <GalleryFontColorsSection form={form} />
