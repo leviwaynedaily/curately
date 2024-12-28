@@ -17,11 +17,11 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
   const { toast } = useToast();
 
   const { data: galleries, isLoading } = useQuery({
-    queryKey: ["galleries", businessId, searchQuery],
+    queryKey: ["storefronts", businessId, searchQuery],
     queryFn: async () => {
-      console.log("Fetching galleries...");
+      console.log("Fetching storefronts...");
       let query = supabase
-        .from("galleries")
+        .from("storefronts")
         .select(`
           *,
           businesses (
@@ -41,11 +41,11 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
       const { data, error } = await query;
 
       if (error) {
-        console.error("Error fetching galleries:", error);
+        console.error("Error fetching storefronts:", error);
         throw error;
       }
 
-      console.log("Galleries fetched:", data);
+      console.log("Storefronts fetched:", data);
       return data;
     },
   });
@@ -59,22 +59,22 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
     if (!galleryToDelete) return;
 
     try {
-      console.log("Deleting gallery:", galleryToDelete.id);
+      console.log("Deleting storefront:", galleryToDelete.id);
       const { error } = await supabase
-        .from("galleries")
+        .from("storefronts")
         .delete()
         .eq("id", galleryToDelete.id);
 
       if (error) throw error;
 
-      queryClient.invalidateQueries({ queryKey: ["galleries"] });
-      toast({ description: "Gallery deleted successfully" });
-      console.log("Gallery deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["storefronts"] });
+      toast({ description: "Storefront deleted successfully" });
+      console.log("Storefront deleted successfully");
     } catch (error) {
-      console.error("Error deleting gallery:", error);
+      console.error("Error deleting storefront:", error);
       toast({
         variant: "destructive",
-        description: "There was an error deleting the gallery",
+        description: "There was an error deleting the storefront",
       });
     } finally {
       setGalleryToDelete(null);
@@ -82,14 +82,14 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
   };
 
   if (isLoading) {
-    return <div>Loading galleries...</div>;
+    return <div>Loading storefronts...</div>;
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Galleries</h2>
-        <Button onClick={() => setIsFormOpen(true)}>Add Gallery</Button>
+        <h2 className="text-xl font-semibold">Storefronts</h2>
+        <Button onClick={() => setIsFormOpen(true)}>Add Storefront</Button>
       </div>
 
       <GallerySearch value={searchQuery} onChange={setSearchQuery} />

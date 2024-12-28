@@ -14,12 +14,12 @@ export const AgeVerification = ({ onVerified, tenantId }: AgeVerificationProps) 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: gallery } = useQuery({
-    queryKey: ["gallery-verification", tenantId],
+  const { data: storefront } = useQuery({
+    queryKey: ["storefront-verification", tenantId],
     queryFn: async () => {
-      console.log("Fetching gallery verification settings for ID:", tenantId);
+      console.log("Fetching storefront verification settings for ID:", tenantId);
       const { data, error } = await supabase
-        .from("galleries")
+        .from("storefronts")
         .select(`
           logo,
           heading_text,
@@ -35,14 +35,14 @@ export const AgeVerification = ({ onVerified, tenantId }: AgeVerificationProps) 
           password
         `)
         .eq("id", tenantId)
-        .single();
+        .maybeSingle();
 
       if (error) {
-        console.error("Error fetching gallery verification settings:", error);
+        console.error("Error fetching storefront verification settings:", error);
         throw error;
       }
 
-      console.log("Gallery verification settings:", data);
+      console.log("Storefront verification settings:", data);
       return data;
     },
   });
@@ -52,13 +52,13 @@ export const AgeVerification = ({ onVerified, tenantId }: AgeVerificationProps) 
     setError(null);
     
     try {
-      if (gallery?.password_required && gallery.password) {
+      if (storefront?.password_required && storefront.password) {
         if (!password) {
           setError("Password is required");
           return;
         }
         
-        if (password !== gallery.password) {
+        if (password !== storefront.password) {
           setError("Incorrect password");
           return;
         }
@@ -73,23 +73,21 @@ export const AgeVerification = ({ onVerified, tenantId }: AgeVerificationProps) 
 
   return (
     <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
-      {/* Blurred background overlay */}
       <div className="absolute inset-0 backdrop-blur-md bg-black/30" />
       
-      {/* White verification window with border */}
       <div className="relative w-full max-w-md bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
         <div className="p-6 space-y-8">
-          {gallery?.logo && <AgeVerificationLogo logo={gallery.logo} />}
+          {storefront?.logo && <AgeVerificationLogo logo={storefront.logo} />}
           
           <AgeVerificationForm
             isLoading={isLoading}
             onVerify={handleVerification}
-            headingText={gallery?.heading_text || "Age Verification Required"}
-            subheadingText={gallery?.subheading_text || "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content."}
-            verificationText={gallery?.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy."}
-            buttonText={gallery?.button_text || "Enter Site"}
-            accentColor={gallery?.accent_font_color || '#8B5CF6'}
-            passwordRequired={gallery?.password_required || false}
+            headingText={storefront?.heading_text || "Age Verification Required"}
+            subheadingText={storefront?.subheading_text || "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content."}
+            verificationText={storefront?.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy."}
+            buttonText={storefront?.button_text || "Enter Site"}
+            accentColor={storefront?.accent_font_color || '#8B5CF6'}
+            passwordRequired={storefront?.password_required || false}
             error={error}
           />
         </div>

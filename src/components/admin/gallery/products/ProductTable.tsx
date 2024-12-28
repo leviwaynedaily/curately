@@ -1,7 +1,7 @@
+import { useState } from "react";
 import { Table, TableBody } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
 import { ProductTableHeader } from "./ProductTableHeader";
 import { ProductTableRow } from "./ProductTableRow";
 import { ProductTableActions } from "./ProductTableActions";
@@ -9,13 +9,13 @@ import { ProductMediaDialog } from "./ProductMediaDialog";
 import { Product } from "./types";
 
 type ProductTableProps = {
-  galleryId: string;
+  storefrontId: string;
   products: Product[];
   onProductUpdate: () => void;
 };
 
 export const ProductTable = ({
-  galleryId,
+  storefrontId,
   products,
   onProductUpdate,
 }: ProductTableProps) => {
@@ -128,7 +128,7 @@ export const ProductTable = ({
 
         // Skip header row
         const products = rows.slice(1).map((row) => ({
-          gallery_id: galleryId,
+          storefront_id: storefrontId,
           name: row[0],
           description: row[1] || null,
           price: row[2] ? parseFloat(row[2]) : null,
@@ -160,7 +160,7 @@ export const ProductTable = ({
       <ProductTableActions
         onExport={handleExport}
         onImport={handleImport}
-        galleryId={galleryId}
+        galleryId={storefrontId}
       />
 
       <div className="rounded-md border overflow-x-auto">

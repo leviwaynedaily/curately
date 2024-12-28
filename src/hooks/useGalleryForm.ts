@@ -96,10 +96,9 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
     setIsLoading(true);
     console.log("Submitting gallery form...", values);
 
-    // Remove currentTab from values before sending to API and ensure required fields
     const { currentTab, ...rest } = values;
     const sanitizedValues = {
-      name: values.name, // This is required
+      name: values.name,
       status: values.status || "active",
       business_id: values.business_id,
       password: values.password,
@@ -123,30 +122,30 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
     try {
       if (gallery?.id) {
         const { error } = await supabase
-          .from("galleries")
+          .from("storefronts")
           .update(sanitizedValues)
           .eq("id", gallery.id);
 
         if (error) throw error;
-        console.log("Gallery updated successfully");
-        toast({ description: "Gallery updated successfully" });
+        console.log("Storefront updated successfully");
+        toast({ description: "Storefront updated successfully" });
       } else {
         const { error } = await supabase
-          .from("galleries")
+          .from("storefronts")
           .insert(sanitizedValues);
 
         if (error) throw error;
-        console.log("Gallery created successfully");
-        toast({ description: "Gallery created successfully" });
+        console.log("Storefront created successfully");
+        toast({ description: "Storefront created successfully" });
       }
 
-      queryClient.invalidateQueries({ queryKey: ["galleries"] });
+      queryClient.invalidateQueries({ queryKey: ["storefronts"] });
       onClose();
     } catch (error) {
-      console.error("Error saving gallery:", error);
+      console.error("Error saving storefront:", error);
       toast({
         variant: "destructive",
-        description: "There was an error saving the gallery",
+        description: "There was an error saving the storefront",
       });
     } finally {
       setIsLoading(false);

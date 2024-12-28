@@ -7,14 +7,14 @@ export const useGallery = (galleryId: string | undefined) => {
   const { toast } = useToast();
 
   const { data: gallery, isLoading, error, refetch } = useQuery({
-    queryKey: ["gallery", galleryId],
+    queryKey: ["storefront", galleryId],
     queryFn: async () => {
       if (!galleryId) {
-        console.log("No gallery ID provided");
-        throw new Error("Gallery ID is required");
+        console.log("No storefront ID provided");
+        throw new Error("Storefront ID is required");
       }
 
-      console.log("Fetching gallery details for ID:", galleryId);
+      console.log("Fetching storefront details for ID:", galleryId);
       const { data, error } = await supabase
         .from("storefronts")
         .select(`
@@ -44,16 +44,16 @@ export const useGallery = (galleryId: string | undefined) => {
         .maybeSingle();
 
       if (error) {
-        console.error("Error fetching gallery:", error);
+        console.error("Error fetching storefront:", error);
         throw error;
       }
 
       if (!data) {
-        console.log("No gallery found with ID:", galleryId);
+        console.log("No storefront found with ID:", galleryId);
         return null;
       }
 
-      console.log("Successfully fetched gallery:", data);
+      console.log("Successfully fetched storefront:", data);
       return data as Gallery;
     },
     retry: false,
@@ -69,7 +69,6 @@ export const useGallery = (galleryId: string | undefined) => {
 
       if (error) throw error;
 
-      // Also delete from storage
       const { error: storageError } = await supabase.storage
         .from("gallery_images")
         .remove([image.filePath]);
