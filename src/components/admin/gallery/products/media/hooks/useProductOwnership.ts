@@ -12,7 +12,7 @@ export const useProductOwnership = () => {
 
     console.log("Verifying product ownership for:", productId);
     
-    // First, get the product and its related storefront and business
+    // Query to check if the authenticated user owns the business that owns the gallery that owns the product
     const { data, error } = await supabase
       .from("products")
       .select(`
