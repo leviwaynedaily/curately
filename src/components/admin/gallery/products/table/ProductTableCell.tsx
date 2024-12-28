@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Product } from "../types";
+import { cn } from "@/lib/utils";
 
 type ProductTableCellProps = {
   field: keyof Product;
@@ -10,6 +11,7 @@ type ProductTableCellProps = {
   isEditing: boolean;
   onEdit: () => void;
   onChange: (value: any) => void;
+  className?: string;
 };
 
 export const ProductTableCell = ({
@@ -18,6 +20,7 @@ export const ProductTableCell = ({
   isEditing,
   onEdit,
   onChange,
+  className,
 }: ProductTableCellProps) => {
   const handleDoubleClick = () => {
     if (!isEditing) {
@@ -28,7 +31,7 @@ export const ProductTableCell = ({
   if (isEditing) {
     if (field === "description") {
       return (
-        <TableCell>
+        <TableCell className={cn("min-w-[300px]", className)}>
           <Textarea
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
@@ -40,7 +43,7 @@ export const ProductTableCell = ({
 
     if (field === "price" || field === "stock_quantity") {
       return (
-        <TableCell>
+        <TableCell className={className}>
           <Input
             type="number"
             value={value || ""}
@@ -53,7 +56,7 @@ export const ProductTableCell = ({
 
     if (field === "status") {
       return (
-        <TableCell>
+        <TableCell className={className}>
           <Select value={value || ""} onValueChange={onChange}>
             <SelectTrigger>
               <SelectValue />
@@ -69,7 +72,7 @@ export const ProductTableCell = ({
     }
 
     return (
-      <TableCell>
+      <TableCell className={className}>
         <Input
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
@@ -80,7 +83,10 @@ export const ProductTableCell = ({
   }
 
   return (
-    <TableCell onDoubleClick={handleDoubleClick} className="cursor-pointer">
+    <TableCell 
+      onDoubleClick={handleDoubleClick} 
+      className={cn("cursor-pointer", className)}
+    >
       {field === "status" ? (
         <span className={`capitalize ${value === 'active' ? 'text-green-600' : 'text-gray-500'}`}>
           {value}

@@ -26,6 +26,7 @@ export const ProductTable = ({
   const [sortField, setSortField] = useState<keyof Product | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc" | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showHiddenFields, setShowHiddenFields] = useState(false);
   const { toast } = useToast();
 
   const handleEdit = (product: Product) => {
@@ -225,6 +226,8 @@ export const ProductTable = ({
             onSort={handleSort}
             sortField={sortField}
             sortDirection={sortDirection}
+            showHiddenFields={showHiddenFields}
+            onToggleHiddenFields={() => setShowHiddenFields(!showHiddenFields)}
           />
           <TableBody>
             {filteredAndSortedProducts.map((product) => (
@@ -239,6 +242,7 @@ export const ProductTable = ({
                 onDelete={handleDelete}
                 onProductChange={handleProductChange}
                 onMediaClick={setSelectedProduct}
+                showHiddenFields={showHiddenFields}
               />
             ))}
           </TableBody>

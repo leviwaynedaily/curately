@@ -15,6 +15,7 @@ type ProductTableRowProps = {
   onDelete: (id: string) => void;
   onProductChange: (field: keyof Product, value: any) => void;
   onMediaClick: (product: Product) => void;
+  showHiddenFields: boolean;
 };
 
 export const ProductTableRow = ({
@@ -27,6 +28,7 @@ export const ProductTableRow = ({
   onDelete,
   onProductChange,
   onMediaClick,
+  showHiddenFields,
 }: ProductTableRowProps) => {
   const handleCellChange = (field: keyof Product) => (value: any) => {
     onProductChange(field, value);
@@ -37,6 +39,12 @@ export const ProductTableRow = ({
       onEdit(product);
     }
   };
+
+  const visibleFields = ["name", "description", "price"];
+  if (showHiddenFields) {
+    visibleFields.push("sku", "stock_quantity");
+  }
+  visibleFields.push("category", "status");
 
   return (
     <TableRow>
@@ -49,18 +57,20 @@ export const ProductTableRow = ({
             isEditing={isEditing}
             onEdit={handleCellEdit}
             onChange={handleCellChange("name")}
+            className="flex-1"
           />
         </div>
       </TableCell>
 
-      {(["description", "price", "sku", "category", "stock_quantity", "status"] as const).map((field) => (
+      {visibleFields.slice(1).map((field) => (
         <ProductTableCell
           key={field}
-          field={field}
-          value={isEditing ? editedProduct?.[field] : product[field]}
+          field={field as keyof Product}
+          value={isEditing ? editedProduct?.[field as keyof Product] : product[field as keyof Product]}
           isEditing={isEditing}
           onEdit={handleCellEdit}
-          onChange={handleCellChange(field)}
+          onChange={handleCellChange(field as keyof Product)}
+          className={field === "description" ? "max-w-md" : ""}
         />
       ))}
 
