@@ -96,8 +96,29 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
     setIsLoading(true);
     console.log("Submitting gallery form...", values);
 
-    // Remove currentTab from values before sending to API
-    const { currentTab, ...sanitizedValues } = values;
+    // Remove currentTab from values before sending to API and ensure required fields
+    const { currentTab, ...rest } = values;
+    const sanitizedValues = {
+      name: values.name, // This is required
+      status: values.status || "active",
+      business_id: values.business_id,
+      password: values.password,
+      logo: values.logo,
+      site_logo: values.site_logo,
+      description: values.description,
+      primary_color: values.primary_color,
+      secondary_color: values.secondary_color,
+      accent_color: values.accent_color,
+      primary_font_color: values.primary_font_color,
+      secondary_font_color: values.secondary_font_color,
+      accent_font_color: values.accent_font_color,
+      heading_text: values.heading_text,
+      subheading_text: values.subheading_text,
+      age_verification_text: values.age_verification_text,
+      button_text: values.button_text,
+      age_verification_enabled: values.age_verification_enabled,
+      password_required: values.password_required,
+    };
 
     try {
       if (gallery?.id) {
