@@ -2,16 +2,23 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useStorefront } from "@/hooks/useStorefront";
 import { AgeVerification } from "@/components/AgeVerification";
-import { GalleryContent } from "@/components/gallery/GalleryContent";
 import { Button } from "@/components/ui/button";
 import { Home, AlertCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
+import { StorefrontHeader } from "@/components/storefront/StorefrontHeader";
+import { StorefrontFilters } from "@/components/storefront/StorefrontFilters";
+import { StorefrontProductGrid } from "@/components/storefront/StorefrontProductGrid";
+import { StorefrontLoadingSkeleton } from "@/components/storefront/StorefrontLoadingSkeleton";
 
 const StorefrontView = () => {
   const { storefrontId } = useParams();
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+
   const { 
     storefront, 
     isLoading: isStorefrontLoading, 
@@ -74,12 +81,7 @@ const StorefrontView = () => {
   };
 
   if (isLoading || isStorefrontLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
-        <div className="animate-pulse text-xl text-gray-600 mb-4">Loading storefront...</div>
-        <div className="w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
+    return <StorefrontLoadingSkeleton />;
   }
 
   if (storefrontError) {
@@ -119,12 +121,22 @@ const StorefrontView = () => {
 
   return (
     <div className="relative">
-      <GalleryContent
-        gallery={storefront}
-        galleryId={storefrontId as string}
-        onDeleteImage={deleteImage}
-        onUploadComplete={handleUploadComplete}
-      />
+      <div className="container mx-auto px-4 py-8">
+        <StorefrontHeader storefront={storefront} />
+        <StorefrontFilters
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          categoryFilter={categoryFilter}
+          onCategoryChange={setCategoryFilter}
+          categories={[]}
+        />
+        <StorefrontProductGrid 
+          products={[]}
+          accentColor={storefront.accent_color}
+        />
+      </div>
       {!isVerified && (
         <AgeVerification
           onVerified={handleVerified}
