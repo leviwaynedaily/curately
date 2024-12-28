@@ -6,6 +6,7 @@ import { Product } from "./types";
 import { MediaUploadButton } from "./media/MediaUploadButton";
 import { MediaGrid } from "./media/MediaGrid";
 import { MediaTypeStatus } from "./media/MediaTypeStatus";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ProductMediaDialogProps = {
   isOpen: boolean;
@@ -23,8 +24,14 @@ export const ProductMediaDialog = ({
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const [media, setMedia] = useState<Array<{ id: string; file_path: string; media_type: string; is_primary: boolean }>>([]);
+  const { user } = useAuth();
 
   const fetchMedia = async () => {
+    if (!user) {
+      console.error("No authenticated user found");
+      return;
+    }
+
     console.log("Fetching media for product:", product.id);
     const { data, error } = await supabase
       .from("product_media")
@@ -42,6 +49,14 @@ export const ProductMediaDialog = ({
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        description: "You must be logged in to upload media",
+      });
+      return;
+    }
+
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
@@ -66,6 +81,18 @@ export const ProductMediaDialog = ({
         if (uploadError) {
           console.error("Error uploading file:", file.name, uploadError);
           throw uploadError;
+        }
+
+        // Verify product ownership before creating media record
+        const { data: productData, error: productError } = await supabase
+          .from("products")
+          .select("storefront_id")
+          .eq("id", product.id)
+          .single();
+
+        if (productError) {
+          console.error("Error verifying product ownership:", productError);
+          throw productError;
         }
 
         // Create media record for each file
@@ -101,6 +128,8 @@ export const ProductMediaDialog = ({
   };
 
   const handleDelete = async (mediaId: string, filePath: string) => {
+    if (!user) return;
+
     try {
       console.log("Deleting media:", mediaId);
       const { error: dbError } = await supabase
@@ -131,6 +160,8 @@ export const ProductMediaDialog = ({
   };
 
   const setPrimaryMedia = async (mediaId: string) => {
+    if (!user) return;
+
     try {
       console.log("Setting primary media:", mediaId);
       // First, set all media for this product to non-primary
