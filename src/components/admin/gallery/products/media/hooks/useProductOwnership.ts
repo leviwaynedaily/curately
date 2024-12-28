@@ -17,6 +17,7 @@ export const useProductOwnership = () => {
       .from("products")
       .select(`
         id,
+        storefront_id,
         storefronts!inner (
           id,
           business_id,
@@ -39,8 +40,10 @@ export const useProductOwnership = () => {
       throw new Error("Product not found");
     }
 
+    console.log("Product ownership data:", data);
+
     // Check if the authenticated user is the owner of the business
-    const isOwner = data.storefronts.businesses.owner_id === user.id;
+    const isOwner = data.storefronts?.businesses?.owner_id === user.id;
     
     if (!isOwner) {
       console.error("Unauthorized: User does not own this product");
