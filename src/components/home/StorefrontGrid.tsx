@@ -9,7 +9,7 @@ const StorefrontGrid = ({ storefronts }: { storefronts: Storefront[] | null }) =
 
   return (
     <div className="w-full max-w-3xl mx-auto px-2 space-y-1 bounce-in" style={{ animationDelay: '0.7s' }}>
-      <h2 className="text-xl font-semibold text-center text-primary/90">Featured Galleries</h2>
+      <h2 className="text-xl font-semibold text-center text-primary/90">Trusted by our Partners</h2>
       <div className="flex flex-wrap justify-center gap-6">
         {storefronts.map((storefront) => (
           <Link
