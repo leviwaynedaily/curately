@@ -2,7 +2,7 @@ import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowUpDown, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "./types";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 type ProductTableHeaderProps = {
   onSort: (field: keyof Product) => void;
@@ -52,24 +52,26 @@ export const ProductTableHeader = ({
         <SortableHeader field="category">Category</SortableHeader>
         <SortableHeader field="status">Status</SortableHeader>
         <TableHead className="w-[100px]">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onToggleHiddenFields}
-                className="hover:bg-transparent"
-              >
-                <EyeOff className="h-4 w-4" />
-                {visibleFields.length > 0 && (
-                  <span className="ml-1 text-xs">{visibleFields.length}</span>
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              {showHiddenFields ? "Hide optional fields" : `Show ${visibleFields.length} hidden fields`}
-            </TooltipContent>
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onToggleHiddenFields}
+                  className="hover:bg-transparent"
+                >
+                  <EyeOff className="h-4 w-4" />
+                  {visibleFields.length > 0 && (
+                    <span className="ml-1 text-xs">{visibleFields.length}</span>
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {showHiddenFields ? "Hide optional fields" : `Show ${visibleFields.length} hidden fields`}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </TableHead>
       </TableRow>
     </TableHeader>
