@@ -2,6 +2,14 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useProductOwnership } from "./useProductOwnership";
+import {
+  uploadMediaFile,
+  createMediaRecord,
+  deleteMediaRecord,
+  deleteMediaFile,
+  updatePrimaryStatus,
+} from "../utils/mediaOperations";
 
 export type ProductMedia = {
   id: string;
@@ -15,6 +23,7 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { verifyProductOwnership } = useProductOwnership();
 
   const fetchMedia = async () => {
     if (!user) {
@@ -38,40 +47,6 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
     setMedia(data);
   };
 
-  const verifyProductOwnership = async () => {
-    if (!user) {
-      throw new Error("No authenticated user found");
-    }
-
-    console.log("Verifying product ownership for:", productId);
-    const { data, error } = await supabase
-      .from("products")
-      .select(`
-        id,
-        storefront:storefronts!inner(
-          id,
-          business:businesses!inner(
-            id,
-            owner_id
-          )
-        )
-      `)
-      .eq("id", productId)
-      .single();
-
-    if (error) {
-      console.error("Error verifying product ownership:", error);
-      throw new Error("Failed to verify product ownership");
-    }
-
-    if (!data || data.storefront.business.owner_id !== user.id) {
-      console.error("Unauthorized: User does not own this product");
-      throw new Error("Unauthorized: You don't have permission to modify this product");
-    }
-
-    return true;
-  };
-
   const handleFileUpload = async (files: FileList) => {
     if (!user) {
       toast({
@@ -85,41 +60,18 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
     console.log(`Starting media upload for ${files.length} files, product:`, productId);
 
     try {
-      // Verify ownership before proceeding with upload
-      await verifyProductOwnership();
-      
+      await verifyProductOwnership(productId);
       const fileArray = Array.from(files);
       
       for (const file of fileArray) {
-        const fileExt = file.name.split(".").pop();
-        const filePath = `${productId}/${crypto.randomUUID()}.${fileExt}`;
-        const mediaType = file.type.startsWith("video/") ? "video" : "image";
-
-        console.log(`Uploading ${mediaType} to storage:`, file.name);
-        const { error: uploadError } = await supabase.storage
-          .from("gallery_images")
-          .upload(filePath, file);
-
-        if (uploadError) {
-          console.error("Error uploading file:", file.name, uploadError);
-          throw uploadError;
-        }
-
-        console.log("Creating media record for:", file.name);
-        const { error: dbError } = await supabase
-          .from("product_media")
-          .insert([{
-            product_id: productId,
-            file_path: filePath,
-            media_type: mediaType,
-            is_primary: media.length === 0 && fileArray.indexOf(file) === 0,
-            title: file.name,
-          }]);
-
-        if (dbError) {
-          console.error("Error creating media record:", dbError);
-          throw dbError;
-        }
+        const { filePath, mediaType, fileName } = await uploadMediaFile(file, productId);
+        await createMediaRecord(
+          productId,
+          filePath,
+          mediaType,
+          fileName,
+          media.length === 0 && fileArray.indexOf(file) === 0
+        );
       }
 
       toast({ description: `Successfully uploaded ${fileArray.length} files` });
@@ -140,23 +92,11 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
     if (!user) return;
 
     try {
-      await verifyProductOwnership();
+      await verifyProductOwnership(productId);
       
       console.log("Deleting media:", mediaId);
-      const { error: dbError } = await supabase
-        .from("product_media")
-        .delete()
-        .eq("id", mediaId);
-
-      if (dbError) throw dbError;
-
-      const { error: storageError } = await supabase.storage
-        .from("gallery_images")
-        .remove([filePath]);
-
-      if (storageError) {
-        console.error("Error deleting file from storage:", storageError);
-      }
+      await deleteMediaRecord(mediaId);
+      await deleteMediaFile(filePath);
 
       toast({ description: "Media deleted successfully" });
       fetchMedia();
@@ -174,20 +114,8 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
     if (!user) return;
 
     try {
-      await verifyProductOwnership();
-      
-      console.log("Setting primary media:", mediaId);
-      await supabase
-        .from("product_media")
-        .update({ is_primary: false })
-        .eq("product_id", productId);
-
-      const { error } = await supabase
-        .from("product_media")
-        .update({ is_primary: true })
-        .eq("id", mediaId);
-
-      if (error) throw error;
+      await verifyProductOwnership(productId);
+      await updatePrimaryStatus(productId, mediaId);
 
       toast({ description: "Primary media updated" });
       fetchMedia();

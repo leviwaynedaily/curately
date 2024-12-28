@@ -1,0 +1,42 @@
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+
+export const useProductOwnership = () => {
+  const { user } = useAuth();
+
+  const verifyProductOwnership = async (productId: string) => {
+    if (!user) {
+      throw new Error("No authenticated user found");
+    }
+
+    console.log("Verifying product ownership for:", productId);
+    const { data, error } = await supabase
+      .from("products")
+      .select(`
+        id,
+        storefront:storefronts!inner(
+          id,
+          business:businesses!inner(
+            id,
+            owner_id
+          )
+        )
+      `)
+      .eq("id", productId)
+      .single();
+
+    if (error) {
+      console.error("Error verifying product ownership:", error);
+      throw new Error("Failed to verify product ownership");
+    }
+
+    if (!data || data.storefront.business.owner_id !== user.id) {
+      console.error("Unauthorized: User does not own this product");
+      throw new Error("Unauthorized: You don't have permission to modify this product");
+    }
+
+    return true;
+  };
+
+  return { verifyProductOwnership };
+};
