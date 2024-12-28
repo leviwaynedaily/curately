@@ -6,8 +6,9 @@ import { ProductDetailsDialog } from "./product/ProductDetailsDialog";
 import { ProductMediaCarousel } from "./product/ProductMediaCarousel";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Edit } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Edit, Trash, X } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 type StorefrontProductGridProps = {
   products: Product[];
@@ -21,35 +22,106 @@ export const StorefrontProductGrid = ({
   allowDownload = false
 }: StorefrontProductGridProps) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
   const { session } = useAuth();
-  const navigate = useNavigate();
-  
-  const handleEditClick = (e: React.MouseEvent, productId: string, storefrontId: string) => {
-    e.stopPropagation(); // Prevent opening the product details dialog
-    navigate(`/admin/products/${storefrontId}?productId=${productId}`);
+  const { toast } = useToast();
+
+  const handleProductClick = (product: Product) => {
+    if (isEditMode) {
+      // In edit mode, toggle selection
+      setSelectedProducts(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(product.id)) {
+          newSet.delete(product.id);
+        } else {
+          newSet.add(product.id);
+        }
+        return newSet;
+      });
+    } else {
+      // Normal mode, show product details
+      setSelectedProduct(product);
+    }
   };
-  
+
+  const handleDeleteSelected = async () => {
+    if (selectedProducts.size === 0) {
+      toast({
+        description: "Please select products to delete",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("products")
+        .update({ status: "archived" })
+        .in("id", Array.from(selectedProducts));
+
+      if (error) throw error;
+
+      toast({
+        description: `Successfully archived ${selectedProducts.size} product(s)`
+      });
+      
+      setSelectedProducts(new Set());
+      // Ideally we would refresh the products list here
+    } catch (error) {
+      console.error("Error deleting products:", error);
+      toast({
+        description: "Failed to delete products",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <>
+      {session && (
+        <div className="flex justify-end gap-2 mb-4">
+          <Button
+            variant={isEditMode ? "destructive" : "default"}
+            onClick={() => {
+              setIsEditMode(!isEditMode);
+              setSelectedProducts(new Set());
+            }}
+          >
+            {isEditMode ? (
+              <>
+                <X className="h-4 w-4 mr-2" />
+                Exit Edit Mode
+              </>
+            ) : (
+              <>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Products
+              </>
+            )}
+          </Button>
+          {isEditMode && (
+            <Button
+              variant="destructive"
+              onClick={handleDeleteSelected}
+              disabled={selectedProducts.size === 0}
+            >
+              <Trash className="h-4 w-4 mr-2" />
+              Delete Selected ({selectedProducts.size})
+            </Button>
+          )}
+        </div>
+      )}
+
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {products.map((product) => (
           <Card 
             key={product.id} 
-            className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 border-neutral-200 relative"
-            onClick={() => setSelectedProduct(product)}
+            className={`group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 border-neutral-200 relative
+              ${isEditMode && selectedProducts.has(product.id) ? 'ring-2 ring-primary' : ''}
+            `}
+            onClick={() => handleProductClick(product)}
           >
-            {session && (
-              <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white"
-                  onClick={(e) => handleEditClick(e, product.id, product.storefront_id)}
-                >
-                  <Edit className="h-4 w-4" style={{ color: accentColor }} />
-                </Button>
-              </div>
-            )}
             <CardContent className="p-0">
               <div className="aspect-square overflow-hidden bg-gray-100">
                 {product.product_media && product.product_media.length > 0 ? (
