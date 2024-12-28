@@ -1,88 +1,40 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useState, useEffect } from "react";
-import { GalleryImage } from "@/types/gallery";
+import { StorefrontImage } from "@/types/storefront";
 
 type GallerySlideshowDialogProps = {
   isOpen: boolean;
   onClose: () => void;
-  images: GalleryImage[];
-  startIndex?: number;
+  images: StorefrontImage[];
+  startIndex: number;
 };
 
 export const GallerySlideshowDialog = ({
   isOpen,
   onClose,
   images,
-  startIndex = 0,
+  startIndex,
 }: GallerySlideshowDialogProps) => {
-  const [currentIndex, setCurrentIndex] = useState(startIndex);
-  const [isPlaying, setIsPlaying] = useState(true);
-
-  useEffect(() => {
-    let interval: number;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % images.length);
-      }, 3000) as unknown as number;
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying, images.length]);
-
-  const currentImage = images[currentIndex];
-
-  const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-    setIsPlaying(false);
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
-    setIsPlaying(false);
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={() => onClose()}>
-      <DialogContent className="max-w-4xl">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>{currentImage?.title || "Slideshow"}</DialogTitle>
+          <DialogTitle>Slideshow</DialogTitle>
         </DialogHeader>
-        <div className="relative aspect-video">
-          <img
-            src={`${
-              import.meta.env.VITE_SUPABASE_URL
-            }/storage/v1/object/public/gallery_images/${currentImage?.file_path}`}
-            alt={currentImage?.title || "Gallery image"}
-            className="w-full h-full object-contain"
-          />
-          <div className="absolute inset-0 flex items-center justify-between p-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handlePrevious}
-              className="rounded-full bg-background/80 backdrop-blur-sm"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleNext}
-              className="rounded-full bg-background/80 backdrop-blur-sm"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+        <div className="flex justify-center">
+          {images.length > 0 ? (
+            <img
+              src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${images[startIndex].file_path}`}
+              alt={images[startIndex].title || "Slideshow image"}
+              className="max-w-full max-h-[80vh] object-contain"
+            />
+          ) : (
+            <p>No images available for slideshow.</p>
+          )}
         </div>
-        {currentImage?.description && (
-          <p className="text-sm text-muted-foreground">{currentImage.description}</p>
-        )}
+        <div className="flex justify-between mt-4">
+          <Button onClick={onClose}>Close</Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

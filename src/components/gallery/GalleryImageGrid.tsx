@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { GalleryImage } from "@/types/gallery";
+import { StorefrontImage } from "@/types/storefront";
 import { GallerySelectionControls } from "./GallerySelectionControls";
 import { GalleryImageItem } from "./GalleryImageItem";
-import { useImageSelection } from "@/hooks/useImageSelection";
 import { GalleryDialogs } from "./GalleryDialogs";
 import { useToast } from "@/components/ui/use-toast";
 
 type GalleryImageGridProps = {
-  images: GalleryImage[];
+  images: StorefrontImage[];
   galleryId: string;
   onDeleteImage: (image: { id: string; filePath: string }) => void;
   accentColor?: string;
@@ -21,8 +20,8 @@ export const GalleryImageGrid = ({
   accentColor,
   isAdmin,
 }: GalleryImageGridProps) => {
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
-  const [imageToEdit, setImageToEdit] = useState<GalleryImage | null>(null);
+  const [selectedImage, setSelectedImage] = useState<StorefrontImage | null>(null);
+  const [imageToEdit, setImageToEdit] = useState<StorefrontImage | null>(null);
   const [imageToDelete, setImageToDelete] = useState<{
     id: string;
     filePath: string;

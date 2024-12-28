@@ -1,11 +1,11 @@
-import { GalleryImage } from "@/types/gallery";
+import { StorefrontImage } from "@/types/storefront";
 import { cn } from "@/lib/utils";
 import { GalleryMediaDisplay } from "./image/GalleryMediaDisplay";
 import { GalleryImageOverlay } from "./image/GalleryImageOverlay";
 import { GalleryImageDetails } from "./image/GalleryImageDetails";
 
 type GalleryImageItemProps = {
-  image: GalleryImage;
+  image: StorefrontImage;
   isSelectionMode: boolean;
   isSelected: boolean;
   onImageClick: (e: React.MouseEvent) => void;

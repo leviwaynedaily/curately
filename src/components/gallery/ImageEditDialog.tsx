@@ -7,12 +7,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
-import { GalleryImage } from "@/types/gallery";
+import { StorefrontImage } from "@/types/storefront";
 
 type ImageEditDialogProps = {
   isOpen: boolean;
   onClose: () => void;
-  image: GalleryImage;
+  image: StorefrontImage;
   galleryId: string;
 };
 

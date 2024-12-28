@@ -1,21 +1,21 @@
-import { GalleryImage } from "@/types/gallery";
+import { StorefrontImage } from "@/types/storefront";
 import { ImageDetailsDialog } from "./ImageDetailsDialog";
 import { ImageEditDialog } from "./ImageEditDialog";
 import { ImageDeleteDialog } from "./ImageDeleteDialog";
 import { GallerySlideshowDialog } from "./GallerySlideshowDialog";
 
 type GalleryDialogsProps = {
-  selectedImage: GalleryImage | null;
-  setSelectedImage: (image: GalleryImage | null) => void;
-  imageToEdit: GalleryImage | null;
-  setImageToEdit: (image: GalleryImage | null) => void;
+  selectedImage: StorefrontImage | null;
+  setSelectedImage: (image: StorefrontImage | null) => void;
+  imageToEdit: StorefrontImage | null;
+  setImageToEdit: (image: StorefrontImage | null) => void;
   imageToDelete: { id: string; filePath: string } | null;
   setImageToDelete: (image: { id: string; filePath: string } | null) => void;
   isSlideshowOpen: boolean;
   setIsSlideshowOpen: (isOpen: boolean) => void;
   slideshowStartIndex: number;
   galleryId: string;
-  images: GalleryImage[];
+  images: StorefrontImage[];
   onDeleteImage: (image: { id: string; filePath: string }) => void;
 };
 

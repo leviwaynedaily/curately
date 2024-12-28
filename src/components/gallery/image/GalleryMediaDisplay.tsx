@@ -1,7 +1,7 @@
-import { GalleryImage } from "@/types/gallery";
+import { StorefrontImage } from "@/types/storefront";
 
 type GalleryMediaDisplayProps = {
-  image: GalleryImage;
+  image: StorefrontImage;
   mediaUrl: string;
 };
 

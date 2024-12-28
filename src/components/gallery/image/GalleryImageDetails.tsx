@@ -1,47 +1,44 @@
-import { GalleryImage } from "@/types/gallery";
-import { GalleryImageActions } from "../GalleryImageActions";
+import { StorefrontImage } from "@/types/storefront";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 type GalleryImageDetailsProps = {
-  image: GalleryImage;
-  onStartSlideshow: () => void;
-  onReorderClick: () => void;
-  onFilterClick: () => void;
-  isAdmin: boolean;
+  isOpen: boolean;
+  onClose: () => void;
+  image: StorefrontImage;
 };
 
-export const GalleryImageDetails = ({
-  image,
-  onStartSlideshow,
-  onReorderClick,
-  onFilterClick,
-  isAdmin,
-}: GalleryImageDetailsProps) => {
+export const GalleryImageDetails = ({ isOpen, onClose, image }: GalleryImageDetailsProps) => {
+  const { toast } = useToast();
+
+  const handleImageClick = () => {
+    toast({
+      description: `Image Title: ${image.title || "No Title"}`,
+    });
+  };
+
   return (
-    <div className="absolute bottom-0 left-0 right-0 p-4">
-      <div className="bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 rounded-lg backdrop-blur-sm">
-        {image.title && (
-          <h3 className="text-white font-semibold">{image.title}</h3>
-        )}
-        {image.description && (
-          <p className="text-white/80 text-sm line-clamp-2">
-            {image.description}
-          </p>
-        )}
-        {image.price && (
-          <p className="text-white font-semibold mt-2">
-            ${image.price.toFixed(2)}
-          </p>
-        )}
-        <div className="mt-2">
-          <GalleryImageActions
-            image={image}
-            onStartSlideshow={onStartSlideshow}
-            onReorderClick={onReorderClick}
-            onFilterClick={onFilterClick}
-            isAdmin={isAdmin}
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{image.title || "Image Details"}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <img
+            src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${image.file_path}`}
+            alt={image.title || "Gallery Image"}
+            className="w-full h-auto rounded-lg"
+            onClick={handleImageClick}
           />
+          <p>{image.description || "No description available."}</p>
         </div>
-      </div>
-    </div>
+        <div className="flex justify-end space-x-2">
+          <Button variant="outline" onClick={onClose}>
+            Close
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

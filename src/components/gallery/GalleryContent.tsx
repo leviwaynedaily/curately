@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Storefront } from "@/types/storefront";
 import { GalleryHeader } from "./GalleryHeader";
 import { GalleryControls } from "./GalleryControls";
 import { GalleryImageGrid } from "./GalleryImageGrid";
 import { GalleryDialogs } from "./GalleryDialogs";
 import { useImageSelection } from "@/hooks/useImageSelection";
 import { useGalleryActions } from "@/hooks/useGalleryActions";
-import { Gallery } from "@/types/gallery";
 
 type GalleryContentProps = {
-  gallery: Gallery;
+  gallery: Storefront;
   galleryId: string;
   onDeleteImage: (image: { id: string; filePath: string }) => Promise<void>;
   onUploadComplete: () => Promise<void>;
