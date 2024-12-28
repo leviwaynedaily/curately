@@ -19,7 +19,7 @@ export const StorefrontProductGrid = ({ products, accentColor }: StorefrontProdu
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       {products.map((product) => (
         <Card key={product.id} className="group overflow-hidden">
           <CardContent className="p-0">
@@ -37,15 +37,15 @@ export const StorefrontProductGrid = ({ products, accentColor }: StorefrontProdu
               )}
             </div>
           </CardContent>
-          <CardFooter className="flex flex-col items-start gap-2 p-4">
-            <h3 className="font-medium text-lg">{product.name}</h3>
+          <CardFooter className="flex flex-col items-start gap-1 p-3">
+            <h3 className="font-medium text-base line-clamp-1">{product.name}</h3>
             {product.price && (
-              <p className="text-lg font-semibold" style={{ color: accentColor }}>
+              <p className="text-base font-semibold" style={{ color: accentColor }}>
                 {formatCurrency(product.price)}
               </p>
             )}
             {product.category && (
-              <span className="text-sm text-gray-500 capitalize">
+              <span className="text-xs text-gray-500 capitalize">
                 {product.category}
               </span>
             )}
