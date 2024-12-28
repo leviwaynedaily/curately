@@ -173,10 +173,12 @@ export type Database = {
           button_text: string | null
           created_at: string
           description: string | null
+          favicon: string | null
           heading_text: string | null
           id: string
           logo: string | null
           name: string
+          page_title: string | null
           password: string | null
           password_required: boolean | null
           primary_color: string | null
@@ -198,10 +200,12 @@ export type Database = {
           button_text?: string | null
           created_at?: string
           description?: string | null
+          favicon?: string | null
           heading_text?: string | null
           id?: string
           logo?: string | null
           name: string
+          page_title?: string | null
           password?: string | null
           password_required?: boolean | null
           primary_color?: string | null
@@ -223,10 +227,12 @@ export type Database = {
           button_text?: string | null
           created_at?: string
           description?: string | null
+          favicon?: string | null
           heading_text?: string | null
           id?: string
           logo?: string | null
           name?: string
+          page_title?: string | null
           password?: string | null
           password_required?: boolean | null
           primary_color?: string | null
