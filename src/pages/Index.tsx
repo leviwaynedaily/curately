@@ -22,7 +22,36 @@ const Index = () => {
 
   return (
     <div className="h-screen flex flex-col bg-gradient-to-b from-primary/10 via-primary/20 to-neutral/90">
-      <main className="flex-grow flex flex-col justify-center items-center px-2 sm:px-4 lg:px-6 py-4">
+      {/* Professional Header */}
+      <header className="w-full py-4 px-6 bg-white/80 backdrop-blur-sm border-b border-primary/10 fixed top-0 z-50">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Lock className="h-5 w-5 text-accent/80" />
+            <span className="text-lg font-bold bg-gradient-to-r from-accent/90 to-primary bg-clip-text text-transparent">
+              Curately
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button 
+              asChild 
+              variant="ghost"
+              size="sm"
+              className="text-primary/80 hover:text-primary hover:bg-primary/5"
+            >
+              <Link to="/login">Login</Link>
+            </Button>
+            <Button
+              size="sm"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground transition-all duration-300 rounded-full px-4 shadow-sm hover:shadow-md"
+              disabled
+            >
+              Start Free Trial
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-grow flex flex-col justify-center items-center px-2 sm:px-4 lg:px-6 py-4 mt-16">
         <div className="max-w-6xl w-full mx-auto flex flex-col items-center justify-center gap-6">
           {/* Logo and Hero Content */}
           <div className="text-center space-y-4">
