@@ -1,11 +1,11 @@
 import { Form } from "@/components/ui/form";
-import { GalleryNameField } from "./GalleryNameField";
-import { GalleryBusinessField } from "./GalleryBusinessField";
-import { GalleryDescriptionField } from "./GalleryDescriptionField";
-import { GalleryVerificationFields } from "./GalleryVerificationFields";
-import { GalleryCustomizationFields } from "./GalleryCustomizationFields";
-import { GalleryInstructionsFields } from "./GalleryInstructionsFields";
-import { GalleryFormActions } from "./GalleryFormActions";
+import { GalleryNameField } from "./gallery/GalleryNameField";
+import { GalleryBusinessField } from "./gallery/GalleryBusinessField";
+import { GalleryDescriptionField } from "./gallery/GalleryDescriptionField";
+import { GalleryVerificationFields } from "./gallery/GalleryVerificationFields";
+import { GalleryCustomizationFields } from "./gallery/GalleryCustomizationFields";
+import { GalleryInstructionsFields } from "./gallery/GalleryInstructionsFields";
+import { GalleryFormActions } from "./gallery/GalleryFormActions";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
