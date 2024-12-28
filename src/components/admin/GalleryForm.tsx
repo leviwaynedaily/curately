@@ -38,7 +38,7 @@ export const GalleryForm = ({
     <Dialog open={isOpen} onOpenChange={handleDialogClose}>
       <DialogContent className="max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle>{gallery ? "Edit Gallery" : "Add Gallery"}</DialogTitle>
+          <DialogTitle>{gallery ? "Edit Storefront" : "Add Storefront"}</DialogTitle>
         </DialogHeader>
         <div className="flex-1 overflow-y-auto pr-2">
           <GalleryFormContent

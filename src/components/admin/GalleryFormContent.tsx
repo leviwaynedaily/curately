@@ -66,7 +66,7 @@ export const GalleryFormContent = ({
                 <ProductManagement storefrontId={galleryId} />
               ) : (
                 <div className="flex items-center justify-center h-64 text-muted-foreground">
-                  Save the gallery first to manage products
+                  Save the storefront first to manage products
                 </div>
               )}
             </TabsContent>
