@@ -61,13 +61,6 @@ const Admin = () => {
     return (
       <AdminLayout>
         <div className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-bold">Platform Admin Dashboard</h2>
-            <p className="text-muted-foreground">
-              Manage all businesses and storefronts
-            </p>
-          </div>
-
           <Tabs defaultValue="businesses">
             <TabsList>
               <TabsTrigger value="businesses">Businesses</TabsTrigger>
@@ -89,13 +82,6 @@ const Admin = () => {
     return (
       <AdminLayout>
         <div className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-bold">Business Admin Dashboard</h2>
-            <p className="text-muted-foreground">
-              Manage your business and galleries
-            </p>
-          </div>
-
           <div className="space-y-8">
             <BusinessList />
             <GalleryList />

@@ -1,6 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Settings } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
@@ -11,10 +11,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       <header className="sticky top-0 z-50 w-full border-b bg-white/50 backdrop-blur-sm">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <Settings className="h-5 w-5 text-accent" />
-            <h1 className="text-xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
-              Admin Dashboard
-            </h1>
+            {/* Left empty intentionally after removing dashboard text */}
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-slate">
