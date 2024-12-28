@@ -7,6 +7,8 @@ import HomeHero from "@/components/home/HomeHero";
 import StorefrontGrid from "@/components/home/StorefrontGrid";
 import IndustryIcons from "@/components/home/IndustryIcons";
 import FeatureCards from "@/components/home/FeatureCards";
+import Newsletter from "@/components/home/Newsletter";
+import ParallaxBackground from "@/components/home/ParallaxBackground";
 
 const Index = () => {
   const { data: storefronts } = useQuery({
@@ -25,7 +27,9 @@ const Index = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-primary/10 via-primary/20 to-neutral/90">
+    <div className="min-h-screen flex flex-col">
+      <ParallaxBackground />
+      
       {/* Professional Header */}
       <header className="w-full py-4 px-6 bg-white/80 backdrop-blur-sm border-b border-primary/10 fixed top-0 z-50">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -44,23 +48,17 @@ const Index = () => {
             >
               <Link to="/login">Login</Link>
             </Button>
-            <Button
-              size="sm"
-              className="bg-accent hover:bg-accent/90 text-accent-foreground transition-all duration-300 rounded-full px-4 shadow-sm hover:shadow-md"
-              disabled
-            >
-              Start Free Trial
-            </Button>
           </div>
         </div>
       </header>
 
       <main className="flex-grow flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-8 mt-16">
-        <div className="max-w-6xl w-full mx-auto flex flex-col items-center justify-center gap-12 sm:gap-16 lg:gap-20">
+        <div className="max-w-6xl w-full mx-auto flex flex-col items-center justify-center gap-16 sm:gap-20 lg:gap-24">
           <HomeHero />
           <StorefrontGrid storefronts={storefronts} />
           <IndustryIcons />
           <FeatureCards />
+          <Newsletter />
         </div>
       </main>
 
