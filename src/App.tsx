@@ -7,7 +7,7 @@ import Login from "@/pages/Login";
 import Admin from "@/pages/Admin";
 import StorefrontView from "@/pages/StorefrontView";
 import ProductManagement from "@/pages/ProductManagement";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
