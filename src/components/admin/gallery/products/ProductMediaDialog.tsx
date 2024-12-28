@@ -1,12 +1,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 import { Product } from "./types";
 import { MediaUploadButton } from "./media/MediaUploadButton";
 import { MediaGrid } from "./media/MediaGrid";
 import { MediaTypeStatus } from "./media/MediaTypeStatus";
-import { useAuth } from "@/contexts/AuthContext";
+import { useProductMedia } from "./media/hooks/useProductMedia";
 
 type ProductMediaDialogProps = {
   isOpen: boolean;
@@ -21,172 +19,19 @@ export const ProductMediaDialog = ({
   product,
   onMediaUpdate,
 }: ProductMediaDialogProps) => {
-  const [isUploading, setIsUploading] = useState(false);
-  const { toast } = useToast();
-  const [media, setMedia] = useState<Array<{ id: string; file_path: string; media_type: string; is_primary: boolean }>>([]);
-  const { user } = useAuth();
+  const {
+    media,
+    isLoading,
+    fetchMedia,
+    handleFileUpload,
+    handleDelete,
+    setPrimaryMedia,
+  } = useProductMedia(product.id, onMediaUpdate);
 
-  const fetchMedia = async () => {
-    if (!user) {
-      console.error("No authenticated user found");
-      return;
-    }
-
-    console.log("Fetching media for product:", product.id);
-    const { data, error } = await supabase
-      .from("product_media")
-      .select("*")
-      .eq("product_id", product.id)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching product media:", error);
-      return;
-    }
-
-    console.log("Fetched product media:", data);
-    setMedia(data);
-  };
-
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user) {
-      toast({
-        variant: "destructive",
-        description: "You must be logged in to upload media",
-      });
-      return;
-    }
-
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (!files || files.length === 0) return;
-
-    setIsUploading(true);
-    console.log(`Starting media upload for ${files.length} files, product:`, product.id);
-
-    try {
-      // Convert FileList to array for easier handling
-      const fileArray = Array.from(files);
-      
-      for (const file of fileArray) {
-        // Upload each file to storage
-        const fileExt = file.name.split(".").pop();
-        const filePath = `${product.id}/${crypto.randomUUID()}.${fileExt}`;
-        const mediaType = file.type.startsWith("video/") ? "video" : "image";
-
-        console.log(`Uploading ${mediaType} to storage:`, file.name);
-        const { error: uploadError } = await supabase.storage
-          .from("gallery_images")
-          .upload(filePath, file);
-
-        if (uploadError) {
-          console.error("Error uploading file:", file.name, uploadError);
-          throw uploadError;
-        }
-
-        // Verify product ownership before creating media record
-        const { data: productData, error: productError } = await supabase
-          .from("products")
-          .select("storefront_id")
-          .eq("id", product.id)
-          .single();
-
-        if (productError) {
-          console.error("Error verifying product ownership:", productError);
-          throw productError;
-        }
-
-        // Create media record for each file
-        console.log("Creating media record for:", file.name);
-        const { error: dbError } = await supabase
-          .from("product_media")
-          .insert([{
-            product_id: product.id,
-            file_path: filePath,
-            media_type: mediaType,
-            is_primary: media.length === 0 && fileArray.indexOf(file) === 0, // First file of first upload is primary
-            title: file.name,
-          }]);
-
-        if (dbError) {
-          console.error("Error creating media record:", dbError);
-          throw dbError;
-        }
-      }
-
-      toast({ description: `Successfully uploaded ${fileArray.length} files` });
-      fetchMedia();
-      onMediaUpdate();
-    } catch (error) {
-      console.error("Media upload failed:", error);
-      toast({
-        variant: "destructive",
-        description: "Failed to upload media. Please try again.",
-      });
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleDelete = async (mediaId: string, filePath: string) => {
-    if (!user) return;
-
-    try {
-      console.log("Deleting media:", mediaId);
-      const { error: dbError } = await supabase
-        .from("product_media")
-        .delete()
-        .eq("id", mediaId);
-
-      if (dbError) throw dbError;
-
-      const { error: storageError } = await supabase.storage
-        .from("gallery_images")
-        .remove([filePath]);
-
-      if (storageError) {
-        console.error("Error deleting file from storage:", storageError);
-      }
-
-      toast({ description: "Media deleted successfully" });
-      fetchMedia();
-      onMediaUpdate();
-    } catch (error) {
-      console.error("Error deleting media:", error);
-      toast({
-        variant: "destructive",
-        description: "Failed to delete media",
-      });
-    }
-  };
-
-  const setPrimaryMedia = async (mediaId: string) => {
-    if (!user) return;
-
-    try {
-      console.log("Setting primary media:", mediaId);
-      // First, set all media for this product to non-primary
-      await supabase
-        .from("product_media")
-        .update({ is_primary: false })
-        .eq("product_id", product.id);
-
-      // Then set the selected media as primary
-      const { error } = await supabase
-        .from("product_media")
-        .update({ is_primary: true })
-        .eq("id", mediaId);
-
-      if (error) throw error;
-
-      toast({ description: "Primary media updated" });
-      fetchMedia();
-      onMediaUpdate();
-    } catch (error) {
-      console.error("Error updating primary media:", error);
-      toast({
-        variant: "destructive",
-        description: "Failed to update primary media",
-      });
+    if (files) {
+      handleFileUpload(files);
     }
   };
 
@@ -208,7 +53,7 @@ export const ProductMediaDialog = ({
           <div className="flex justify-between items-center">
             <MediaTypeStatus media={media} />
             <MediaUploadButton
-              isUploading={isUploading}
+              isUploading={isLoading}
               onClick={() => document.getElementById("media-upload")?.click()}
             />
           </div>
@@ -219,8 +64,8 @@ export const ProductMediaDialog = ({
             accept="image/*,video/*"
             multiple
             className="hidden"
-            onChange={handleFileUpload}
-            disabled={isUploading}
+            onChange={handleInputChange}
+            disabled={isLoading}
           />
 
           <MediaGrid
