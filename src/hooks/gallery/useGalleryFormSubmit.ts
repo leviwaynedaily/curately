@@ -9,7 +9,7 @@ export const useGalleryFormSubmit = (
   gallery?: { id: string }
 ) => {
   const handleSubmit = async (values: GalleryFormValues) => {
-    console.log("Submitting gallery form...", values);
+    console.log("Starting gallery form submission...");
 
     const { currentTab, ...sanitizedValues } = values;
     const dataToSubmit = {
@@ -23,23 +23,37 @@ export const useGalleryFormSubmit = (
     
     try {
       if (gallery?.id) {
-        console.log("Updating storefront with data:", dataToSubmit);
-        const { error } = await supabase
+        console.log("Updating storefront with instructions data:", {
+          instructions_enabled: dataToSubmit.instructions_enabled,
+          instructions_content: Boolean(dataToSubmit.instructions_content),
+          instructions_button_text: dataToSubmit.instructions_button_text
+        });
+        
+        const { data, error } = await supabase
           .from("storefronts")
           .update(dataToSubmit)
-          .eq("id", gallery.id);
+          .eq("id", gallery.id)
+          .select();
 
         if (error) throw error;
-        console.log("Storefront updated successfully");
+        
+        console.log("Storefront updated successfully. Response:", data);
         toast({ description: "Storefront updated successfully" });
       } else {
-        console.log("Creating new storefront with data:", dataToSubmit);
-        const { error } = await supabase
+        console.log("Creating new storefront with instructions data:", {
+          instructions_enabled: dataToSubmit.instructions_enabled,
+          instructions_content: Boolean(dataToSubmit.instructions_content),
+          instructions_button_text: dataToSubmit.instructions_button_text
+        });
+        
+        const { data, error } = await supabase
           .from("storefronts")
-          .insert(dataToSubmit);
+          .insert(dataToSubmit)
+          .select();
 
         if (error) throw error;
-        console.log("Storefront created successfully");
+        
+        console.log("Storefront created successfully. Response:", data);
         toast({ description: "Storefront created successfully" });
       }
 

@@ -40,7 +40,10 @@ export const useStorefront = (storefrontId: string | undefined) => {
           accent_font_color,
           password_required,
           page_title,
-          favicon
+          favicon,
+          instructions_enabled,
+          instructions_content,
+          instructions_button_text
         `)
         .eq("id", storefrontId)
         .maybeSingle();
@@ -55,7 +58,12 @@ export const useStorefront = (storefrontId: string | undefined) => {
         return null;
       }
 
-      console.log("Successfully fetched storefront:", data);
+      console.log("Successfully fetched storefront with instructions data:", {
+        instructions_enabled: data.instructions_enabled,
+        has_instructions_content: Boolean(data.instructions_content),
+        instructions_button_text: data.instructions_button_text
+      });
+      
       return data as Storefront;
     },
     retry: false,
