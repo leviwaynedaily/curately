@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-b from-primary/5 via-primary/10 to-neutral overflow-hidden">
+    <div className="h-screen flex flex-col bg-gradient-to-b from-primary/5 via-primary/10 via-primary/5 to-neutral/80 overflow-hidden">
       <main className="flex-grow flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-6">
         <div className="max-w-7xl w-full mx-auto flex flex-col items-center justify-center gap-12">
           {/* Logo and Hero Content */}
