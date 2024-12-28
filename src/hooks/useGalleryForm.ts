@@ -32,6 +32,9 @@ type UseGalleryFormProps = {
     password_required?: boolean;
     page_title?: string;
     favicon?: string;
+    instructions_enabled?: boolean;
+    instructions_content?: string;
+    instructions_button_text?: string;
   };
 };
 
@@ -65,6 +68,9 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       currentTab: "basic",
       page_title: gallery?.page_title || gallery?.name || "",
       favicon: gallery?.favicon || "",
+      instructions_enabled: gallery?.instructions_enabled || false,
+      instructions_content: gallery?.instructions_content || "",
+      instructions_button_text: gallery?.instructions_button_text || "Enter Site",
     },
   });
 
@@ -94,6 +100,9 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
         currentTab: "basic",
         page_title: gallery.page_title || gallery.name || "",
         favicon: gallery.favicon || "",
+        instructions_enabled: gallery.instructions_enabled || false,
+        instructions_content: gallery.instructions_content || "",
+        instructions_button_text: gallery.instructions_button_text || "Enter Site",
       });
     }
   }, [gallery, form]);
@@ -105,8 +114,11 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
     const { currentTab, ...sanitizedValues } = values;
     const dataToSubmit = {
       ...sanitizedValues,
-      name: values.name, // Ensure name is included and required
+      name: values.name,
       page_title: values.page_title || values.name,
+      instructions_enabled: values.instructions_enabled,
+      instructions_content: values.instructions_content,
+      instructions_button_text: values.instructions_button_text || "Enter Site",
     };
     
     try {
