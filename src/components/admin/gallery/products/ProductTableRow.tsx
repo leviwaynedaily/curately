@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit, Save, X, Trash } from "lucide-react";
+import { Edit, Save, X, Trash, Image as ImageIcon } from "lucide-react";
 import { Product } from "./types";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 type ProductTableRowProps = {
   product: Product;
@@ -12,6 +14,7 @@ type ProductTableRowProps = {
   onCancel: () => void;
   onDelete: (id: string) => void;
   onProductChange: (field: keyof Product, value: any) => void;
+  onMediaClick: (product: Product) => void;
 };
 
 export const ProductTableRow = ({
@@ -23,10 +26,46 @@ export const ProductTableRow = ({
   onCancel,
   onDelete,
   onProductChange,
+  onMediaClick,
 }: ProductTableRowProps) => {
+  const [primaryMedia, setPrimaryMedia] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPrimaryMedia = async () => {
+      const { data, error } = await supabase
+        .from("product_media")
+        .select("file_path")
+        .eq("product_id", product.id)
+        .eq("is_primary", true)
+        .single();
+
+      if (error) {
+        console.error("Error fetching primary media:", error);
+        return;
+      }
+
+      if (data) {
+        setPrimaryMedia(data.file_path);
+      }
+    };
+
+    fetchPrimaryMedia();
+  }, [product.id]);
+
   return (
     <tr>
-      <td>
+      <td className="flex items-center gap-2">
+        {primaryMedia ? (
+          <img
+            src={supabase.storage.from("gallery_images").getPublicUrl(primaryMedia).data.publicUrl}
+            alt=""
+            className="w-10 h-10 object-cover rounded"
+          />
+        ) : (
+          <div className="w-10 h-10 bg-muted rounded flex items-center justify-center">
+            <ImageIcon className="w-4 h-4 text-muted-foreground" />
+          </div>
+        )}
         {isEditing ? (
           <Input
             value={editedProduct?.name || ""}
@@ -128,6 +167,13 @@ export const ProductTableRow = ({
                 onClick={() => onDelete(product.id)}
               >
                 <Trash className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onMediaClick(product)}
+              >
+                <ImageIcon className="h-4 w-4" />
               </Button>
             </>
           )}

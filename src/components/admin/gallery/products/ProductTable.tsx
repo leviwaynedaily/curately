@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ProductTableHeader } from "./ProductTableHeader";
 import { ProductTableRow } from "./ProductTableRow";
 import { ProductTableActions } from "./ProductTableActions";
+import { ProductMediaDialog } from "./ProductMediaDialog";
 import { Product } from "./types";
 
 type ProductTableProps = {
@@ -20,6 +21,7 @@ export const ProductTable = ({
 }: ProductTableProps) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedProduct, setEditedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { toast } = useToast();
 
   const handleEdit = (product: Product) => {
@@ -176,11 +178,21 @@ export const ProductTable = ({
                 onCancel={handleCancel}
                 onDelete={handleDelete}
                 onProductChange={handleProductChange}
+                onMediaClick={setSelectedProduct}
               />
             ))}
           </TableBody>
         </Table>
       </div>
+
+      {selectedProduct && (
+        <ProductMediaDialog
+          isOpen={!!selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          product={selectedProduct}
+          onMediaUpdate={onProductUpdate}
+        />
+      )}
     </div>
   );
 };

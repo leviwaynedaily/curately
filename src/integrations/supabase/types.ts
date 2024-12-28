@@ -174,6 +174,50 @@ export type Database = {
           },
         ]
       }
+      product_media: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_path: string
+          id: string
+          is_primary: boolean | null
+          media_type: string | null
+          product_id: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_path: string
+          id?: string
+          is_primary?: boolean | null
+          media_type?: string | null
+          product_id?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_path?: string
+          id?: string
+          is_primary?: boolean | null
+          media_type?: string | null
+          product_id?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_media_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category: string | null
