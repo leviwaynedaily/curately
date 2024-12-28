@@ -15,6 +15,7 @@ const StorefrontView = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [error, setError] = useState<string | null>(null);
 
   const { 
@@ -96,6 +97,8 @@ const StorefrontView = () => {
         categoryFilter={categoryFilter}
         onCategoryChange={setCategoryFilter}
         categories={categories}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
     </div>
   );
