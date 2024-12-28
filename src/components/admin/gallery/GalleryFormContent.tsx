@@ -59,7 +59,7 @@ export const GalleryFormContent = ({
 
             <TabsContent value="products" className="space-y-4 mt-0">
               {galleryId ? (
-                <ProductManagement galleryId={galleryId} />
+                <ProductManagement storefrontId={galleryId} />
               ) : (
                 <div className="flex items-center justify-center h-64 text-muted-foreground">
                   Save the gallery first to manage products

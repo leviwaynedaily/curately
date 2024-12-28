@@ -11,7 +11,7 @@ export const checkSupabaseConnection = async () => {
   try {
     console.log('Checking Supabase connection...');
     const { data, error } = await supabase
-      .from('galleries')
+      .from('storefronts')
       .select('id')
       .limit(1)
       .maybeSingle();
@@ -21,7 +21,6 @@ export const checkSupabaseConnection = async () => {
       return false;
     }
     
-    // Connection is successful even if no data is found
     console.log('Supabase connection successful. Data found:', !!data);
     return true;
   } catch (error) {
