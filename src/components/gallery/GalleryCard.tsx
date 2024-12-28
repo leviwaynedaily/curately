@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 type GalleryCardProps = {
   storefront: Storefront;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
 };
 
 export const GalleryCard = ({ storefront, onDelete }: GalleryCardProps) => {
@@ -14,6 +14,8 @@ export const GalleryCard = ({ storefront, onDelete }: GalleryCardProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = async () => {
+    if (!onDelete) return;
+    
     setIsLoading(true);
     try {
       const { error } = await supabase
@@ -41,9 +43,11 @@ export const GalleryCard = ({ storefront, onDelete }: GalleryCardProps) => {
       <h3 className="text-lg font-semibold">{storefront.name}</h3>
       <p className="text-sm text-gray-500">{storefront.description}</p>
       <div className="mt-4 flex justify-between">
-        <Button onClick={handleDelete} variant="destructive" disabled={isLoading}>
-          {isLoading ? "Deleting..." : "Delete"}
-        </Button>
+        {onDelete && (
+          <Button onClick={handleDelete} variant="destructive" disabled={isLoading}>
+            {isLoading ? "Deleting..." : "Delete"}
+          </Button>
+        )}
       </div>
     </div>
   );

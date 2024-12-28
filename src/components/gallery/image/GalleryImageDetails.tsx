@@ -4,12 +4,20 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 
 type GalleryImageDetailsProps = {
-  isOpen: boolean;
-  onClose: () => void;
   image: StorefrontImage;
+  onStartSlideshow?: () => void;
+  onReorderClick?: () => void;
+  onFilterClick?: () => void;
+  isAdmin?: boolean;
 };
 
-export const GalleryImageDetails = ({ isOpen, onClose, image }: GalleryImageDetailsProps) => {
+export const GalleryImageDetails = ({ 
+  image, 
+  onStartSlideshow,
+  onReorderClick,
+  onFilterClick,
+  isAdmin 
+}: GalleryImageDetailsProps) => {
   const { toast } = useToast();
 
   const handleImageClick = () => {
@@ -19,26 +27,54 @@ export const GalleryImageDetails = ({ isOpen, onClose, image }: GalleryImageDeta
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{image.title || "Image Details"}</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <img
-            src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${image.file_path}`}
-            alt={image.title || "Gallery Image"}
-            className="w-full h-auto rounded-lg"
-            onClick={handleImageClick}
-          />
-          <p>{image.description || "No description available."}</p>
+    <div className="absolute inset-0 flex flex-col justify-between p-4 text-white">
+      <div>
+        <h3 className="text-lg font-semibold">{image.title || "Untitled"}</h3>
+        {image.description && (
+          <p className="text-sm opacity-90">{image.description}</p>
+        )}
+      </div>
+      
+      {isAdmin && (
+        <div className="flex gap-2 mt-4">
+          {onStartSlideshow && (
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onStartSlideshow();
+              }}
+            >
+              Start Slideshow
+            </Button>
+          )}
+          {onReorderClick && (
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onReorderClick();
+              }}
+            >
+              Reorder
+            </Button>
+          )}
+          {onFilterClick && (
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onFilterClick();
+              }}
+            >
+              Filter
+            </Button>
+          )}
         </div>
-        <div className="flex justify-end space-x-2">
-          <Button variant="outline" onClick={onClose}>
-            Close
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+      )}
+    </div>
   );
 };

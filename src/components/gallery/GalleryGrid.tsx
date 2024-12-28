@@ -40,9 +40,9 @@ export const GalleryGrid = () => {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {storefronts?.map((gallery) => (
-        <Link key={gallery.id} to={`/storefront/${gallery.id}`}>
-          <GalleryCard gallery={gallery} />
+      {storefronts?.map((storefront) => (
+        <Link key={storefront.id} to={`/storefront/${storefront.id}`}>
+          <GalleryCard storefront={storefront} />
         </Link>
       ))}
     </div>
