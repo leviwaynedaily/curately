@@ -12,14 +12,14 @@ export const useProductOwnership = () => {
 
     console.log("Verifying product ownership for:", productId);
     
-    // Exactly match the RLS policy structure
+    // Exactly match the RLS policy structure with the same table aliases
     const { data, error } = await supabase
-      .from("products")
+      .from("products as p")
       .select(`
         id,
-        storefront:storefronts!inner(
+        storefront:storefronts!inner (
           id,
-          business:businesses!inner(
+          business:businesses!inner (
             id,
             owner_id
           )
