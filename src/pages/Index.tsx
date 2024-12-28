@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-b from-primary/5 via-primary/10 via-primary/5 to-neutral/80 overflow-hidden">
+    <div className="h-screen flex flex-col bg-gradient-to-b from-primary/10 via-primary/20 to-neutral/90 overflow-hidden">
       <main className="flex-grow flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-6">
         <div className="max-w-7xl w-full mx-auto flex flex-col items-center justify-center gap-12">
           {/* Logo and Hero Content */}
@@ -68,32 +68,32 @@ const Index = () => {
 
           {/* Feature Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-4xl mx-auto px-4">
-            <div className="p-5 rounded-lg bg-white/40 backdrop-blur-sm border border-primary/5 hover:border-primary/10 transition-all duration-300 group bounce-in" style={{ animationDelay: '1.1s' }}>
-              <Cloud className="h-6 w-6 text-primary/60 group-hover:text-primary/80 transition-colors mb-2 mx-auto" />
-              <h3 className="text-base font-medium mb-1 text-primary/80 text-center">
+            <div className="p-5 rounded-lg bg-white/60 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 group bounce-in" style={{ animationDelay: '1.1s' }}>
+              <Cloud className="h-6 w-6 text-primary/80 group-hover:text-primary transition-colors mb-2 mx-auto" />
+              <h3 className="text-base font-medium mb-1 text-primary text-center">
                 Cloud-Based
               </h3>
-              <p className="text-sm text-slate/60 text-center leading-relaxed">
+              <p className="text-sm text-slate text-center leading-relaxed">
                 Access your galleries anywhere, anytime.
               </p>
             </div>
 
-            <div className="p-5 rounded-lg bg-white/40 backdrop-blur-sm border border-primary/5 hover:border-primary/10 transition-all duration-300 group bounce-in" style={{ animationDelay: '1.2s' }}>
-              <GalleryIcon className="h-6 w-6 text-primary/60 group-hover:text-primary/80 transition-colors mb-2 mx-auto" />
-              <h3 className="text-base font-medium mb-1 text-primary/80 text-center">
+            <div className="p-5 rounded-lg bg-white/60 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 group bounce-in" style={{ animationDelay: '1.2s' }}>
+              <GalleryIcon className="h-6 w-6 text-primary/80 group-hover:text-primary transition-colors mb-2 mx-auto" />
+              <h3 className="text-base font-medium mb-1 text-primary text-center">
                 Beautiful Display
               </h3>
-              <p className="text-sm text-slate/60 text-center leading-relaxed">
+              <p className="text-sm text-slate text-center leading-relaxed">
                 Showcase your work with elegant layouts.
               </p>
             </div>
 
-            <div className="p-5 rounded-lg bg-white/40 backdrop-blur-sm border border-primary/5 hover:border-primary/10 transition-all duration-300 group bounce-in" style={{ animationDelay: '1.3s' }}>
-              <Lock className="h-6 w-6 text-primary/60 group-hover:text-primary/80 transition-colors mb-2 mx-auto" />
-              <h3 className="text-base font-medium mb-1 text-primary/80 text-center">
+            <div className="p-5 rounded-lg bg-white/60 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 group bounce-in" style={{ animationDelay: '1.3s' }}>
+              <Lock className="h-6 w-6 text-primary/80 group-hover:text-primary transition-colors mb-2 mx-auto" />
+              <h3 className="text-base font-medium mb-1 text-primary text-center">
                 Secure Access
               </h3>
-              <p className="text-sm text-slate/60 text-center leading-relaxed">
+              <p className="text-sm text-slate text-center leading-relaxed">
                 Control who sees your content.
               </p>
             </div>
