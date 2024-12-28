@@ -44,136 +44,6 @@ export type Database = {
           },
         ]
       }
-      galleries: {
-        Row: {
-          accent_color: string | null
-          accent_font_color: string | null
-          age_verification_enabled: boolean | null
-          age_verification_text: string | null
-          business_id: string | null
-          button_text: string | null
-          created_at: string
-          description: string | null
-          heading_text: string | null
-          id: string
-          logo: string | null
-          name: string
-          password: string | null
-          password_required: boolean | null
-          primary_color: string | null
-          primary_font_color: string | null
-          secondary_color: string | null
-          secondary_font_color: string | null
-          site_logo: string | null
-          status: string | null
-          subheading_text: string | null
-          updated_at: string
-        }
-        Insert: {
-          accent_color?: string | null
-          accent_font_color?: string | null
-          age_verification_enabled?: boolean | null
-          age_verification_text?: string | null
-          business_id?: string | null
-          button_text?: string | null
-          created_at?: string
-          description?: string | null
-          heading_text?: string | null
-          id?: string
-          logo?: string | null
-          name: string
-          password?: string | null
-          password_required?: boolean | null
-          primary_color?: string | null
-          primary_font_color?: string | null
-          secondary_color?: string | null
-          secondary_font_color?: string | null
-          site_logo?: string | null
-          status?: string | null
-          subheading_text?: string | null
-          updated_at?: string
-        }
-        Update: {
-          accent_color?: string | null
-          accent_font_color?: string | null
-          age_verification_enabled?: boolean | null
-          age_verification_text?: string | null
-          business_id?: string | null
-          button_text?: string | null
-          created_at?: string
-          description?: string | null
-          heading_text?: string | null
-          id?: string
-          logo?: string | null
-          name?: string
-          password?: string | null
-          password_required?: boolean | null
-          primary_color?: string | null
-          primary_font_color?: string | null
-          secondary_color?: string | null
-          secondary_font_color?: string | null
-          site_logo?: string | null
-          status?: string | null
-          subheading_text?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "galleries_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gallery_images: {
-        Row: {
-          created_at: string
-          description: string | null
-          file_path: string
-          gallery_id: string | null
-          id: string
-          is_featured: boolean | null
-          media_type: string | null
-          price: number | null
-          title: string | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          file_path: string
-          gallery_id?: string | null
-          id?: string
-          is_featured?: boolean | null
-          media_type?: string | null
-          price?: number | null
-          title?: string | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          file_path?: string
-          gallery_id?: string | null
-          id?: string
-          is_featured?: boolean | null
-          media_type?: string | null
-          price?: number | null
-          title?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gallery_images_gallery_id_fkey"
-            columns: ["gallery_id"]
-            isOneToOne: false
-            referencedRelation: "galleries"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       product_media: {
         Row: {
           created_at: string
@@ -223,47 +93,47 @@ export type Database = {
           category: string | null
           created_at: string
           description: string | null
-          gallery_id: string | null
           id: string
           name: string
           price: number | null
           sku: string | null
           status: string | null
           stock_quantity: number | null
+          storefront_id: string | null
           updated_at: string
         }
         Insert: {
           category?: string | null
           created_at?: string
           description?: string | null
-          gallery_id?: string | null
           id?: string
           name: string
           price?: number | null
           sku?: string | null
           status?: string | null
           stock_quantity?: number | null
+          storefront_id?: string | null
           updated_at?: string
         }
         Update: {
           category?: string | null
           created_at?: string
           description?: string | null
-          gallery_id?: string | null
           id?: string
           name?: string
           price?: number | null
           sku?: string | null
           status?: string | null
           stock_quantity?: number | null
+          storefront_id?: string | null
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "products_gallery_id_fkey"
-            columns: ["gallery_id"]
+            foreignKeyName: "products_storefront_id_fkey"
+            columns: ["storefront_id"]
             isOneToOne: false
-            referencedRelation: "galleries"
+            referencedRelation: "storefronts"
             referencedColumns: ["id"]
           },
         ]
@@ -291,6 +161,89 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      storefronts: {
+        Row: {
+          accent_color: string | null
+          accent_font_color: string | null
+          age_verification_enabled: boolean | null
+          age_verification_message: string | null
+          business_id: string | null
+          button_text: string | null
+          created_at: string
+          description: string | null
+          heading_text: string | null
+          id: string
+          logo: string | null
+          name: string
+          password: string | null
+          password_required: boolean | null
+          primary_color: string | null
+          primary_font_color: string | null
+          secondary_color: string | null
+          secondary_font_color: string | null
+          site_logo: string | null
+          status: string | null
+          subheading_text: string | null
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string | null
+          accent_font_color?: string | null
+          age_verification_enabled?: boolean | null
+          age_verification_message?: string | null
+          business_id?: string | null
+          button_text?: string | null
+          created_at?: string
+          description?: string | null
+          heading_text?: string | null
+          id?: string
+          logo?: string | null
+          name: string
+          password?: string | null
+          password_required?: boolean | null
+          primary_color?: string | null
+          primary_font_color?: string | null
+          secondary_color?: string | null
+          secondary_font_color?: string | null
+          site_logo?: string | null
+          status?: string | null
+          subheading_text?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string | null
+          accent_font_color?: string | null
+          age_verification_enabled?: boolean | null
+          age_verification_message?: string | null
+          business_id?: string | null
+          button_text?: string | null
+          created_at?: string
+          description?: string | null
+          heading_text?: string | null
+          id?: string
+          logo?: string | null
+          name?: string
+          password?: string | null
+          password_required?: boolean | null
+          primary_color?: string | null
+          primary_font_color?: string | null
+          secondary_color?: string | null
+          secondary_font_color?: string | null
+          site_logo?: string | null
+          status?: string | null
+          subheading_text?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "galleries_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

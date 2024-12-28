@@ -6,10 +6,10 @@ import { Plus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 type ProductManagementProps = {
-  galleryId: string;
+  storefrontId: string;
 };
 
-export const ProductManagement = ({ galleryId }: ProductManagementProps) => {
+export const ProductManagement = ({ storefrontId }: ProductManagementProps) => {
   const { toast } = useToast();
 
   const {
@@ -18,29 +18,29 @@ export const ProductManagement = ({ galleryId }: ProductManagementProps) => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["products", galleryId],
+    queryKey: ["products", storefrontId],
     queryFn: async () => {
-      console.log("Starting product fetch for gallery:", galleryId);
+      console.log("Starting product fetch for storefront:", storefrontId);
       
-      // First, verify the gallery exists
-      const { data: gallery, error: galleryError } = await supabase
-        .from("galleries")
+      // First, verify the storefront exists
+      const { data: storefront, error: storefrontError } = await supabase
+        .from("storefronts")
         .select("id")
-        .eq("id", galleryId)
-        .single();
+        .eq("id", storefrontId)
+        .maybeSingle();
 
-      if (galleryError) {
-        console.error("Error verifying gallery:", galleryError);
-        throw galleryError;
+      if (storefrontError) {
+        console.error("Error verifying storefront:", storefrontError);
+        throw storefrontError;
       }
 
-      console.log("Gallery verified:", gallery);
+      console.log("Storefront verified:", storefront);
 
       // Now fetch products
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .eq("gallery_id", galleryId)
+        .eq("storefront_id", storefrontId)
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -64,9 +64,9 @@ export const ProductManagement = ({ galleryId }: ProductManagementProps) => {
 
   const handleAddProduct = async () => {
     try {
-      console.log("Adding new product for gallery:", galleryId);
+      console.log("Adding new product for storefront:", storefrontId);
       const { data, error } = await supabase.from("products").insert({
-        gallery_id: galleryId,
+        storefront_id: storefrontId,
         name: "New Product",
         status: "active",
       });
@@ -116,7 +116,7 @@ export const ProductManagement = ({ galleryId }: ProductManagementProps) => {
         </div>
       ) : (
         <ProductTable
-          galleryId={galleryId}
+          storefrontId={storefrontId}
           products={products}
           onProductUpdate={refetch}
         />

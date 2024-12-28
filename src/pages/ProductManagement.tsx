@@ -2,19 +2,19 @@ import { ProductManagement as ProductManagementComponent } from "@/components/ad
 import { useParams } from "react-router-dom";
 
 const ProductManagement = () => {
-  const { galleryId } = useParams();
+  const { storefrontId } = useParams();
 
-  if (!galleryId) {
+  if (!storefrontId) {
     return (
       <div className="flex items-center justify-center h-screen">
-        Gallery ID is required
+        Storefront ID is required
       </div>
     );
   }
 
   return (
     <div className="container mx-auto py-8">
-      <ProductManagementComponent galleryId={galleryId} />
+      <ProductManagementComponent storefrontId={storefrontId} />
     </div>
   );
 };

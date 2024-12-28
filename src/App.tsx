@@ -8,7 +8,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
-import GalleryView from "./pages/GalleryView";
+import StorefrontView from "./pages/StorefrontView";
 import ProductManagement from "./pages/ProductManagement";
 
 const queryClient = new QueryClient();
@@ -23,7 +23,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/gallery/:id" element={<GalleryView />} />
+            <Route path="/storefront/:id" element={<StorefrontView />} />
             <Route
               path="/admin"
               element={
@@ -33,7 +33,7 @@ const App = () => (
               }
             />
             <Route
-              path="/admin/galleries/:galleryId/products"
+              path="/admin/storefronts/:storefrontId/products"
               element={
                 <ProtectedRoute>
                   <ProductManagement />
