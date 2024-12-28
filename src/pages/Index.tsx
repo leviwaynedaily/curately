@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Lock, Image as GalleryIcon, Cloud } from "lucide-react";
+import { ArrowRight, Lock, Image as GalleryIcon, Cloud, Cannabis, Building2, Factory, Package2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -53,6 +53,29 @@ const Index = () => {
               >
                 Sign Up (Coming Soon)
               </Button>
+            </div>
+          </div>
+
+          {/* Industries Section */}
+          <div className="w-full max-w-5xl mx-auto px-4">
+            <h2 className="text-xl font-semibold text-primary mb-6 text-center">Industries We Serve</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+              <div className="glass-panel hover-card p-6 flex flex-col items-center">
+                <Cannabis className="h-8 w-8 text-primary mb-3" />
+                <span className="text-sm font-medium text-slate">Cannabis</span>
+              </div>
+              <div className="glass-panel hover-card p-6 flex flex-col items-center">
+                <Building2 className="h-8 w-8 text-primary mb-3" />
+                <span className="text-sm font-medium text-slate">Dispensaries</span>
+              </div>
+              <div className="glass-panel hover-card p-6 flex flex-col items-center">
+                <Factory className="h-8 w-8 text-primary mb-3" />
+                <span className="text-sm font-medium text-slate">Producers</span>
+              </div>
+              <div className="glass-panel hover-card p-6 flex flex-col items-center">
+                <Package2 className="h-8 w-8 text-primary mb-3" />
+                <span className="text-sm font-medium text-slate">Products</span>
+              </div>
             </div>
           </div>
 
