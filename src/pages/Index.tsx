@@ -23,7 +23,7 @@ const Index = () => {
   return (
     <div className="h-screen flex flex-col bg-gradient-to-b from-primary/10 via-primary/20 to-neutral/90">
       <main className="flex-grow flex flex-col justify-center items-center px-2 sm:px-4 lg:px-6 py-4">
-        <div className="max-w-6xl w-full mx-auto flex flex-col items-center justify-center gap-8">
+        <div className="max-w-6xl w-full mx-auto flex flex-col items-center justify-center gap-6">
           {/* Logo and Hero Content */}
           <div className="text-center space-y-4">
             <div className="relative flex flex-col items-center bounce-in" style={{ animationDelay: '0.1s' }}>
@@ -74,7 +74,7 @@ const Index = () => {
 
           {/* Featured Storefronts Grid */}
           {storefronts && storefronts.length > 0 && (
-            <div className="w-full max-w-4xl mx-auto px-2 space-y-4 bounce-in" style={{ animationDelay: '0.7s' }}>
+            <div className="w-full max-w-4xl mx-auto px-2 space-y-3 bounce-in" style={{ animationDelay: '0.7s' }}>
               <h2 className="text-xl font-semibold text-center text-primary/90">Featured Galleries</h2>
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
                 {storefronts.map((storefront) => (
@@ -83,7 +83,7 @@ const Index = () => {
                     to={`/storefront/${storefront.id}`}
                     className="group flex items-center justify-center"
                   >
-                    <div className="aspect-square w-full max-w-[100px] bg-white/60 backdrop-blur-sm rounded-lg border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 p-2 flex items-center justify-center">
+                    <div className="aspect-square w-full max-w-[140px] bg-white/60 backdrop-blur-sm rounded-lg border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 p-3 flex items-center justify-center">
                       {storefront.site_logo ? (
                         <img
                           src={supabase.storage.from("gallery_images").getPublicUrl(storefront.site_logo).data.publicUrl}
