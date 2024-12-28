@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useGallery } from "@/hooks/useGallery";
+import { useStorefront } from "@/hooks/useStorefront";
 import { AgeVerification } from "@/components/AgeVerification";
 import { GalleryContent } from "@/components/gallery/GalleryContent";
 import { Button } from "@/components/ui/button";
@@ -13,12 +13,12 @@ const StorefrontView = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { 
-    gallery, 
-    isLoading: isGalleryLoading, 
-    error: galleryError,
+    storefront, 
+    isLoading: isStorefrontLoading, 
+    error: storefrontError,
     deleteImage, 
-    refetchGallery 
-  } = useGallery(storefrontId);
+    refetchStorefront 
+  } = useStorefront(storefrontId);
 
   useEffect(() => {
     const ageVerified = localStorage.getItem("age-verified") === "true";
@@ -28,18 +28,17 @@ const StorefrontView = () => {
     setIsLoading(false);
   }, [storefrontId]);
 
-  // New effect to handle page title and favicon
   useEffect(() => {
-    if (gallery) {
-      console.log("Setting page title and favicon for storefront:", gallery);
+    if (storefront) {
+      console.log("Setting page title and favicon for storefront:", storefront);
       // Set page title
-      document.title = gallery.page_title || gallery.name || "Gallery";
+      document.title = storefront.page_title || storefront.name || "Gallery";
 
       // Set favicon
-      if (gallery.favicon) {
+      if (storefront.favicon) {
         const faviconUrl = supabase.storage
           .from("gallery_images")
-          .getPublicUrl(gallery.favicon).data.publicUrl;
+          .getPublicUrl(storefront.favicon).data.publicUrl;
         
         // Remove existing favicon if any
         const existingFavicon = document.querySelector("link[rel='icon']");
@@ -67,7 +66,7 @@ const StorefrontView = () => {
         document.head.appendChild(defaultFavicon);
       };
     }
-  }, [gallery]);
+  }, [storefront]);
 
   const handleVerified = () => {
     localStorage.setItem("age-verified", "true");
@@ -76,10 +75,10 @@ const StorefrontView = () => {
   };
 
   const handleUploadComplete = async () => {
-    await refetchGallery();
+    await refetchStorefront();
   };
 
-  if (isLoading || isGalleryLoading) {
+  if (isLoading || isStorefrontLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
         <div className="animate-pulse text-xl text-gray-600 mb-4">Loading storefront...</div>
@@ -88,7 +87,7 @@ const StorefrontView = () => {
     );
   }
 
-  if (galleryError) {
+  if (storefrontError) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
         <Alert variant="destructive" className="max-w-md mb-6">
@@ -108,7 +107,7 @@ const StorefrontView = () => {
     );
   }
 
-  if (!gallery) {
+  if (!storefront) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
         <div className="text-xl text-gray-600 mb-4">Storefront not found</div>
@@ -129,14 +128,14 @@ const StorefrontView = () => {
         <AgeVerification
           onVerified={handleVerified}
           id={storefrontId as string}
-          logo={gallery.logo}
-          verificationText={gallery.age_verification_text}
-          buttonText={gallery.button_text}
+          logo={storefront.logo}
+          verificationText={storefront.age_verification_text}
+          buttonText={storefront.button_text}
         />
       )}
       {isVerified && (
         <GalleryContent
-          gallery={gallery}
+          gallery={storefront}
           galleryId={storefrontId as string}
           onDeleteImage={deleteImage}
           onUploadComplete={handleUploadComplete}
