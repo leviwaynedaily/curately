@@ -36,7 +36,7 @@ const StorefrontView = () => {
     data: products = [],
     isLoading: isProductsLoading,
     error: productsError
-  } = useStorefrontProducts(storefrontId, isVerified);
+  } = useStorefrontProducts(storefrontId, true); // Changed to always fetch products
 
   console.log("StorefrontView state:", {
     storefrontId,
@@ -71,36 +71,35 @@ const StorefrontView = () => {
     return <StorefrontError isNotFound />;
   }
 
-  // If age verification is enabled and user is not verified, show verification screen
-  if (storefront.age_verification_enabled && !isVerified) {
-    return (
-      <AgeVerification
-        onVerified={handleVerified}
-        id={storefrontId as string}
-        logo={storefront.logo}
-        verificationText={storefront.age_verification_text}
-        buttonText={storefront.button_text}
-        error={error}
-        onError={setError}
-      />
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <StorefrontContent
-        storefront={storefront}
-        products={filteredAndSortedProducts}
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        sortBy={sortBy}
-        onSortChange={setSortBy}
-        categoryFilter={categoryFilter}
-        onCategoryChange={setCategoryFilter}
-        categories={categories}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-      />
+    <div className="min-h-screen bg-gray-50 relative">
+      <div className={storefront.age_verification_enabled && !isVerified ? "blur-sm" : ""}>
+        <StorefrontContent
+          storefront={storefront}
+          products={filteredAndSortedProducts}
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          categoryFilter={categoryFilter}
+          onCategoryChange={setCategoryFilter}
+          categories={categories}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+        />
+      </div>
+      
+      {storefront.age_verification_enabled && !isVerified && (
+        <AgeVerification
+          onVerified={handleVerified}
+          id={storefrontId as string}
+          logo={storefront.logo}
+          verificationText={storefront.age_verification_text}
+          buttonText={storefront.button_text}
+          error={error}
+          onError={setError}
+        />
+      )}
     </div>
   );
 };
