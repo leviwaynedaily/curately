@@ -2,7 +2,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Filter } from "lucide-react";
 
-type ProductFiltersProps = {
+type StorefrontFiltersProps = {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   sortBy: string;
@@ -12,7 +12,7 @@ type ProductFiltersProps = {
   categories: string[];
 };
 
-export const ProductFilters = ({
+export const StorefrontFilters = ({
   searchTerm,
   onSearchChange,
   sortBy,
@@ -20,7 +20,7 @@ export const ProductFilters = ({
   categoryFilter,
   onCategoryChange,
   categories,
-}: ProductFiltersProps) => {
+}: StorefrontFiltersProps) => {
   return (
     <div className="bg-white shadow-sm border rounded-lg p-4 mb-8">
       <div className="flex flex-col md:flex-row gap-4">

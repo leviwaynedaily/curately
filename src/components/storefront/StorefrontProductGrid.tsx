@@ -3,12 +3,12 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 
-type ProductGridProps = {
+type StorefrontProductGridProps = {
   products: Product[];
   accentColor?: string;
 };
 
-export const ProductGrid = ({ products, accentColor }: ProductGridProps) => {
+export const StorefrontProductGrid = ({ products, accentColor }: StorefrontProductGridProps) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product) => (

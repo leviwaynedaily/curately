@@ -2,35 +2,35 @@ import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Storefront } from "@/types/storefront";
-import { ProductFilters } from "./products/ProductFilters";
-import { ProductGrid } from "./products/ProductGrid";
+import { StorefrontHeader } from "./StorefrontHeader";
+import { StorefrontFilters } from "./StorefrontFilters";
+import { StorefrontProductGrid } from "./StorefrontProductGrid";
+import { StorefrontLoadingSkeleton } from "./StorefrontLoadingSkeleton";
 
-type GalleryContentProps = {
-  gallery: Storefront;
-  galleryId: string;
-  onDeleteImage: (image: { id: string; filePath: string }) => Promise<void>;
-  onUploadComplete: () => Promise<void>;
+type StorefrontViewProps = {
+  storefront: Storefront;
+  storefrontId: string;
 };
 
-export const GalleryContent = ({
-  gallery,
-  galleryId,
-}: GalleryContentProps) => {
+export const StorefrontView = ({
+  storefront,
+  storefrontId,
+}: StorefrontViewProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ["products", galleryId],
+    queryKey: ["products", storefrontId],
     queryFn: async () => {
-      console.log("Fetching products for storefront:", galleryId);
+      console.log("Fetching products for storefront:", storefrontId);
       const { data, error } = await supabase
         .from("products")
         .select(`
           *,
           product_media (*)
         `)
-        .eq("storefront_id", galleryId)
+        .eq("storefront_id", storefrontId)
         .eq("status", "active");
 
       if (error) {
@@ -39,8 +39,6 @@ export const GalleryContent = ({
       }
 
       console.log("Products fetched:", data);
-
-      // Add primary_media to each product
       return data.map(product => ({
         ...product,
         primary_media: product.product_media?.find(media => media.is_primary)?.file_path
@@ -56,7 +54,6 @@ export const GalleryContent = ({
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...products];
 
-    // Apply search filter
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       result = result.filter(
@@ -67,12 +64,10 @@ export const GalleryContent = ({
       );
     }
 
-    // Apply category filter
     if (categoryFilter !== "all") {
       result = result.filter(product => product.category === categoryFilter);
     }
 
-    // Apply sorting
     switch (sortBy) {
       case "newest":
         result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -98,38 +93,13 @@ export const GalleryContent = ({
   }, [products, searchTerm, categoryFilter, sortBy]);
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-16 bg-gray-200 rounded w-48 mx-auto"></div>
-          <div className="h-12 bg-gray-200 rounded"></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-80 bg-gray-200 rounded"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <StorefrontLoadingSkeleton />;
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header with Logo */}
-      <div className="flex justify-center mb-12">
-        {gallery.site_logo ? (
-          <img
-            src={supabase.storage.from("gallery_images").getPublicUrl(gallery.site_logo).data.publicUrl}
-            alt={gallery.name}
-            className="h-16 object-contain"
-          />
-        ) : (
-          <h1 className="text-3xl font-bold text-center">{gallery.name}</h1>
-        )}
-      </div>
-
-      {/* Filters */}
-      <ProductFilters
+      <StorefrontHeader storefront={storefront} />
+      <StorefrontFilters
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         sortBy={sortBy}
@@ -138,11 +108,9 @@ export const GalleryContent = ({
         onCategoryChange={setCategoryFilter}
         categories={categories}
       />
-
-      {/* Products Grid */}
-      <ProductGrid 
+      <StorefrontProductGrid 
         products={filteredAndSortedProducts}
-        accentColor={gallery.accent_color || "#9b87f5"}
+        accentColor={storefront.accent_color || "#9b87f5"}
       />
     </div>
   );
