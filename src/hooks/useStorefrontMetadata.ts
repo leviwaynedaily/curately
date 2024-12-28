@@ -1,11 +1,14 @@
 import { Storefront } from "@/types/storefront";
 import { useEffect } from "react";
 
+// Default to curately.shop if no domain is provided in env
+const SITE_DOMAIN = import.meta.env.VITE_SITE_DOMAIN || 'curately.shop';
+
 export const useStorefrontMetadata = (storefront: Storefront | null) => {
   useEffect(() => {
     if (storefront) {
       // Update page title
-      document.title = storefront.page_title || `${storefront.name} | Curately.shop`;
+      document.title = storefront.page_title || `${storefront.name} | ${SITE_DOMAIN}`;
 
       // Update favicon if set
       if (storefront.favicon) {
@@ -19,25 +22,25 @@ export const useStorefrontMetadata = (storefront: Storefront | null) => {
       const metaTags = [
         {
           property: "og:title",
-          content: storefront.page_title || `${storefront.name} | Curately.shop`,
+          content: storefront.page_title || `${storefront.name} | ${SITE_DOMAIN}`,
         },
         {
           property: "og:description",
-          content: storefront.description || `Visit ${storefront.name} on Curately.shop`,
+          content: storefront.description || `Visit ${storefront.name} on ${SITE_DOMAIN}`,
         },
         {
           property: "og:image",
           content: storefront.site_logo
             ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${storefront.site_logo}`
-            : "https://curately.shop/og-image.png",
+            : `https://${SITE_DOMAIN}/og-image.png`,
         },
         {
           property: "og:url",
-          content: `https://curately.shop/storefront/${storefront.id}`,
+          content: `https://${SITE_DOMAIN}/storefront/${storefront.id}`,
         },
         {
           name: "description",
-          content: storefront.description || `Visit ${storefront.name} on Curately.shop`,
+          content: storefront.description || `Visit ${storefront.name} on ${SITE_DOMAIN}`,
         },
       ];
 
