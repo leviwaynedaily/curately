@@ -1,46 +1,67 @@
-import { useEffect } from "react";
 import { Storefront } from "@/types/storefront";
-import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 
 export const useStorefrontMetadata = (storefront: Storefront | null) => {
   useEffect(() => {
     if (storefront) {
-      console.log("Setting page title and favicon for storefront:", storefront);
-      
-      // Set page title
-      document.title = storefront.page_title || storefront.name || "Gallery";
+      // Update page title
+      document.title = storefront.page_title || `${storefront.name} | Curately.shop`;
 
-      // Set favicon if available
+      // Update favicon if set
       if (storefront.favicon) {
-        const faviconUrl = supabase.storage
-          .from("gallery_images")
-          .getPublicUrl(storefront.favicon).data.publicUrl;
-        
-        console.log("Setting favicon URL:", faviconUrl);
-        
-        const existingFavicon = document.querySelector("link[rel='icon']");
-        if (existingFavicon) {
-          document.head.removeChild(existingFavicon);
+        const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+        if (link) {
+          link.href = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${storefront.favicon}`;
         }
-
-        const favicon = document.createElement("link");
-        favicon.rel = "icon";
-        favicon.href = faviconUrl;
-        document.head.appendChild(favicon);
       }
 
-      return () => {
-        // Cleanup: Reset to default values
-        document.title = "Curately - Digital Gallery Platform";
-        const existingFavicon = document.querySelector("link[rel='icon']");
-        if (existingFavicon) {
-          document.head.removeChild(existingFavicon);
+      // Update meta tags
+      const metaTags = [
+        {
+          property: "og:title",
+          content: storefront.page_title || `${storefront.name} | Curately.shop`,
+        },
+        {
+          property: "og:description",
+          content: storefront.description || `Visit ${storefront.name} on Curately.shop`,
+        },
+        {
+          property: "og:image",
+          content: storefront.site_logo
+            ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${storefront.site_logo}`
+            : "https://curately.shop/og-image.png",
+        },
+        {
+          property: "og:url",
+          content: `https://curately.shop/storefront/${storefront.id}`,
+        },
+        {
+          name: "description",
+          content: storefront.description || `Visit ${storefront.name} on Curately.shop`,
+        },
+      ];
+
+      // Update or create meta tags
+      metaTags.forEach(({ property, name, content }) => {
+        let meta = document.querySelector(
+          property
+            ? `meta[property="${property}"]`
+            : `meta[name="${name}"]`
+        ) as HTMLMetaElement;
+
+        if (!meta) {
+          meta = document.createElement("meta");
+          if (property) {
+            meta.setAttribute("property", property);
+          }
+          if (name) {
+            meta.setAttribute("name", name);
+          }
+          document.head.appendChild(meta);
         }
-        const defaultFavicon = document.createElement("link");
-        defaultFavicon.rel = "icon";
-        defaultFavicon.href = "/favicon.ico";
-        document.head.appendChild(defaultFavicon);
-      };
+
+        meta.setAttribute("content", content);
+      });
     }
   }, [storefront]);
 };
