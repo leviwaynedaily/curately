@@ -27,10 +27,15 @@ export const GalleryForm = ({
     gallery,
   });
 
-  console.log("Gallery in form:", gallery); // Added for debugging
+  const handleDialogClose = (open: boolean) => {
+    // Only close if we're not in the products tab
+    if (form.getValues("currentTab") !== "products") {
+      onClose();
+    }
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleDialogClose}>
       <DialogContent className="max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle>{gallery ? "Edit Gallery" : "Add Gallery"}</DialogTitle>
@@ -40,7 +45,7 @@ export const GalleryForm = ({
             form={form}
             isLoading={isLoading}
             onSubmit={handleSubmit}
-            onCancel={onClose}
+            onClose={onClose}
             galleryId={gallery?.id}
           />
         </div>

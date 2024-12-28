@@ -16,7 +16,7 @@ type GalleryFormContentProps = {
   form: UseFormReturn<GalleryFormValues>;
   isLoading: boolean;
   onSubmit: (values: GalleryFormValues) => Promise<void>;
-  onCancel: () => void;
+  onClose: () => void;
   galleryId?: string;
 };
 
@@ -24,15 +24,17 @@ export const GalleryFormContent = ({
   form,
   isLoading,
   onSubmit,
-  onCancel,
+  onClose,
   galleryId,
 }: GalleryFormContentProps) => {
-  console.log("Gallery ID in form content:", galleryId); // Added for debugging
+  const handleTabChange = (value: string) => {
+    form.setValue("currentTab", value);
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <Tabs defaultValue="basic" className="w-full">
+        <Tabs defaultValue="basic" className="w-full" onValueChange={handleTabChange}>
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="basic">Basic Information</TabsTrigger>
             <TabsTrigger value="verification">Verification</TabsTrigger>
@@ -68,7 +70,7 @@ export const GalleryFormContent = ({
         </Tabs>
 
         <div className="sticky bottom-0 bg-background pt-4 border-t">
-          <GalleryFormActions isLoading={isLoading} onCancel={onCancel} />
+          <GalleryFormActions isLoading={isLoading} onCancel={onClose} />
         </div>
       </form>
     </Form>
