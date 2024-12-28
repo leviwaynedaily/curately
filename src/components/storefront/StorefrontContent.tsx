@@ -36,7 +36,11 @@ export const StorefrontContent = ({
 }: StorefrontContentProps) => {
   return (
     <div className="container mx-auto px-4 py-8">
-      <StorefrontHeader storefront={storefront} onLogoClick={onLogoClick} />
+      <StorefrontHeader 
+        storefront={storefront} 
+        onLogoClick={onLogoClick}
+        showDescription={storefront.show_description}
+      />
       <div className="space-y-4">
         <StorefrontFilters
           searchTerm={searchTerm}

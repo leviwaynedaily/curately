@@ -4,9 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 interface StorefrontHeaderProps {
   storefront: Storefront;
   onLogoClick?: () => void;
+  showDescription?: boolean;
 }
 
-export const StorefrontHeader = ({ storefront, onLogoClick }: StorefrontHeaderProps) => {
+export const StorefrontHeader = ({ 
+  storefront, 
+  onLogoClick,
+  showDescription = true
+}: StorefrontHeaderProps) => {
   const logoUrl = storefront.site_logo
     ? supabase.storage.from("gallery_images").getPublicUrl(storefront.site_logo).data.publicUrl
     : null;
@@ -30,7 +35,7 @@ export const StorefrontHeader = ({ storefront, onLogoClick }: StorefrontHeaderPr
           {storefront.name}
         </h1>
       )}
-      {storefront.description && (
+      {showDescription && storefront.description && (
         <p 
           className="text-base max-w-2xl mx-auto"
           style={{ color: storefront.secondary_font_color || '#4B5563' }}

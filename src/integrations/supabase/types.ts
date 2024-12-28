@@ -190,6 +190,7 @@ export type Database = {
           pwa_icon_512: string | null
           secondary_color: string | null
           secondary_font_color: string | null
+          show_description: boolean | null
           site_logo: string | null
           status: string | null
           subheading_text: string | null
@@ -222,6 +223,7 @@ export type Database = {
           pwa_icon_512?: string | null
           secondary_color?: string | null
           secondary_font_color?: string | null
+          show_description?: boolean | null
           site_logo?: string | null
           status?: string | null
           subheading_text?: string | null
@@ -254,6 +256,7 @@ export type Database = {
           pwa_icon_512?: string | null
           secondary_color?: string | null
           secondary_font_color?: string | null
+          show_description?: boolean | null
           site_logo?: string | null
           status?: string | null
           subheading_text?: string | null
