@@ -31,6 +31,11 @@ export const GalleryTable = ({
     });
   };
 
+  const getStorefrontUrl = (id: string) => {
+    const baseUrl = window.location.origin;
+    return `${baseUrl}/storefront/${id}`;
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -74,8 +79,8 @@ export const GalleryTable = ({
             </TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                <Link
-                  to={`/storefront/${gallery.id}`}
+                <a
+                  href={getStorefrontUrl(gallery.id)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -86,7 +91,7 @@ export const GalleryTable = ({
                   >
                     <ExternalLink className="h-4 w-4" />
                   </Button>
-                </Link>
+                </a>
                 <Link
                   to={`/admin/products/${gallery.id}`}
                 >

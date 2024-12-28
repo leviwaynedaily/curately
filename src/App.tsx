@@ -9,9 +9,17 @@ import StorefrontView from "@/pages/StorefrontView";
 import ProductManagement from "@/pages/ProductManagement";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});
 
 function App() {
+  console.log("App rendering, setting up routes");
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
