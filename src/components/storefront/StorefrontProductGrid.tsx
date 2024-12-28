@@ -4,6 +4,10 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import { ProductDetailsDialog } from "./product/ProductDetailsDialog";
 import { ProductMediaCarousel } from "./product/ProductMediaCarousel";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Edit } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type StorefrontProductGridProps = {
   products: Product[];
@@ -17,6 +21,13 @@ export const StorefrontProductGrid = ({
   allowDownload = false
 }: StorefrontProductGridProps) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const { session } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleEditClick = (e: React.MouseEvent, productId: string, storefrontId: string) => {
+    e.stopPropagation(); // Prevent opening the product details dialog
+    navigate(`/admin/products/${storefrontId}?productId=${productId}`);
+  };
   
   return (
     <>
@@ -24,9 +35,21 @@ export const StorefrontProductGrid = ({
         {products.map((product) => (
           <Card 
             key={product.id} 
-            className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 border-neutral-200"
+            className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 border-neutral-200 relative"
             onClick={() => setSelectedProduct(product)}
           >
+            {session && (
+              <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white"
+                  onClick={(e) => handleEditClick(e, product.id, product.storefront_id)}
+                >
+                  <Edit className="h-4 w-4" style={{ color: accentColor }} />
+                </Button>
+              </div>
+            )}
             <CardContent className="p-0">
               <div className="aspect-square overflow-hidden bg-gray-100">
                 {product.product_media && product.product_media.length > 0 ? (
