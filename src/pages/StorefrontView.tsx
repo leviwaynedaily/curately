@@ -31,29 +31,24 @@ const StorefrontView = () => {
   useEffect(() => {
     if (storefront) {
       console.log("Setting page title and favicon for storefront:", storefront);
-      // Set page title
       document.title = storefront.page_title || storefront.name || "Gallery";
 
-      // Set favicon
       if (storefront.favicon) {
         const faviconUrl = supabase.storage
           .from("gallery_images")
           .getPublicUrl(storefront.favicon).data.publicUrl;
         
-        // Remove existing favicon if any
         const existingFavicon = document.querySelector("link[rel='icon']");
         if (existingFavicon) {
           document.head.removeChild(existingFavicon);
         }
 
-        // Create and add new favicon
         const favicon = document.createElement("link");
         favicon.rel = "icon";
         favicon.href = faviconUrl;
         document.head.appendChild(favicon);
       }
 
-      // Cleanup function to restore default title and favicon when leaving the page
       return () => {
         document.title = "Curately - Digital Gallery Platform";
         const existingFavicon = document.querySelector("link[rel='icon']");
@@ -123,7 +118,13 @@ const StorefrontView = () => {
   }
 
   return (
-    <>
+    <div className="relative">
+      <GalleryContent
+        gallery={storefront}
+        galleryId={storefrontId as string}
+        onDeleteImage={deleteImage}
+        onUploadComplete={handleUploadComplete}
+      />
       {!isVerified && (
         <AgeVerification
           onVerified={handleVerified}
@@ -133,15 +134,7 @@ const StorefrontView = () => {
           buttonText={storefront.button_text}
         />
       )}
-      {isVerified && (
-        <GalleryContent
-          gallery={storefront}
-          galleryId={storefrontId as string}
-          onDeleteImage={deleteImage}
-          onUploadComplete={handleUploadComplete}
-        />
-      )}
-    </>
+    </div>
   );
 };
 
