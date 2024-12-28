@@ -24,7 +24,7 @@ export const StorefrontProductGrid = ({
         {products.map((product) => (
           <Card 
             key={product.id} 
-            className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
+            className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 border-neutral-200"
             onClick={() => setSelectedProduct(product)}
           >
             <CardContent className="p-0">
@@ -41,18 +41,32 @@ export const StorefrontProductGrid = ({
                 )}
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col items-start gap-1 p-3">
-              <h3 className="font-medium text-base line-clamp-1">{product.name}</h3>
-              {product.price && (
-                <p className="text-base font-semibold" style={{ color: accentColor }}>
-                  {formatCurrency(product.price)}
-                </p>
-              )}
-              {product.category && (
-                <span className="text-xs text-gray-500 capitalize">
-                  {product.category}
-                </span>
-              )}
+            <CardFooter className="flex flex-col items-start gap-2 p-4">
+              <div className="w-full space-y-2">
+                <h3 className="font-medium text-base line-clamp-1 group-hover:text-neutral-700 transition-colors">
+                  {product.name}
+                </h3>
+                {product.price && (
+                  <p 
+                    className="text-base font-semibold" 
+                    style={{ color: accentColor }}
+                  >
+                    {formatCurrency(product.price)}
+                  </p>
+                )}
+                {product.category && (
+                  <span 
+                    className="inline-block px-2 py-1 text-xs rounded-full"
+                    style={{ 
+                      backgroundColor: `${accentColor}15`,
+                      color: accentColor,
+                      border: `1px solid ${accentColor}30`
+                    }}
+                  >
+                    {product.category}
+                  </span>
+                )}
+              </div>
             </CardFooter>
           </Card>
         ))}
