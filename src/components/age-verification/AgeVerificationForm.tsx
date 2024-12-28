@@ -62,7 +62,7 @@ export const AgeVerificationForm = ({
           />
           <Label
             htmlFor="age-verification"
-            className="text-[13px] text-[#333333] leading-tight"
+            className="text-[11px] text-[#1A1A1A] leading-tight"
           >
             {verificationText}
           </Label>
