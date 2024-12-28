@@ -65,15 +65,18 @@ export const ProductMediaDialog = ({
       console.log("Creating media record with product_id:", product.id);
       const { error: dbError } = await supabase
         .from("product_media")
-        .insert({
-          product_id: product.id, // Ensure this is set
+        .insert([{
+          product_id: product.id,
           file_path: filePath,
           media_type: mediaType,
-          is_primary: media.length === 0, // Set as primary if it's the first media
+          is_primary: media.length === 0,
           title: file.name,
-        });
+        }]);
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        console.error("Error creating media record:", dbError);
+        throw dbError;
+      }
 
       toast({ description: "Media uploaded successfully" });
       fetchMedia();
