@@ -6,6 +6,8 @@ import { StorefrontHeader } from "./StorefrontHeader";
 import { StorefrontFilters } from "./StorefrontFilters";
 import { StorefrontProductGrid } from "./StorefrontProductGrid";
 import { StorefrontLoadingSkeleton } from "./StorefrontLoadingSkeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 type StorefrontViewProps = {
   storefront: Storefront;
@@ -20,7 +22,7 @@ export const StorefrontView = ({
   const [sortBy, setSortBy] = useState("newest");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
-  const { data: products = [], isLoading } = useQuery({
+  const { data: products = [], isLoading, error } = useQuery({
     queryKey: ["products", storefrontId],
     queryFn: async () => {
       console.log("Fetching products for storefront:", storefrontId);
@@ -39,10 +41,19 @@ export const StorefrontView = ({
       }
 
       console.log("Products fetched:", data);
-      return data.map(product => ({
+      
+      if (!data || data.length === 0) {
+        console.log("No products found for storefront:", storefrontId);
+        return [];
+      }
+
+      const productsWithMedia = data.map(product => ({
         ...product,
         primary_media: product.product_media?.find(media => media.is_primary)?.file_path
       }));
+
+      console.log("Products with media:", productsWithMedia);
+      return productsWithMedia;
     },
   });
 
@@ -96,6 +107,18 @@ export const StorefrontView = ({
     return <StorefrontLoadingSkeleton />;
   }
 
+  if (error) {
+    console.error("Error loading products:", error);
+    return (
+      <Alert variant="destructive" className="m-4">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Error loading products. Please try again later.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <StorefrontHeader storefront={storefront} />
@@ -108,10 +131,16 @@ export const StorefrontView = ({
         onCategoryChange={setCategoryFilter}
         categories={categories}
       />
-      <StorefrontProductGrid 
-        products={filteredAndSortedProducts}
-        accentColor={storefront.accent_color || "#9b87f5"}
-      />
+      {products.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500">No products available at this time.</p>
+        </div>
+      ) : (
+        <StorefrontProductGrid 
+          products={filteredAndSortedProducts}
+          accentColor={storefront.accent_color}
+        />
+      )}
     </div>
   );
 };
