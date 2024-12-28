@@ -15,6 +15,7 @@ type GallerySiteSettingsSectionProps = {
 export const GallerySiteSettingsSection = ({ form }: GallerySiteSettingsSectionProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
+  const siteName = form.watch("name");
 
   const handleFaviconUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -37,11 +38,7 @@ export const GallerySiteSettingsSection = ({ form }: GallerySiteSettingsSectionP
         throw uploadError;
       }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from("gallery_images")
-        .getPublicUrl(filePath);
-
-      console.log("Favicon uploaded successfully, public URL:", publicUrl);
+      console.log("Favicon uploaded successfully, setting form value:", filePath);
       form.setValue("favicon", filePath);
       toast({ description: "Favicon uploaded successfully" });
     } catch (error) {
@@ -72,7 +69,7 @@ export const GallerySiteSettingsSection = ({ form }: GallerySiteSettingsSectionP
               <Input 
                 placeholder="Enter page title" 
                 {...field} 
-                value={field.value || form.getValues("name") || ''} 
+                value={field.value || siteName || ''} 
               />
             </FormControl>
             <FormMessage />
@@ -100,6 +97,7 @@ export const GallerySiteSettingsSection = ({ form }: GallerySiteSettingsSectionP
                       size="icon"
                       className="absolute -top-2 -right-2"
                       onClick={clearFavicon}
+                      type="button"
                     >
                       <X className="h-4 w-4" />
                     </Button>
