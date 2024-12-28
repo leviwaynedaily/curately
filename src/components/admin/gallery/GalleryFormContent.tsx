@@ -4,6 +4,7 @@ import { GalleryBusinessField } from "./GalleryBusinessField";
 import { GalleryDescriptionField } from "./GalleryDescriptionField";
 import { GalleryVerificationFields } from "./GalleryVerificationFields";
 import { GalleryCustomizationFields } from "./GalleryCustomizationFields";
+import { GalleryInstructionsFields } from "./GalleryInstructionsFields";
 import { GalleryFormActions } from "./GalleryFormActions";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
@@ -32,9 +33,10 @@ export const GalleryFormContent = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Tabs defaultValue="basic" className="w-full" onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="basic">Basic Information</TabsTrigger>
             <TabsTrigger value="verification">Verification</TabsTrigger>
+            <TabsTrigger value="instructions">Instructions</TabsTrigger>
             <TabsTrigger value="customization">Customization</TabsTrigger>
           </TabsList>
           
@@ -47,6 +49,10 @@ export const GalleryFormContent = ({
             
             <TabsContent value="verification" className="space-y-4 mt-0">
               <GalleryVerificationFields form={form} />
+            </TabsContent>
+
+            <TabsContent value="instructions" className="space-y-4 mt-0">
+              <GalleryInstructionsFields form={form} />
             </TabsContent>
             
             <TabsContent value="customization" className="space-y-4 mt-0">
