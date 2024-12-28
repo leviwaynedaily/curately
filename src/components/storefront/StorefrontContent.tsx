@@ -32,6 +32,9 @@ export const StorefrontContent = ({
   viewMode,
   onViewModeChange,
 }: StorefrontContentProps) => {
+  // For now, we'll hardcode this. In a future update, this should come from storefront settings
+  const allowDownload = false;
+
   return (
     <div className="container mx-auto px-4 py-8">
       <StorefrontHeader storefront={storefront} />
@@ -51,6 +54,7 @@ export const StorefrontContent = ({
           <StorefrontProductGrid 
             products={products}
             accentColor={storefront.accent_color}
+            allowDownload={allowDownload}
           />
         ) : (
           <StorefrontProductList
