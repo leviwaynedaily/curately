@@ -32,19 +32,14 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
 
       console.log("Storefront verified, fetching products");
 
-      // Fetch products with their media using LEFT JOIN like in the SQL query
+      // Fetch products with their media - using the exact same query as admin dashboard
       const { data, error } = await supabase
         .from("products")
         .select(`
           *,
-          product_media!left (
-            id,
-            file_path,
-            is_primary
-          )
+          product_media (*)
         `)
-        .eq("storefront_id", storefrontId)
-        .eq("status", 'active');
+        .eq("storefront_id", storefrontId);
 
       if (error) {
         console.error("Error fetching products:", error);
