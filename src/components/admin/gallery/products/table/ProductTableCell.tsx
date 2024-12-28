@@ -11,7 +11,7 @@ type ProductTableCellProps = {
   isEditing: boolean;
   onEdit: () => void;
   onChange: (value: any) => void;
-  onSave?: () => void;  // Added onSave prop
+  onSave?: () => void;
   className?: string;
 };
 
@@ -21,7 +21,7 @@ export const ProductTableCell = ({
   isEditing,
   onEdit,
   onChange,
-  onSave,  // Added onSave prop
+  onSave,
   className,
 }: ProductTableCellProps) => {
   const handleDoubleClick = () => {
@@ -37,6 +37,12 @@ export const ProductTableCell = ({
     }
   };
 
+  const handleBlur = () => {
+    if (isEditing) {
+      onSave?.();
+    }
+  };
+
   if (isEditing) {
     if (field === "description") {
       return (
@@ -45,6 +51,7 @@ export const ProductTableCell = ({
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
             className="w-full min-h-[60px]"
           />
         </TableCell>
@@ -59,6 +66,7 @@ export const ProductTableCell = ({
             value={value || ""}
             onChange={(e) => onChange(field === "price" ? parseFloat(e.target.value) : parseInt(e.target.value))}
             onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
             className="w-full"
           />
         </TableCell>
@@ -68,7 +76,14 @@ export const ProductTableCell = ({
     if (field === "status") {
       return (
         <TableCell className={className}>
-          <Select value={value || ""} onValueChange={onChange}>
+          <Select 
+            value={value || ""} 
+            onValueChange={(newValue) => {
+              onChange(newValue);
+              // Automatically save when status is changed
+              setTimeout(() => onSave?.(), 0);
+            }}
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -88,6 +103,7 @@ export const ProductTableCell = ({
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
           className="w-full"
         />
       </TableCell>
