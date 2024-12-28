@@ -56,21 +56,21 @@ const Login = () => {
                 variables: {
                   default: {
                     colors: {
-                      brand: '#2A6041', // primary color
-                      brandAccent: '#D4AF37', // accent color
-                      brandButtonText: '#F5F5DC', // neutral color
-                      defaultButtonBackground: '#333333', // secondary color
-                      defaultButtonBackgroundHover: '#4A6572', // slate color
+                      brand: '#2A6041',
+                      brandAccent: '#D4AF37',
+                      brandButtonText: '#F5F5DC',
+                      defaultButtonBackground: '#333333',
+                      defaultButtonBackgroundHover: '#4A6572',
                       inputBackground: 'white',
                       inputBorder: '#E8E8E8',
                       inputBorderHover: '#D4AF37',
                       inputBorderFocus: '#2A6041',
                     },
-                    borderWidths: {
-                      buttonBorderWidth: '1px',
-                      inputBorderWidth: '1px',
+                    space: {
+                      buttonPadding: '0.75rem 1rem',
+                      inputPadding: '0.75rem 1rem',
                     },
-                    borderRadius: {
+                    radii: {
                       borderRadiusButton: '0.5rem',
                       buttonBorderRadius: '0.5rem',
                       inputBorderRadius: '0.5rem',
