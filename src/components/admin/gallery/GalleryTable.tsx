@@ -48,7 +48,7 @@ export const GalleryTable = ({
           <TableRow key={gallery.id}>
             <TableCell>
               <Link 
-                to={`/gallery/${gallery.id}`}
+                to={`/storefront/${gallery.id}`}
                 className="text-blue-600 hover:text-blue-800 hover:underline"
               >
                 {gallery.name}
@@ -75,7 +75,7 @@ export const GalleryTable = ({
             <TableCell>
               <div className="flex items-center gap-2">
                 <a
-                  href={`https://curately-galleries.lovable.app/gallery/${gallery.id}`}
+                  href={`/storefront/${gallery.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
