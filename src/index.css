@@ -60,6 +60,7 @@
     border-radius: 4px;
     appearance: none;
     background-color: transparent;
+    margin-top: 0.125rem; /* Adds a small top margin to align with text */
   }
 
   [type="checkbox"]:checked {
