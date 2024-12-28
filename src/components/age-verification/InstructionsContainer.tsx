@@ -41,11 +41,7 @@ export const InstructionsContainer = ({
             
             <Button
               onClick={onConfirm}
-              className="w-full mt-auto"
-              style={{
-                backgroundColor: 'var(--accent-color, var(--primary))',
-                color: 'var(--accent-font-color, white)',
-              }}
+              className="w-full mt-auto bg-accent hover:bg-accent/90"
             >
               {buttonText}
             </Button>
