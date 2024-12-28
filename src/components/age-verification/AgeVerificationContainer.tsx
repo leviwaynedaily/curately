@@ -59,15 +59,16 @@ export const AgeVerificationContainer = ({
 
   return (
     <div className="fixed inset-0 z-50">
+      {/* Semi-transparent overlay with blur effect */}
       <div 
-        className="absolute inset-0 bg-black/50 backdrop-blur-md"
+        className="absolute inset-0 backdrop-blur-md"
         style={{
-          backgroundColor: storefront?.primary_color ? `${storefront.primary_color}80` : 'rgba(0, 0, 0, 0.5)'
+          backgroundColor: storefront?.primary_color ? `${storefront.primary_color}40` : 'rgba(0, 0, 0, 0.3)'
         }}
       />
       
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-md bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-2xl">
+        <div className="w-full max-w-md bg-white/95 backdrop-blur-sm p-8 rounded-xl shadow-2xl">
           {logo && <AgeVerificationLogo logo={logo} />}
           
           <AgeVerificationForm
