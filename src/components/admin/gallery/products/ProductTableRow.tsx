@@ -1,8 +1,8 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit, Save, X, Trash, Image as ImageIcon } from "lucide-react";
 import { Product } from "./types";
-import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 type ProductTableRowProps = {
@@ -29,23 +29,36 @@ export const ProductTableRow = ({
   onMediaClick,
 }: ProductTableRowProps) => {
   const [primaryMedia, setPrimaryMedia] = useState<string | null>(null);
+  const [isLoadingMedia, setIsLoadingMedia] = useState(true);
 
   useEffect(() => {
     const fetchPrimaryMedia = async () => {
-      const { data, error } = await supabase
-        .from("product_media")
-        .select("file_path")
-        .eq("product_id", product.id)
-        .eq("is_primary", true)
-        .single();
+      setIsLoadingMedia(true);
+      try {
+        console.log("Fetching primary media for product:", product.id);
+        const { data, error } = await supabase
+          .from("product_media")
+          .select("file_path")
+          .eq("product_id", product.id)
+          .eq("is_primary", true)
+          .maybeSingle();
 
-      if (error) {
-        console.error("Error fetching primary media:", error);
-        return;
-      }
+        if (error) {
+          console.error("Error fetching primary media:", error);
+          return;
+        }
 
-      if (data) {
-        setPrimaryMedia(data.file_path);
+        console.log("Primary media data:", data);
+        if (data) {
+          setPrimaryMedia(data.file_path);
+        } else {
+          console.log("No primary media found for product:", product.id);
+          setPrimaryMedia(null);
+        }
+      } catch (error) {
+        console.error("Error in fetchPrimaryMedia:", error);
+      } finally {
+        setIsLoadingMedia(false);
       }
     };
 
@@ -55,7 +68,9 @@ export const ProductTableRow = ({
   return (
     <tr>
       <td className="flex items-center gap-2">
-        {primaryMedia ? (
+        {isLoadingMedia ? (
+          <div className="w-10 h-10 bg-muted animate-pulse rounded" />
+        ) : primaryMedia ? (
           <img
             src={supabase.storage.from("gallery_images").getPublicUrl(primaryMedia).data.publicUrl}
             alt=""
