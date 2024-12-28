@@ -16,6 +16,8 @@ type StorefrontContentProps = {
   categoryFilter: string;
   onCategoryChange: (value: string) => void;
   categories: string[];
+  viewMode: "grid" | "list";
+  onViewModeChange: (mode: "grid" | "list") => void;
 };
 
 export const StorefrontContent = ({
@@ -28,9 +30,9 @@ export const StorefrontContent = ({
   categoryFilter,
   onCategoryChange,
   categories,
+  viewMode,
+  onViewModeChange,
 }: StorefrontContentProps) => {
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
   return (
     <div className="container mx-auto px-4 py-8">
       <StorefrontHeader storefront={storefront} />
@@ -43,7 +45,7 @@ export const StorefrontContent = ({
         onCategoryChange={onCategoryChange}
         categories={categories}
         viewMode={viewMode}
-        onViewModeChange={setViewMode}
+        onViewModeChange={onViewModeChange}
       />
       {products.length > 0 ? (
         viewMode === "grid" ? (
