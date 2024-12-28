@@ -5,7 +5,7 @@ import { formatCurrency } from "@/lib/utils";
 import { ProductDetailsDialog } from "./product/ProductDetailsDialog";
 import { ProductMediaCarousel } from "./product/ProductMediaCarousel";
 import { Button } from "@/components/ui/button";
-import { Edit, MoreVertical, Trash } from "lucide-react";
+import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -162,7 +162,7 @@ export const StorefrontProductGrid = ({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                     <Button variant="ghost" size="icon" className="bg-white/80 hover:bg-white/90 backdrop-blur-sm">
-                      <MoreVertical className="h-4 w-4" />
+                      <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
