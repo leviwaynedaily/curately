@@ -56,7 +56,7 @@
 
   /* Custom checkbox styles */
   [type="checkbox"] {
-    @apply h-6 w-6 rounded-sm border-2 cursor-pointer transition-all duration-200;
+    @apply h-8 w-8 rounded-sm border-2 cursor-pointer transition-all duration-200;
   }
 
   [type="checkbox"]:checked {
