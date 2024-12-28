@@ -30,6 +30,8 @@ type UseGalleryFormProps = {
     button_text?: string;
     age_verification_enabled?: boolean;
     password_required?: boolean;
+    page_title?: string;
+    favicon?: string;
   };
 };
 
@@ -61,6 +63,8 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       age_verification_enabled: gallery?.age_verification_enabled || false,
       password_required: gallery?.password_required || false,
       currentTab: "basic",
+      page_title: gallery?.page_title || gallery?.name || "",
+      favicon: gallery?.favicon || "",
     },
   });
 
@@ -88,6 +92,8 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
         age_verification_enabled: gallery.age_verification_enabled || false,
         password_required: gallery.password_required || false,
         currentTab: "basic",
+        page_title: gallery.page_title || gallery.name || "",
+        favicon: gallery.favicon || "",
       });
     }
   }, [gallery, form]);
@@ -96,34 +102,16 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
     setIsLoading(true);
     console.log("Submitting gallery form...", values);
 
-    const { currentTab, ...rest } = values;
-    const sanitizedValues = {
-      name: values.name,
-      status: values.status || "active",
-      business_id: values.business_id,
-      password: values.password,
-      logo: values.logo,
-      site_logo: values.site_logo,
-      description: values.description,
-      primary_color: values.primary_color,
-      secondary_color: values.secondary_color,
-      accent_color: values.accent_color,
-      primary_font_color: values.primary_font_color,
-      secondary_font_color: values.secondary_font_color,
-      accent_font_color: values.accent_font_color,
-      heading_text: values.heading_text,
-      subheading_text: values.subheading_text,
-      age_verification_text: values.age_verification_text,
-      button_text: values.button_text,
-      age_verification_enabled: values.age_verification_enabled,
-      password_required: values.password_required,
-    };
-
+    const { currentTab, ...sanitizedValues } = values;
+    
     try {
       if (gallery?.id) {
         const { error } = await supabase
           .from("storefronts")
-          .update(sanitizedValues)
+          .update({
+            ...sanitizedValues,
+            page_title: values.page_title || values.name, // Ensure page_title defaults to name if empty
+          })
           .eq("id", gallery.id);
 
         if (error) throw error;
@@ -132,7 +120,10 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
       } else {
         const { error } = await supabase
           .from("storefronts")
-          .insert(sanitizedValues);
+          .insert({
+            ...sanitizedValues,
+            page_title: values.page_title || values.name, // Ensure page_title defaults to name if empty
+          });
 
         if (error) throw error;
         console.log("Storefront created successfully");
