@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { StorefrontHeader } from "./StorefrontHeader";
 import { StorefrontFilters } from "./StorefrontFilters";
 import { StorefrontProductGrid } from "./StorefrontProductGrid";
