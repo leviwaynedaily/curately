@@ -35,9 +35,15 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
       // Fetch products with their media
       const { data, error } = await supabase
         .from("products")
-        .select("*, product_media(*)")
-        .eq("storefront_id", storefrontId)
-        .eq("status", "active");
+        .select(`
+          *,
+          product_media!inner (
+            id,
+            file_path,
+            is_primary
+          )
+        `)
+        .eq("storefront_id", storefrontId);
 
       if (error) {
         console.error("Error fetching products:", error);
