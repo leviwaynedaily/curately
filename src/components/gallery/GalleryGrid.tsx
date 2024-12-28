@@ -12,7 +12,7 @@ export const GalleryGrid = () => {
     queryFn: async () => {
       let query = supabase
         .from("storefronts")
-        .select("*")
+        .select("*, businesses(name)")
         .order("created_at", { ascending: false });
 
       if (searchQuery) {
@@ -40,9 +40,9 @@ export const GalleryGrid = () => {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {storefronts?.map((storefront) => (
-        <Link key={storefront.id} to={`/storefront/${storefront.id}`}>
-          <GalleryCard storefront={storefront} />
+      {storefronts?.map((gallery) => (
+        <Link key={gallery.id} to={`/storefront/${gallery.id}`}>
+          <GalleryCard gallery={gallery} />
         </Link>
       ))}
     </div>
