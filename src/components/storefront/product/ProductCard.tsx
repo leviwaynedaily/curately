@@ -99,6 +99,11 @@ export const ProductCard = ({
               </span>
             )}
           </div>
+          {product.description && (
+            <p className="text-sm text-gray-600 line-clamp-2">
+              {product.description}
+            </p>
+          )}
           {product.price && (
             <p 
               className="text-base font-semibold" 
