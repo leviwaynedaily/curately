@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Cloud, Image as GalleryIcon, Lock } from "lucide-react";
+import { ArrowRight, Lock, Image as GalleryIcon, Cloud } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -9,19 +9,25 @@ const Index = () => {
         <div className="max-w-7xl w-full mx-auto flex flex-col items-center justify-center gap-12">
           {/* Logo and Hero Content */}
           <div className="text-center space-y-6 animate-fade-down">
-            <div className="flex flex-col items-center gap-2">
-              <Lock 
-                className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 text-accent hover:text-accent/80 transition-colors"
-              />
-              <span className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Curately
-              </span>
+            <div className="relative flex flex-col items-center">
+              {/* Picture Frame Effect */}
+              <div className="relative p-6 rounded-lg bg-gradient-to-tr from-[#D4AF37]/20 to-[#FFD700]/10 shadow-xl border border-[#D4AF37]/30">
+                <div className="absolute inset-0 bg-white/50 backdrop-blur-sm rounded-lg" />
+                <div className="relative flex items-center justify-center gap-3">
+                  <Lock 
+                    className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 text-[#D4AF37] drop-shadow-md transition-all duration-300 hover:scale-110"
+                  />
+                  <span className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-[#D4AF37] to-[#FFD700] bg-clip-text text-transparent">
+                    Curately
+                  </span>
+                </div>
+              </div>
             </div>
             
             <div className="space-y-4">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate leading-tight">
                 Your Digital Gallery,{" "}
-                <span className="text-primary">Beautifully Curated</span>
+                <span className="text-[#D4AF37]">Beautifully Curated</span>
               </h1>
               <p className="text-sm sm:text-base lg:text-lg text-slate/80 max-w-2xl mx-auto font-light">
                 Showcase your products and collections with our elegant, secure, and
@@ -33,7 +39,7 @@ const Index = () => {
               <Button 
                 asChild 
                 size="lg"
-                className="bg-primary hover:bg-primary/90 text-neutral transition-all duration-300 rounded-full px-6"
+                className="bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-white transition-all duration-300 rounded-full px-6 shadow-md hover:shadow-lg"
               >
                 <Link to="/login" className="flex items-center justify-center">
                   Sign In <ArrowRight className="ml-2 h-4 w-4" />
@@ -43,7 +49,7 @@ const Index = () => {
                 disabled
                 size="lg"
                 variant="secondary"
-                className="bg-light/80 border border-secondary/10 text-secondary hover:bg-light/60 transition-all duration-300 rounded-full px-6 opacity-75 cursor-not-allowed"
+                className="bg-white/80 border border-[#D4AF37]/20 text-[#D4AF37] hover:bg-white/60 transition-all duration-300 rounded-full px-6 opacity-75 cursor-not-allowed shadow-md"
               >
                 Sign Up (Coming Soon)
               </Button>
@@ -52,9 +58,9 @@ const Index = () => {
 
           {/* Feature Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-5xl mx-auto px-4">
-            <div className="p-6 glass-panel hover-card">
-              <Cloud className="h-8 w-8 text-accent mb-3 mx-auto" />
-              <h3 className="text-base sm:text-lg font-semibold mb-2 text-primary text-center">
+            <div className="p-6 glass-panel hover-card border-[#D4AF37]/20">
+              <Cloud className="h-8 w-8 text-[#D4AF37] mb-3 mx-auto" />
+              <h3 className="text-base sm:text-lg font-semibold mb-2 text-[#D4AF37] text-center">
                 Cloud-Based
               </h3>
               <p className="text-xs sm:text-sm text-slate/80 text-center leading-relaxed">
@@ -62,9 +68,9 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="p-6 glass-panel hover-card">
-              <GalleryIcon className="h-8 w-8 text-accent mb-3 mx-auto" />
-              <h3 className="text-base sm:text-lg font-semibold mb-2 text-primary text-center">
+            <div className="p-6 glass-panel hover-card border-[#D4AF37]/20">
+              <GalleryIcon className="h-8 w-8 text-[#D4AF37] mb-3 mx-auto" />
+              <h3 className="text-base sm:text-lg font-semibold mb-2 text-[#D4AF37] text-center">
                 Beautiful Display
               </h3>
               <p className="text-xs sm:text-sm text-slate/80 text-center leading-relaxed">
@@ -72,9 +78,9 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="p-6 glass-panel hover-card">
-              <Lock className="h-8 w-8 text-accent mb-3 mx-auto" />
-              <h3 className="text-base sm:text-lg font-semibold mb-2 text-primary text-center">
+            <div className="p-6 glass-panel hover-card border-[#D4AF37]/20">
+              <Lock className="h-8 w-8 text-[#D4AF37] mb-3 mx-auto" />
+              <h3 className="text-base sm:text-lg font-semibold mb-2 text-[#D4AF37] text-center">
                 Secure Access
               </h3>
               <p className="text-xs sm:text-sm text-slate/80 text-center leading-relaxed">
@@ -86,16 +92,16 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="w-full bg-primary/5 py-4 px-4 sm:px-8 backdrop-blur-sm">
+      <footer className="w-full bg-[#D4AF37]/5 py-4 px-4 sm:px-8 backdrop-blur-sm border-t border-[#D4AF37]/10">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 text-slate/80">
-            <Link to="#" className="hover:text-primary transition-colors text-xs sm:text-sm">
+            <Link to="#" className="hover:text-[#D4AF37] transition-colors text-xs sm:text-sm">
               About
             </Link>
-            <Link to="#" className="hover:text-primary transition-colors text-xs sm:text-sm">
+            <Link to="#" className="hover:text-[#D4AF37] transition-colors text-xs sm:text-sm">
               Contact
             </Link>
-            <Link to="#" className="hover:text-primary transition-colors text-xs sm:text-sm">
+            <Link to="#" className="hover:text-[#D4AF37] transition-colors text-xs sm:text-sm">
               Privacy Policy
             </Link>
           </div>
