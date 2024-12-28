@@ -16,7 +16,7 @@ interface AgeVerificationProps {
 }
 
 export const AgeVerification = (props: AgeVerificationProps) => {
-  const [isAgeVerified, setIsAgeVerified] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
 
   const handleAgeVerified = () => {
     console.log("Age verification completed", {
@@ -24,15 +24,12 @@ export const AgeVerification = (props: AgeVerificationProps) => {
       instructionsContent: props.instructionsContent
     });
     
-    // Set age verified state
-    setIsAgeVerified(true);
-    
-    // Only complete verification if instructions are not enabled
-    if (!props.instructionsEnabled) {
+    if (props.instructionsEnabled) {
+      console.log("Instructions enabled, showing instructions screen");
+      setShowInstructions(true);
+    } else {
       console.log("No instructions enabled, completing verification");
       props.onVerified();
-    } else {
-      console.log("Instructions enabled, showing instructions screen");
     }
   };
 
@@ -41,8 +38,8 @@ export const AgeVerification = (props: AgeVerificationProps) => {
     props.onVerified();
   };
 
-  // Show instructions after age verification if enabled
-  if (isAgeVerified && props.instructionsEnabled) {
+  // Show instructions if enabled and age is verified
+  if (showInstructions && props.instructionsEnabled) {
     console.log("Rendering instructions screen", {
       logo: props.logo,
       content: props.instructionsContent,
