@@ -22,9 +22,9 @@ const Index = () => {
               businesses.
             </p>
             <div className="flex justify-center gap-4">
-              <Button asChild size="lg" className="bg-accent text-primary hover:bg-accent/90">
+              <Button asChild size="lg" className="bg-accent text-white hover:bg-accent/90">
                 <Link to="/login">
-                  Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                  Sign In <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
