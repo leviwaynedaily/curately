@@ -23,6 +23,9 @@ export const gallerySchema = z.object({
   currentTab: z.string().optional().default("basic"),
   page_title: z.string().optional(),
   favicon: z.string().optional(),
+  instructions_enabled: z.boolean().optional().default(false),
+  instructions_content: z.string().optional(),
+  instructions_button_text: z.string().optional().default("Enter Site"),
 });
 
 export type GalleryFormValues = z.infer<typeof gallerySchema>;

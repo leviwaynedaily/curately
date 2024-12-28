@@ -1,12 +1,10 @@
 import { Form } from "@/components/ui/form";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { GalleryNameField } from "./gallery/GalleryNameField";
 import { GalleryBusinessField } from "./gallery/GalleryBusinessField";
-import { GalleryPasswordField } from "./gallery/GalleryPasswordField";
-import { GalleryLogoField } from "./gallery/GalleryLogoField";
 import { GalleryDescriptionField } from "./gallery/GalleryDescriptionField";
 import { GalleryVerificationFields } from "./gallery/GalleryVerificationFields";
 import { GalleryCustomizationFields } from "./gallery/GalleryCustomizationFields";
+import { GalleryInstructionsFields } from "./gallery/GalleryInstructionsFields";
 import { GalleryFormActions } from "./gallery/GalleryFormActions";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
@@ -36,9 +34,10 @@ export const GalleryFormContent = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Tabs defaultValue="basic" className="w-full" onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="basic">Basic Information</TabsTrigger>
             <TabsTrigger value="verification">Verification</TabsTrigger>
+            <TabsTrigger value="instructions">Instructions</TabsTrigger>
             <TabsTrigger value="customization">Customization</TabsTrigger>
             <TabsTrigger value="products" disabled={!galleryId}>Products</TabsTrigger>
           </TabsList>
@@ -52,6 +51,10 @@ export const GalleryFormContent = ({
             
             <TabsContent value="verification" className="space-y-4 mt-0">
               <GalleryVerificationFields form={form} />
+            </TabsContent>
+
+            <TabsContent value="instructions" className="space-y-4 mt-0">
+              <GalleryInstructionsFields form={form} />
             </TabsContent>
             
             <TabsContent value="customization" className="space-y-4 mt-0">

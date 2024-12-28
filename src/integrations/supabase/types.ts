@@ -176,6 +176,9 @@ export type Database = {
           favicon: string | null
           heading_text: string | null
           id: string
+          instructions_button_text: string | null
+          instructions_content: string | null
+          instructions_enabled: boolean | null
           logo: string | null
           name: string
           page_title: string | null
@@ -203,6 +206,9 @@ export type Database = {
           favicon?: string | null
           heading_text?: string | null
           id?: string
+          instructions_button_text?: string | null
+          instructions_content?: string | null
+          instructions_enabled?: boolean | null
           logo?: string | null
           name: string
           page_title?: string | null
@@ -230,6 +236,9 @@ export type Database = {
           favicon?: string | null
           heading_text?: string | null
           id?: string
+          instructions_button_text?: string | null
+          instructions_content?: string | null
+          instructions_enabled?: boolean | null
           logo?: string | null
           name?: string
           page_title?: string | null
