@@ -12,7 +12,7 @@ const Index = () => {
           <div className="text-center space-y-4 animate-fade-down">
             <div className="flex flex-col items-center gap-1">
               <img 
-                src="/lovable-uploads/f9154862-2d73-4019-a599-7676eb6c38d6.png" 
+                src="/lovable-uploads/0920769a-f831-488a-86aa-99dc581e5339.png" 
                 alt="Curately Logo" 
                 className="h-16 w-auto sm:h-20 lg:h-24 object-contain"
               />
