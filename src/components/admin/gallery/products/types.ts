@@ -7,6 +7,8 @@ export type Product = {
   category: string | null;
   stock_quantity: number | null;
   status: string;
+  created_at: string;
+  updated_at: string;
   primary_media?: string | null;
   product_media?: Array<{
     id: string;
