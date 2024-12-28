@@ -26,6 +26,8 @@ export const gallerySchema = z.object({
   instructions_enabled: z.boolean().optional().default(false),
   instructions_content: z.string().optional(),
   instructions_button_text: z.string().optional().default("Enter Site"),
+  pwa_icon_192: z.string().optional(),
+  pwa_icon_512: z.string().optional(),
 });
 
 export type GalleryFormValues = z.infer<typeof gallerySchema>;
