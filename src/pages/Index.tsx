@@ -12,11 +12,10 @@ const Index = () => {
           <div className="text-center space-y-4 animate-fade-down">
             <div className="flex flex-col items-center gap-1">
               <img 
-                src="/lovable-uploads/2e1493f2-d9d7-4ff8-9114-4f21044df0df.png" 
+                src="/lovable-uploads/f9154862-2d73-4019-a599-7676eb6c38d6.png" 
                 alt="Curately Logo" 
-                className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-contain"
+                className="h-16 w-auto sm:h-20 lg:h-24 object-contain"
               />
-              <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#2A6041]">Curately</span>
             </div>
             
             <div className="space-y-3">
