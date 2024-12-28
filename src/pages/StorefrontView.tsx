@@ -105,6 +105,9 @@ const StorefrontView = () => {
           buttonText={storefront.button_text}
           error={error}
           onError={setError}
+          instructionsEnabled={storefront.instructions_enabled}
+          instructionsContent={storefront.instructions_content}
+          instructionsButtonText={storefront.instructions_button_text}
         />
       )}
     </div>
