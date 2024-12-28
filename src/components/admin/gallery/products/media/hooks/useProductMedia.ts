@@ -39,6 +39,11 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
   };
 
   const verifyProductOwnership = async () => {
+    if (!user) {
+      throw new Error("No authenticated user found");
+    }
+
+    console.log("Verifying product ownership for:", productId);
     const { data, error } = await supabase
       .from("products")
       .select(`
@@ -59,7 +64,8 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
       throw new Error("Failed to verify product ownership");
     }
 
-    if (!data || data.storefront.business.owner_id !== user?.id) {
+    if (!data || data.storefront.business.owner_id !== user.id) {
+      console.error("Unauthorized: User does not own this product");
       throw new Error("Unauthorized: You don't have permission to modify this product");
     }
 
