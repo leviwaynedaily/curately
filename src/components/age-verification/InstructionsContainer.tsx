@@ -24,14 +24,14 @@ export const InstructionsContainer = ({
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-2xl bg-white/95 backdrop-blur-sm p-8 rounded-xl shadow-2xl max-h-[90vh] flex flex-col">
           {logo && (
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 mb-6">
               <AgeVerificationLogo logo={logo} />
             </div>
           )}
           
-          <div className="mt-6 flex flex-col flex-grow min-h-0">
+          <div className="flex-1 min-h-0 flex flex-col">
             {content && (
-              <ScrollArea className="flex-grow">
+              <ScrollArea className="flex-1 mb-6 overflow-y-auto">
                 <div 
                   className="prose prose-sm max-w-none"
                   dangerouslySetInnerHTML={{ __html: content }}
@@ -41,7 +41,11 @@ export const InstructionsContainer = ({
             
             <Button
               onClick={onConfirm}
-              className="w-full mt-6 flex-shrink-0"
+              className="w-full mt-auto"
+              style={{
+                backgroundColor: 'var(--accent-color, var(--primary))',
+                color: 'var(--accent-font-color, white)',
+              }}
             >
               {buttonText}
             </Button>
