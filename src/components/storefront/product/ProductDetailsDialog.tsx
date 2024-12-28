@@ -18,25 +18,29 @@ type ProductDetailsDialogProps = {
   accentColor?: string;
 };
 
+type EditableFields = {
+  [K in keyof Product]: Product[K] extends string | number | null ? K : never;
+}[keyof Product];
+
 export const ProductDetailsDialog = ({ 
   product, 
   onClose,
   allowDownload = false,
   accentColor = '#8B5CF6'
 }: ProductDetailsDialogProps) => {
-  const [editingField, setEditingField] = useState<string | null>(null);
+  const [editingField, setEditingField] = useState<EditableFields | null>(null);
   const [editedProduct, setEditedProduct] = useState<Product | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   if (!product) return null;
 
-  const handleDoubleClick = (field: string) => {
+  const handleDoubleClick = (field: EditableFields) => {
     setEditingField(field);
     setEditedProduct(product);
   };
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: EditableFields, value: string | number) => {
     setEditedProduct(prev => {
       if (!prev) return null;
       return {
@@ -47,18 +51,20 @@ export const ProductDetailsDialog = ({
   };
 
   const handleSave = async () => {
-    if (!editedProduct) return;
+    if (!editedProduct || !editingField) return;
 
     try {
+      console.log("Saving product update:", { field: editingField, value: editedProduct[editingField] });
       const { error } = await supabase
         .from('products')
         .update({
-          [editingField as string]: editedProduct[editingField as keyof Product]
+          [editingField]: editedProduct[editingField]
         })
         .eq('id', product.id);
 
       if (error) throw error;
 
+      console.log("Product updated successfully");
       toast({ description: "Product updated successfully" });
       queryClient.invalidateQueries({ queryKey: ['products', product.storefront_id] });
       setEditingField(null);
@@ -80,12 +86,12 @@ export const ProductDetailsDialog = ({
     }
   };
 
-  const renderField = (field: string, value: any, type: 'text' | 'number' | 'textarea' = 'text') => {
+  const renderField = (field: EditableFields, value: string | number | null, type: 'text' | 'number' | 'textarea' = 'text') => {
     if (editingField === field) {
       if (type === 'textarea') {
         return (
           <Textarea
-            value={editedProduct?.[field as keyof Product] || ''}
+            value={editedProduct?.[field]?.toString() || ''}
             onChange={(e) => handleChange(field, e.target.value)}
             onBlur={handleSave}
             onKeyDown={handleKeyDown}
@@ -97,7 +103,7 @@ export const ProductDetailsDialog = ({
       return (
         <Input
           type={type}
-          value={editedProduct?.[field as keyof Product] || ''}
+          value={editedProduct?.[field]?.toString() || ''}
           onChange={(e) => handleChange(field, type === 'number' ? parseFloat(e.target.value) : e.target.value)}
           onBlur={handleSave}
           onKeyDown={handleKeyDown}
@@ -107,7 +113,7 @@ export const ProductDetailsDialog = ({
       );
     }
     
-    if (field === 'price') {
+    if (field === 'price' && typeof value === 'number') {
       return (
         <p 
           className="text-lg font-bold cursor-pointer" 
