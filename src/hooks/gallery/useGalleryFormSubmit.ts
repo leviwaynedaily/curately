@@ -9,7 +9,7 @@ export const useGalleryFormSubmit = (
   gallery?: { id: string }
 ) => {
   const handleSubmit = async (values: GalleryFormValues) => {
-    console.log("Starting gallery form submission...");
+    console.log("Starting gallery form submission with PWA icons...", values);
 
     const { currentTab, ...sanitizedValues } = values;
     const dataToSubmit = {
@@ -19,14 +19,15 @@ export const useGalleryFormSubmit = (
       instructions_enabled: values.instructions_enabled,
       instructions_content: values.instructions_content,
       instructions_button_text: values.instructions_button_text || "Enter Site",
+      pwa_icon_192: values.pwa_icon_192,
+      pwa_icon_512: values.pwa_icon_512
     };
     
     try {
       if (gallery?.id) {
-        console.log("Updating storefront with instructions data:", {
-          instructions_enabled: dataToSubmit.instructions_enabled,
-          instructions_content: Boolean(dataToSubmit.instructions_content),
-          instructions_button_text: dataToSubmit.instructions_button_text
+        console.log("Updating storefront with PWA icons:", {
+          pwa_icon_192: dataToSubmit.pwa_icon_192,
+          pwa_icon_512: dataToSubmit.pwa_icon_512
         });
         
         const { data, error } = await supabase
@@ -37,13 +38,12 @@ export const useGalleryFormSubmit = (
 
         if (error) throw error;
         
-        console.log("Storefront updated successfully. Response:", data);
+        console.log("Storefront updated successfully with PWA icons. Response:", data);
         toast({ description: "Storefront updated successfully" });
       } else {
-        console.log("Creating new storefront with instructions data:", {
-          instructions_enabled: dataToSubmit.instructions_enabled,
-          instructions_content: Boolean(dataToSubmit.instructions_content),
-          instructions_button_text: dataToSubmit.instructions_button_text
+        console.log("Creating new storefront with PWA icons:", {
+          pwa_icon_192: dataToSubmit.pwa_icon_192,
+          pwa_icon_512: dataToSubmit.pwa_icon_512
         });
         
         const { data, error } = await supabase
@@ -53,7 +53,7 @@ export const useGalleryFormSubmit = (
 
         if (error) throw error;
         
-        console.log("Storefront created successfully. Response:", data);
+        console.log("Storefront created successfully with PWA icons. Response:", data);
         toast({ description: "Storefront created successfully" });
       }
 
