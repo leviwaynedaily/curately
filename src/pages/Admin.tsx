@@ -64,7 +64,7 @@ const Admin = () => {
           <div>
             <h2 className="text-2xl font-bold">Platform Admin Dashboard</h2>
             <p className="text-muted-foreground">
-              Manage all businesses and galleries
+              Manage all businesses and storefronts
             </p>
           </div>
 
