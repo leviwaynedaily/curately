@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Product } from "./types";
 import { MediaUploadButton } from "./media/MediaUploadButton";
@@ -49,6 +49,7 @@ export const ProductMediaDialog = ({
     console.log("Starting media upload for product:", product.id);
 
     try {
+      // First upload the file to storage
       const fileExt = file.name.split(".").pop();
       const filePath = `${product.id}/${crypto.randomUUID()}.${fileExt}`;
       const mediaType = file.type.startsWith("video/") ? "video" : "image";
@@ -60,14 +61,17 @@ export const ProductMediaDialog = ({
 
       if (uploadError) throw uploadError;
 
-      console.log("Creating media record...");
-      const { error: dbError } = await supabase.from("product_media").insert({
-        product_id: product.id,
-        file_path: filePath,
-        media_type: mediaType,
-        is_primary: media.length === 0,
-        title: file.name,
-      });
+      // Then create the media record with the product_id
+      console.log("Creating media record with product_id:", product.id);
+      const { error: dbError } = await supabase
+        .from("product_media")
+        .insert({
+          product_id: product.id, // Ensure this is set
+          file_path: filePath,
+          media_type: mediaType,
+          is_primary: media.length === 0, // Set as primary if it's the first media
+          title: file.name,
+        });
 
       if (dbError) throw dbError;
 
@@ -118,11 +122,13 @@ export const ProductMediaDialog = ({
   const setPrimaryMedia = async (mediaId: string) => {
     try {
       console.log("Setting primary media:", mediaId);
+      // First, set all media for this product to non-primary
       await supabase
         .from("product_media")
         .update({ is_primary: false })
         .eq("product_id", product.id);
 
+      // Then set the selected media as primary
       const { error } = await supabase
         .from("product_media")
         .update({ is_primary: true })
@@ -143,11 +149,11 @@ export const ProductMediaDialog = ({
   };
 
   // Fetch media when dialog opens
-  useState(() => {
+  useEffect(() => {
     if (isOpen) {
       fetchMedia();
     }
-  });
+  }, [isOpen, product.id]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
