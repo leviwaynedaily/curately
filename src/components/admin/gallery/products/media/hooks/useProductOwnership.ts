@@ -12,14 +12,15 @@ export const useProductOwnership = () => {
 
     console.log("Verifying product ownership for:", productId);
     
-    // First get the product and its relationships
+    // Match the RLS policy structure exactly
     const { data, error } = await supabase
       .from("products")
       .select(`
         id,
-        storefronts (
+        storefronts!inner (
           id,
-          businesses (
+          business_id,
+          businesses!inner (
             id,
             owner_id
           )
@@ -39,13 +40,7 @@ export const useProductOwnership = () => {
     }
 
     // Check if the authenticated user is the owner of the business
-    const storefront = data.storefronts;
-    if (!storefront || !storefront.businesses) {
-      console.error("Invalid product data structure");
-      throw new Error("Invalid product data structure");
-    }
-
-    const isOwner = storefront.businesses.owner_id === user.id;
+    const isOwner = data.storefronts.businesses.owner_id === user.id;
     
     if (!isOwner) {
       console.error("Unauthorized: User does not own this product");
