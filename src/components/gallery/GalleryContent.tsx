@@ -21,7 +21,7 @@ export const GalleryContent = ({
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ["storefront-products", galleryId],
+    queryKey: ["products", galleryId],
     queryFn: async () => {
       console.log("Fetching products for storefront:", galleryId);
       const { data, error } = await supabase
