@@ -15,6 +15,7 @@ const StorefrontView = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [error, setError] = useState<string | null>(null);
 
   const { 
     storefront, 
@@ -46,7 +47,15 @@ const StorefrontView = () => {
     new Set(products.map(p => p.category).filter(Boolean))
   );
 
-  if (isVerificationLoading || isStorefrontLoading || isProductsLoading) {
+  console.log("Storefront verification state:", {
+    isVerified,
+    isVerificationLoading,
+    storefrontId,
+    hasStorefront: !!storefront,
+    ageVerificationEnabled: storefront?.age_verification_enabled
+  });
+
+  if (isVerificationLoading || isStorefrontLoading) {
     return <StorefrontLoadingSkeleton />;
   }
 
@@ -58,6 +67,23 @@ const StorefrontView = () => {
     return <StorefrontError isNotFound />;
   }
 
+  // If age verification is enabled and user is not verified, show verification screen
+  if (storefront.age_verification_enabled && !isVerified) {
+    console.log("Showing age verification screen");
+    return (
+      <AgeVerification
+        onVerified={handleVerified}
+        id={storefrontId as string}
+        logo={storefront.logo}
+        verificationText={storefront.age_verification_text}
+        buttonText={storefront.button_text}
+        error={error}
+        onError={setError}
+      />
+    );
+  }
+
+  // If verification passed or not required, show storefront content
   return (
     <div className="relative">
       <StorefrontContent
@@ -71,15 +97,6 @@ const StorefrontView = () => {
         onCategoryChange={setCategoryFilter}
         categories={categories}
       />
-      {!isVerified && (
-        <AgeVerification
-          onVerified={handleVerified}
-          id={storefrontId as string}
-          logo={storefront.logo}
-          verificationText={storefront.age_verification_text}
-          buttonText={storefront.button_text}
-        />
-      )}
     </div>
   );
 };
