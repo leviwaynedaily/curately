@@ -1,9 +1,18 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Edit, Save, X, Trash, Image as ImageIcon } from "lucide-react";
 import { Product } from "./types";
 import { supabase } from "@/integrations/supabase/client";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 
 type ProductTableRowProps = {
   product: Product;
@@ -48,12 +57,8 @@ export const ProductTableRow = ({
           return;
         }
 
-        console.log("Primary media data:", data);
         if (data) {
           setPrimaryMedia(data.file_path);
-        } else {
-          console.log("No primary media found for product:", product.id);
-          setPrimaryMedia(null);
         }
       } catch (error) {
         console.error("Error in fetchPrimaryMedia:", error);
@@ -66,97 +71,112 @@ export const ProductTableRow = ({
   }, [product.id]);
 
   return (
-    <tr>
-      <td className="flex items-center gap-2">
-        {isLoadingMedia ? (
-          <div className="w-10 h-10 bg-muted animate-pulse rounded" />
-        ) : primaryMedia ? (
-          <img
-            src={supabase.storage.from("gallery_images").getPublicUrl(primaryMedia).data.publicUrl}
-            alt=""
-            className="w-10 h-10 object-cover rounded"
-          />
-        ) : (
-          <div className="w-10 h-10 bg-muted rounded flex items-center justify-center">
-            <ImageIcon className="w-4 h-4 text-muted-foreground" />
-          </div>
-        )}
+    <TableRow>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          {isLoadingMedia ? (
+            <div className="w-10 h-10 bg-muted animate-pulse rounded" />
+          ) : primaryMedia ? (
+            <img
+              src={supabase.storage.from("gallery_images").getPublicUrl(primaryMedia).data.publicUrl}
+              alt=""
+              className="w-10 h-10 object-cover rounded"
+            />
+          ) : (
+            <div className="w-10 h-10 bg-muted rounded flex items-center justify-center">
+              <ImageIcon className="w-4 h-4 text-muted-foreground" />
+            </div>
+          )}
+          {isEditing ? (
+            <Input
+              value={editedProduct?.name || ""}
+              onChange={(e) => onProductChange("name", e.target.value)}
+              className="w-full"
+            />
+          ) : (
+            product.name
+          )}
+        </div>
+      </TableCell>
+      <TableCell>
         {isEditing ? (
-          <Input
-            value={editedProduct?.name || ""}
-            onChange={(e) => onProductChange("name", e.target.value)}
-          />
-        ) : (
-          product.name
-        )}
-      </td>
-      <td>
-        {isEditing ? (
-          <Input
+          <Textarea
             value={editedProduct?.description || ""}
             onChange={(e) => onProductChange("description", e.target.value)}
+            className="w-full min-h-[60px]"
           />
         ) : (
           product.description
         )}
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
         {isEditing ? (
           <Input
             type="number"
             value={editedProduct?.price || ""}
-            onChange={(e) =>
-              onProductChange("price", parseFloat(e.target.value))
-            }
+            onChange={(e) => onProductChange("price", parseFloat(e.target.value))}
+            className="w-full"
           />
         ) : (
           product.price
         )}
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
         {isEditing ? (
           <Input
             value={editedProduct?.sku || ""}
             onChange={(e) => onProductChange("sku", e.target.value)}
+            className="w-full"
           />
         ) : (
           product.sku
         )}
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
         {isEditing ? (
           <Input
             value={editedProduct?.category || ""}
             onChange={(e) => onProductChange("category", e.target.value)}
+            className="w-full"
           />
         ) : (
           product.category
         )}
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
         {isEditing ? (
           <Input
             type="number"
             value={editedProduct?.stock_quantity || ""}
-            onChange={(e) =>
-              onProductChange("stock_quantity", parseInt(e.target.value))
-            }
+            onChange={(e) => onProductChange("stock_quantity", parseInt(e.target.value))}
+            className="w-full"
           />
         ) : (
           product.stock_quantity
         )}
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
         {isEditing ? (
-          <Input
+          <Select
             value={editedProduct?.status || ""}
-            onChange={(e) => onProductChange("status", e.target.value)}
-          />
+            onValueChange={(value) => onProductChange("status", value)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="archived">Archived</SelectItem>
+            </SelectContent>
+          </Select>
         ) : (
-          product.status
+          <span className={`capitalize ${product.status === 'active' ? 'text-green-600' : 'text-gray-500'}`}>
+            {product.status}
+          </span>
         )}
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
         <div className="flex items-center gap-2">
           {isEditing ? (
             <>
@@ -169,31 +189,19 @@ export const ProductTableRow = ({
             </>
           ) : (
             <>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onEdit(product)}
-              >
+              <Button variant="ghost" size="icon" onClick={() => onEdit(product)}>
                 <Edit className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onDelete(product.id)}
-              >
+              <Button variant="ghost" size="icon" onClick={() => onDelete(product.id)}>
                 <Trash className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onMediaClick(product)}
-              >
+              <Button variant="ghost" size="icon" onClick={() => onMediaClick(product)}>
                 <ImageIcon className="h-4 w-4" />
               </Button>
             </>
           )}
         </div>
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 };
