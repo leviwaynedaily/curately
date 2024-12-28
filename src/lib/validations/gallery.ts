@@ -21,6 +21,8 @@ export const gallerySchema = z.object({
   age_verification_enabled: z.boolean().optional().default(false),
   password_required: z.boolean().optional().default(false),
   currentTab: z.string().optional().default("basic"),
+  page_title: z.string().optional(),
+  favicon: z.string().optional(),
 });
 
 export type GalleryFormValues = z.infer<typeof gallerySchema>;

@@ -10,11 +10,13 @@ type GalleryCustomizationFieldsProps = {
 
 export const GalleryCustomizationFields = ({ form }: GalleryCustomizationFieldsProps) => {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-8">
+      <div className="grid grid-cols-2 gap-8">
         <GalleryLogosSection form={form} />
-        <GalleryBackgroundColorsSection form={form} />
-        <GalleryFontColorsSection form={form} />
+        <div className="space-y-8">
+          <GalleryBackgroundColorsSection form={form} />
+          <GalleryFontColorsSection form={form} />
+        </div>
       </div>
     </div>
   );

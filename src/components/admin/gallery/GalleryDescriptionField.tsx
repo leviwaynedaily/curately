@@ -18,7 +18,7 @@ export const GalleryDescriptionField = ({ form }: GalleryDescriptionFieldProps) 
           <FormControl>
             <Textarea 
               placeholder="Enter gallery description" 
-              className="resize-none" 
+              className="min-h-[120px]" 
               {...field} 
               value={field.value || ''} 
             />
