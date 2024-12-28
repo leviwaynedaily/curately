@@ -25,6 +25,7 @@ export type Storefront = {
   instructions_enabled?: boolean;
   instructions_content?: string | null;
   instructions_button_text?: string | null;
+  show_description?: boolean;
   businesses?: {
     name: string;
   };

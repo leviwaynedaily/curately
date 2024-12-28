@@ -26,6 +26,7 @@ export const gallerySchema = z.object({
   instructions_enabled: z.boolean().optional().default(false),
   instructions_content: z.string().optional(),
   instructions_button_text: z.string().optional().default("Enter Site"),
+  show_description: z.boolean().optional().default(true),
   pwa_icon_192: z.string().optional(),
   pwa_icon_512: z.string().optional(),
 });
