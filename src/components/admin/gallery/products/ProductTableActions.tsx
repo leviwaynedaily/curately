@@ -15,13 +15,13 @@ export const ProductTableActions = ({
 }: ProductTableActionsProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isFullPage = location.pathname.includes("/admin/galleries/");
+  const isFullPage = location.pathname.includes("/products");
 
   const handlePageToggle = () => {
     if (isFullPage) {
-      navigate("/admin"); // Changed from navigate(-1) to navigate("/admin")
+      navigate("/admin");
     } else {
-      navigate(`/admin/galleries/${galleryId}/products`);
+      navigate(`/admin/products/${galleryId}`);
     }
   };
 
