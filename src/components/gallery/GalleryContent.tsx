@@ -20,10 +20,10 @@ export const GalleryContent = ({
   const [sortBy, setSortBy] = useState("newest");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
-  const { data: products = [] } = useQuery({
-    queryKey: ["products", galleryId],
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ["storefront-products", galleryId],
     queryFn: async () => {
-      console.log("Fetching products for gallery:", galleryId);
+      console.log("Fetching products for storefront:", galleryId);
       const { data, error } = await supabase
         .from("products")
         .select(`
@@ -37,6 +37,8 @@ export const GalleryContent = ({
         console.error("Error fetching products:", error);
         throw error;
       }
+
+      console.log("Products fetched:", data);
 
       // Add primary_media to each product
       return data.map(product => ({
@@ -94,6 +96,22 @@ export const GalleryContent = ({
 
     return result;
   }, [products, searchTerm, categoryFilter, sortBy]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-16 bg-gray-200 rounded w-48 mx-auto"></div>
+          <div className="h-12 bg-gray-200 rounded"></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="h-80 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
