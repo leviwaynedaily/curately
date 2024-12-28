@@ -12,7 +12,7 @@ export const useProductOwnership = () => {
 
     console.log("Verifying product ownership for:", productId);
     
-    // Query to check if the authenticated user owns the business that owns the gallery that owns the product
+    // Match the RLS policy structure using JOINs
     const { data, error } = await supabase
       .from("products")
       .select(`
