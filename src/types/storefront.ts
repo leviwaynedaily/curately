@@ -22,6 +22,9 @@ export type Storefront = {
   password_required?: boolean;
   page_title?: string | null;
   favicon?: string | null;
+  instructions_enabled?: boolean;
+  instructions_content?: string | null;
+  instructions_button_text?: string | null;
   businesses?: {
     name: string;
   };
