@@ -6,6 +6,7 @@ import { GalleryContent } from "@/components/gallery/GalleryContent";
 import { Button } from "@/components/ui/button";
 import { Home, AlertCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
 
 const StorefrontView = () => {
   const { storefrontId } = useParams();
@@ -26,6 +27,47 @@ const StorefrontView = () => {
     setIsVerified(ageVerified && authenticated);
     setIsLoading(false);
   }, [storefrontId]);
+
+  // New effect to handle page title and favicon
+  useEffect(() => {
+    if (gallery) {
+      console.log("Setting page title and favicon for storefront:", gallery);
+      // Set page title
+      document.title = gallery.page_title || gallery.name || "Gallery";
+
+      // Set favicon
+      if (gallery.favicon) {
+        const faviconUrl = supabase.storage
+          .from("gallery_images")
+          .getPublicUrl(gallery.favicon).data.publicUrl;
+        
+        // Remove existing favicon if any
+        const existingFavicon = document.querySelector("link[rel='icon']");
+        if (existingFavicon) {
+          document.head.removeChild(existingFavicon);
+        }
+
+        // Create and add new favicon
+        const favicon = document.createElement("link");
+        favicon.rel = "icon";
+        favicon.href = faviconUrl;
+        document.head.appendChild(favicon);
+      }
+
+      // Cleanup function to restore default title and favicon when leaving the page
+      return () => {
+        document.title = "Curately - Digital Gallery Platform";
+        const existingFavicon = document.querySelector("link[rel='icon']");
+        if (existingFavicon) {
+          document.head.removeChild(existingFavicon);
+        }
+        const defaultFavicon = document.createElement("link");
+        defaultFavicon.rel = "icon";
+        defaultFavicon.href = "/favicon.ico";
+        document.head.appendChild(defaultFavicon);
+      };
+    }
+  }, [gallery]);
 
   const handleVerified = () => {
     localStorage.setItem("age-verified", "true");
