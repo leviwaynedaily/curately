@@ -27,6 +27,8 @@ export const GalleryFormContent = ({
   onCancel,
   galleryId,
 }: GalleryFormContentProps) => {
+  console.log("Gallery ID in form content:", galleryId); // Added for debugging
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -35,7 +37,7 @@ export const GalleryFormContent = ({
             <TabsTrigger value="basic">Basic Information</TabsTrigger>
             <TabsTrigger value="verification">Verification</TabsTrigger>
             <TabsTrigger value="customization">Customization</TabsTrigger>
-            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="products" disabled={!galleryId}>Products</TabsTrigger>
           </TabsList>
           
           <div className="h-[500px] overflow-y-auto mt-4">
@@ -54,7 +56,13 @@ export const GalleryFormContent = ({
             </TabsContent>
 
             <TabsContent value="products" className="space-y-4 mt-0">
-              {galleryId && <ProductManagement galleryId={galleryId} />}
+              {galleryId ? (
+                <ProductManagement galleryId={galleryId} />
+              ) : (
+                <div className="flex items-center justify-center h-64 text-muted-foreground">
+                  Save the gallery first to manage products
+                </div>
+              )}
             </TabsContent>
           </div>
         </Tabs>
