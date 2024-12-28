@@ -25,7 +25,7 @@ const Index = () => {
   });
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-b from-primary/10 via-primary/20 to-neutral/90">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-primary/10 via-primary/20 to-neutral/90">
       {/* Professional Header */}
       <header className="w-full py-4 px-6 bg-white/80 backdrop-blur-sm border-b border-primary/10 fixed top-0 z-50">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -55,8 +55,8 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="flex-grow flex flex-col justify-center items-center px-2 sm:px-4 lg:px-6 py-4 mt-16">
-        <div className="max-w-6xl w-full mx-auto flex flex-col items-center justify-center gap-6">
+      <main className="flex-grow flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-8 mt-16">
+        <div className="max-w-6xl w-full mx-auto flex flex-col items-center justify-center gap-12 sm:gap-16 lg:gap-20">
           <HomeHero />
           <StorefrontGrid storefronts={storefronts} />
           <IndustryIcons />
@@ -64,8 +64,7 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="w-full bg-white/5 py-2 px-2 sm:px-4 backdrop-blur-sm border-t border-primary/5 bounce-in" style={{ animationDelay: '1.4s' }}>
+      <footer className="w-full bg-white/5 py-4 px-4 sm:px-6 backdrop-blur-sm border-t border-primary/5 bounce-in" style={{ animationDelay: '1.4s' }}>
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-center items-center gap-2 text-slate/60">
             <Link to="#" className="hover:text-primary/70 transition-colors text-xs">
@@ -78,7 +77,7 @@ const Index = () => {
               Privacy Policy
             </Link>
           </div>
-          <div className="text-center mt-1 text-slate/50 text-xs">
+          <div className="text-center mt-2 text-slate/50 text-xs">
             © {new Date().getFullYear()} Curately. All rights reserved.
           </div>
         </div>
