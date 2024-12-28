@@ -78,8 +78,8 @@ export const AgeVerification = ({
       />
 
       {/* Content */}
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 space-y-8">
-        <div className="w-full max-w-md bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-2xl space-y-6">
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-2xl">
           {logoUrl && (
             <div className="flex justify-center mb-8">
               <img
@@ -90,15 +90,12 @@ export const AgeVerification = ({
             </div>
           )}
 
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-4 mb-8">
             <h1 className="text-3xl font-bold" style={{ color: storefront?.primary_font_color || '#000000' }}>
               {storefront?.heading_text || "Age Verification Required"}
             </h1>
             <p className="text-xl" style={{ color: storefront?.secondary_font_color || '#666666' }}>
               {storefront?.subheading_text}
-            </p>
-            <p style={{ color: storefront?.secondary_font_color || '#666666' }}>
-              {verificationText || storefront?.age_verification_text}
             </p>
           </div>
 
@@ -141,6 +138,13 @@ export const AgeVerification = ({
               {buttonText || storefront?.button_text || "Enter"}
             </Button>
           )}
+
+          {/* Legal disclaimer moved to bottom */}
+          <div className="mt-8 text-center">
+            <p className="text-xs italic text-gray-500" style={{ color: storefront?.secondary_font_color || '#666666' }}>
+              {verificationText || storefront?.age_verification_text || "By entering, you confirm that you meet the legal requirements to view this content."}
+            </p>
+          </div>
         </div>
       </div>
     </div>
