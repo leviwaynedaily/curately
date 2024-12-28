@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Product } from "@/components/admin/gallery/products/types";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
 import { ProductDetailsDialog } from "./product/ProductDetailsDialog";
 import { ProductMediaCarousel } from "./product/ProductMediaCarousel";
 
@@ -25,7 +24,7 @@ export const StorefrontProductGrid = ({
         {products.map((product) => (
           <Card 
             key={product.id} 
-            className="group overflow-hidden cursor-pointer"
+            className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
             onClick={() => setSelectedProduct(product)}
           >
             <CardContent className="p-0">
@@ -63,6 +62,7 @@ export const StorefrontProductGrid = ({
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         allowDownload={allowDownload}
+        accentColor={accentColor}
       />
     </>
   );
