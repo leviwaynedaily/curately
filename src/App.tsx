@@ -19,8 +19,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/admin/*" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-            <Route path="/admin/products/:storefrontId" element={<ProtectedRoute><ProductManagement /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>}>
+              <Route path="products/:storefrontId" element={<ProductManagement />} />
+            </Route>
             <Route path="/storefront/:storefrontId" element={<StorefrontView />} />
           </Routes>
           <Toaster />
