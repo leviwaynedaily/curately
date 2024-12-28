@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { gallerySchema, type GalleryFormValues } from "@/lib/validations/gallery";
+import { getDefaultValues } from "./gallery/useGalleryFormDefaults";
+import { useGalleryFormSubmit } from "./gallery/useGalleryFormSubmit";
 
 type UseGalleryFormProps = {
   onClose: () => void;
@@ -45,112 +46,20 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
 
   const form = useForm<GalleryFormValues>({
     resolver: zodResolver(gallerySchema),
-    defaultValues: {
-      name: gallery?.name || "",
-      password: gallery?.password || "",
-      status: gallery?.status || "active",
-      business_id: gallery?.business_id || businessId || "",
-      logo: gallery?.logo || "",
-      site_logo: gallery?.site_logo || gallery?.logo || "",
-      description: gallery?.description || "",
-      primary_color: gallery?.primary_color || "#141413",
-      secondary_color: gallery?.secondary_color || "#E6E4DD",
-      accent_color: gallery?.accent_color || "#9b87f5",
-      primary_font_color: gallery?.primary_font_color || "#000000",
-      secondary_font_color: gallery?.secondary_font_color || "#6E59A5",
-      accent_font_color: gallery?.accent_font_color || "#8B5CF6",
-      heading_text: gallery?.heading_text || "Age Verification Required",
-      subheading_text: gallery?.subheading_text || "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content.",
-      age_verification_text: gallery?.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy.",
-      button_text: gallery?.button_text || "Enter Site",
-      age_verification_enabled: gallery?.age_verification_enabled || false,
-      password_required: gallery?.password_required || false,
-      currentTab: "basic",
-      page_title: gallery?.page_title || gallery?.name || "",
-      favicon: gallery?.favicon || "",
-      instructions_enabled: gallery?.instructions_enabled || false,
-      instructions_content: gallery?.instructions_content || "",
-      instructions_button_text: gallery?.instructions_button_text || "Enter Site",
-    },
+    defaultValues: getDefaultValues(gallery, businessId),
   });
 
   useEffect(() => {
     if (gallery) {
       console.log("Resetting form with gallery data:", gallery);
-      form.reset({
-        name: gallery.name,
-        password: gallery.password || "",
-        status: gallery.status,
-        business_id: gallery.business_id || "",
-        logo: gallery.logo || "",
-        site_logo: gallery.site_logo || gallery.logo || "",
-        description: gallery.description || "",
-        primary_color: gallery.primary_color || "#141413",
-        secondary_color: gallery.secondary_color || "#E6E4DD",
-        accent_color: gallery.accent_color || "#9b87f5",
-        primary_font_color: gallery.primary_font_color || "#000000",
-        secondary_font_color: gallery.secondary_font_color || "#6E59A5",
-        accent_font_color: gallery.accent_font_color || "#8B5CF6",
-        heading_text: gallery.heading_text || "Age Verification Required",
-        subheading_text: gallery.subheading_text || "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content.",
-        age_verification_text: gallery.age_verification_text || "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy.",
-        button_text: gallery.button_text || "Enter Site",
-        age_verification_enabled: gallery.age_verification_enabled || false,
-        password_required: gallery.password_required || false,
-        currentTab: "basic",
-        page_title: gallery.page_title || gallery.name || "",
-        favicon: gallery.favicon || "",
-        instructions_enabled: gallery.instructions_enabled || false,
-        instructions_content: gallery.instructions_content || "",
-        instructions_button_text: gallery.instructions_button_text || "Enter Site",
-      });
+      form.reset(getDefaultValues(gallery, businessId));
     }
-  }, [gallery, form]);
+  }, [gallery, form, businessId]);
 
   const handleSubmit = async (values: GalleryFormValues) => {
     setIsLoading(true);
-    console.log("Submitting gallery form...", values);
-
-    const { currentTab, ...sanitizedValues } = values;
-    const dataToSubmit = {
-      ...sanitizedValues,
-      name: values.name,
-      page_title: values.page_title || values.name,
-      instructions_enabled: values.instructions_enabled,
-      instructions_content: values.instructions_content,
-      instructions_button_text: values.instructions_button_text || "Enter Site",
-    };
-    
     try {
-      if (gallery?.id) {
-        console.log("Updating storefront with data:", dataToSubmit);
-        const { error } = await supabase
-          .from("storefronts")
-          .update(dataToSubmit)
-          .eq("id", gallery.id);
-
-        if (error) throw error;
-        console.log("Storefront updated successfully");
-        toast({ description: "Storefront updated successfully" });
-      } else {
-        console.log("Creating new storefront with data:", dataToSubmit);
-        const { error } = await supabase
-          .from("storefronts")
-          .insert(dataToSubmit);
-
-        if (error) throw error;
-        console.log("Storefront created successfully");
-        toast({ description: "Storefront created successfully" });
-      }
-
-      queryClient.invalidateQueries({ queryKey: ["storefronts"] });
-      onClose();
-    } catch (error) {
-      console.error("Error saving storefront:", error);
-      toast({
-        variant: "destructive",
-        description: "There was an error saving the storefront",
-      });
+      await useGalleryFormSubmit(toast, queryClient, onClose, gallery)(values);
     } finally {
       setIsLoading(false);
     }
