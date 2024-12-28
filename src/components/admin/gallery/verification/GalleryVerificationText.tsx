@@ -33,7 +33,7 @@ export const GalleryVerificationText = ({ form }: GalleryVerificationTextProps) 
         name="subheading_text"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Verification Subheading</FormLabel>
+            <FormLabel>Legal Text</FormLabel>
             <FormControl>
               <Textarea 
                 placeholder="This website contains age-restricted content..." 

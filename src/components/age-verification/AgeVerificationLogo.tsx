@@ -19,7 +19,7 @@ export const AgeVerificationLogo = ({ logo }: AgeVerificationLogoProps) => {
       <img 
         src={logoUrl} 
         alt="Gallery Logo" 
-        className="h-32 w-auto object-contain" // Changed from h-24 to h-32
+        className="h-40 w-auto object-contain" // Increased from h-32 to h-40
       />
     </div>
   );
