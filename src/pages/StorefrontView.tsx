@@ -28,6 +28,7 @@ const StorefrontView = () => {
     isVerified,
     isLoading: isVerificationLoading,
     handleVerified,
+    resetVerification
   } = useStorefrontState(storefrontId);
 
   useStorefrontMetadata(storefront);
@@ -36,7 +37,7 @@ const StorefrontView = () => {
     data: products = [],
     isLoading: isProductsLoading,
     error: productsError
-  } = useStorefrontProducts(storefrontId, true); // Changed to always fetch products
+  } = useStorefrontProducts(storefrontId, true);
 
   console.log("StorefrontView state:", {
     storefrontId,
@@ -57,6 +58,11 @@ const StorefrontView = () => {
   const categories = Array.from(
     new Set(products.map(p => p.category).filter(Boolean))
   );
+
+  const handleLogoClick = () => {
+    console.log("Logo clicked, resetting verification");
+    resetVerification();
+  };
 
   if (isVerificationLoading || isStorefrontLoading) {
     return <StorefrontLoadingSkeleton />;
@@ -86,6 +92,7 @@ const StorefrontView = () => {
           categories={categories}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
+          onLogoClick={handleLogoClick}
         />
       </div>
       
