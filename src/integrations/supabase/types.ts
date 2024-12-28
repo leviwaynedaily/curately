@@ -174,6 +174,56 @@ export type Database = {
           },
         ]
       }
+      products: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          gallery_id: string | null
+          id: string
+          name: string
+          price: number | null
+          sku: string | null
+          status: string | null
+          stock_quantity: number | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          gallery_id?: string | null
+          id?: string
+          name: string
+          price?: number | null
+          sku?: string | null
+          status?: string | null
+          stock_quantity?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          gallery_id?: string | null
+          id?: string
+          name?: string
+          price?: number | null
+          sku?: string | null
+          status?: string | null
+          stock_quantity?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_gallery_id_fkey"
+            columns: ["gallery_id"]
+            isOneToOne: false
+            referencedRelation: "galleries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string

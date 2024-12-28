@@ -10,12 +10,14 @@ import { GalleryFormActions } from "./GalleryFormActions";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProductManagement } from "./products/ProductManagement";
 
 type GalleryFormContentProps = {
   form: UseFormReturn<GalleryFormValues>;
   isLoading: boolean;
   onSubmit: (values: GalleryFormValues) => Promise<void>;
   onCancel: () => void;
+  galleryId?: string;
 };
 
 export const GalleryFormContent = ({
@@ -23,15 +25,17 @@ export const GalleryFormContent = ({
   isLoading,
   onSubmit,
   onCancel,
+  galleryId,
 }: GalleryFormContentProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="basic">Basic Information</TabsTrigger>
             <TabsTrigger value="verification">Verification</TabsTrigger>
             <TabsTrigger value="customization">Customization</TabsTrigger>
+            <TabsTrigger value="products">Products</TabsTrigger>
           </TabsList>
           
           <div className="h-[500px] overflow-y-auto mt-4">
@@ -47,6 +51,10 @@ export const GalleryFormContent = ({
             
             <TabsContent value="customization" className="space-y-4 mt-0">
               <GalleryCustomizationFields form={form} />
+            </TabsContent>
+
+            <TabsContent value="products" className="space-y-4 mt-0">
+              {galleryId && <ProductManagement galleryId={galleryId} />}
             </TabsContent>
           </div>
         </Tabs>
