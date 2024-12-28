@@ -1,4 +1,4 @@
-export type Gallery = {
+export type Storefront = {
   id: string;
   name: string;
   password?: string | null;
@@ -27,7 +27,7 @@ export type Gallery = {
   };
 };
 
-export type GalleryImage = {
+export type StorefrontImage = {
   id: string;
   file_path: string;
   title?: string | null;

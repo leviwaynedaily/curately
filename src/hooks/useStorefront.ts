@@ -3,18 +3,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Storefront } from "@/types/storefront";
 import { useToast } from "@/components/ui/use-toast";
 
-export const useGallery = (galleryId: string | undefined) => {
+export const useStorefront = (storefrontId: string | undefined) => {
   const { toast } = useToast();
 
-  const { data: gallery, isLoading, error, refetch } = useQuery({
-    queryKey: ["storefront", galleryId],
+  const { data: storefront, isLoading, error, refetch } = useQuery({
+    queryKey: ["storefront", storefrontId],
     queryFn: async () => {
-      if (!galleryId) {
+      if (!storefrontId) {
         console.log("No storefront ID provided");
         throw new Error("Storefront ID is required");
       }
 
-      console.log("Fetching storefront details for ID:", galleryId);
+      console.log("Fetching storefront details for ID:", storefrontId);
       const { data, error } = await supabase
         .from("storefronts")
         .select(`
@@ -38,9 +38,11 @@ export const useGallery = (galleryId: string | undefined) => {
           primary_font_color,
           secondary_font_color,
           accent_font_color,
-          password_required
+          password_required,
+          page_title,
+          favicon
         `)
-        .eq("id", galleryId)
+        .eq("id", storefrontId)
         .maybeSingle();
 
       if (error) {
@@ -49,7 +51,7 @@ export const useGallery = (galleryId: string | undefined) => {
       }
 
       if (!data) {
-        console.log("No storefront found with ID:", galleryId);
+        console.log("No storefront found with ID:", storefrontId);
         return null;
       }
 
@@ -98,10 +100,10 @@ export const useGallery = (galleryId: string | undefined) => {
   };
 
   return {
-    gallery,
+    storefront,
     isLoading,
     error,
     deleteImage,
-    refetchGallery: refetch,
+    refetchStorefront: refetch,
   };
 };
