@@ -4,6 +4,7 @@ import { Product } from "./types";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { ProductTableCell } from "./table/ProductTableCell";
 import { ProductTableMedia } from "./table/ProductTableMedia";
+import { cn } from "@/lib/utils";
 
 type ProductTableRowProps = {
   product: Product;
@@ -16,6 +17,7 @@ type ProductTableRowProps = {
   onProductChange: (field: keyof Product, value: any) => void;
   onMediaClick: (product: Product) => void;
   showHiddenFields: boolean;
+  className?: string;
 };
 
 export const ProductTableRow = ({
@@ -29,6 +31,7 @@ export const ProductTableRow = ({
   onProductChange,
   onMediaClick,
   showHiddenFields,
+  className,
 }: ProductTableRowProps) => {
   const handleCellChange = (field: keyof Product) => (value: any) => {
     onProductChange(field, value);
@@ -47,7 +50,7 @@ export const ProductTableRow = ({
   visibleFields.push("category", "status");
 
   return (
-    <TableRow>
+    <TableRow className={cn(className)}>
       <TableCell>
         <div className="flex items-center gap-2">
           <ProductTableMedia productId={product.id} />

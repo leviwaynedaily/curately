@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
-import { Table, TableBody } from "@/components/ui/table";
+import { Table } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductTableHeader } from "./ProductTableHeader";
-import { ProductTableRow } from "./ProductTableRow";
+import { ProductTableBody } from "./table/ProductTableBody";
 import { ProductTableActions } from "./ProductTableActions";
 import { ProductMediaDialog } from "./ProductMediaDialog";
 import { Product } from "./types";
@@ -52,7 +52,6 @@ export const ProductTable = ({
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...products];
 
-    // Filter
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       result = result.filter(
@@ -64,7 +63,6 @@ export const ProductTable = ({
       );
     }
 
-    // Sort
     if (sortField && sortDirection) {
       result.sort((a, b) => {
         const aValue = a[sortField];
@@ -229,23 +227,18 @@ export const ProductTable = ({
             showHiddenFields={showHiddenFields}
             onToggleHiddenFields={() => setShowHiddenFields(!showHiddenFields)}
           />
-          <TableBody>
-            {filteredAndSortedProducts.map((product) => (
-              <ProductTableRow
-                key={product.id}
-                product={product}
-                isEditing={editingId === product.id}
-                editedProduct={editedProduct}
-                onEdit={handleEdit}
-                onSave={handleSave}
-                onCancel={handleCancel}
-                onDelete={handleDelete}
-                onProductChange={handleProductChange}
-                onMediaClick={setSelectedProduct}
-                showHiddenFields={showHiddenFields}
-              />
-            ))}
-          </TableBody>
+          <ProductTableBody
+            products={filteredAndSortedProducts}
+            editingId={editingId}
+            editedProduct={editedProduct}
+            onEdit={handleEdit}
+            onSave={handleSave}
+            onCancel={handleCancel}
+            onDelete={handleDelete}
+            onProductChange={handleProductChange}
+            onMediaClick={setSelectedProduct}
+            showHiddenFields={showHiddenFields}
+          />
         </Table>
       </div>
 
