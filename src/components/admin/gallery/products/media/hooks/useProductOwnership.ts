@@ -12,7 +12,27 @@ export const useProductOwnership = () => {
 
     console.log("Verifying product ownership for:", productId);
     
-    // Match the RLS policy structure exactly
+    // First check if user is a platform admin
+    const { data: profileData, error: profileError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Error checking user role:", profileError);
+      throw new Error("Failed to verify user role");
+    }
+
+    console.log("User role data:", profileData);
+
+    // If user is a platform admin, they have access to all products
+    if (profileData?.role === "platform_admin") {
+      console.log("User is platform admin, access granted");
+      return true;
+    }
+
+    // If not a platform admin, check business ownership
     const { data, error } = await supabase
       .from("products")
       .select(`
