@@ -56,9 +56,8 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Industries Section - Simplified with Animated Icons */}
+          {/* Industries Section - Icons Only */}
           <div className="w-full max-w-4xl mx-auto px-4">
-            <h2 className="text-lg font-medium text-primary/80 mb-8 text-center">Industries We Serve</h2>
             <div className="flex justify-center gap-12 flex-wrap">
               <Cannabis className="h-12 w-12 text-primary/60 hover:text-primary transition-all duration-300 hover:scale-110 cursor-pointer animate-fade-in" />
               <Building2 className="h-12 w-12 text-primary/60 hover:text-primary transition-all duration-300 hover:scale-110 cursor-pointer animate-fade-in [animation-delay:200ms]" />
