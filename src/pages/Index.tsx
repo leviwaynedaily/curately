@@ -21,7 +21,7 @@ const Index = () => {
               customizable gallery platform. Perfect for photographers, artists, and
               businesses.
             </p>
-            <div className="flex justify-center pt-5">
+            <div className="flex justify-center gap-4 pt-5">
               <Button 
                 asChild 
                 size="lg" 
@@ -30,6 +30,14 @@ const Index = () => {
                 <Link to="/login" className="flex items-center justify-center">
                   Sign In <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
+              </Button>
+              <Button
+                disabled
+                size="lg"
+                variant="secondary"
+                className="bg-slate text-neutral hover:bg-slate/80 hover:text-neutral transition-all duration-300 rounded-full px-4 sm:px-6 py-2 sm:py-4 text-sm sm:text-base w-full sm:w-auto max-w-[280px] opacity-75 cursor-not-allowed"
+              >
+                Sign Up (Coming Soon)
               </Button>
             </div>
           </div>
