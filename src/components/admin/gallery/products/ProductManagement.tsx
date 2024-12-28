@@ -15,11 +15,28 @@ export const ProductManagement = ({ galleryId }: ProductManagementProps) => {
   const {
     data: products,
     isLoading,
+    error,
     refetch,
   } = useQuery({
     queryKey: ["products", galleryId],
     queryFn: async () => {
-      console.log("Fetching products for gallery:", galleryId);
+      console.log("Starting product fetch for gallery:", galleryId);
+      
+      // First, verify the gallery exists
+      const { data: gallery, error: galleryError } = await supabase
+        .from("galleries")
+        .select("id")
+        .eq("id", galleryId)
+        .single();
+
+      if (galleryError) {
+        console.error("Error verifying gallery:", galleryError);
+        throw galleryError;
+      }
+
+      console.log("Gallery verified:", gallery);
+
+      // Now fetch products
       const { data, error } = await supabase
         .from("products")
         .select("*")
@@ -31,26 +48,39 @@ export const ProductManagement = ({ galleryId }: ProductManagementProps) => {
         throw error;
       }
 
-      console.log("Fetched products:", data);
+      console.log("Products query result:", data);
       return data;
     },
   });
 
+  if (error) {
+    console.error("Query error:", error);
+    return (
+      <div className="flex items-center justify-center h-64 text-destructive">
+        Error loading products. Please try again.
+      </div>
+    );
+  }
+
   const handleAddProduct = async () => {
     try {
       console.log("Adding new product for gallery:", galleryId);
-      const { error } = await supabase.from("products").insert({
+      const { data, error } = await supabase.from("products").insert({
         gallery_id: galleryId,
         name: "New Product",
         status: "active",
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error adding product:", error);
+        throw error;
+      }
 
+      console.log("Product added successfully:", data);
       toast({ description: "Product added successfully" });
       refetch();
     } catch (error) {
-      console.error("Error adding product:", error);
+      console.error("Error in handleAddProduct:", error);
       toast({
         variant: "destructive",
         description: "Failed to add product",
@@ -76,7 +106,7 @@ export const ProductManagement = ({ galleryId }: ProductManagementProps) => {
         </Button>
       </div>
 
-      {products?.length === 0 ? (
+      {!products || products.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-64 border rounded-lg bg-muted/10">
           <p className="text-muted-foreground mb-4">No products found</p>
           <Button onClick={handleAddProduct} variant="outline" className="flex items-center gap-2">
@@ -87,7 +117,7 @@ export const ProductManagement = ({ galleryId }: ProductManagementProps) => {
       ) : (
         <ProductTable
           galleryId={galleryId}
-          products={products || []}
+          products={products}
           onProductUpdate={refetch}
         />
       )}
