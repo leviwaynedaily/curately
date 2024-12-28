@@ -16,22 +16,13 @@ export const useGallery = (galleryId: string | undefined) => {
 
       console.log("Fetching gallery details for ID:", galleryId);
       const { data, error } = await supabase
-        .from("galleries")
+        .from("storefronts")
         .select(`
           id,
           name,
           password,
           businesses (
             name
-          ),
-          gallery_images (
-            id,
-            file_path,
-            title,
-            description,
-            media_type,
-            price,
-            is_featured
           ),
           logo,
           site_logo,
@@ -41,7 +32,7 @@ export const useGallery = (galleryId: string | undefined) => {
           accent_color,
           heading_text,
           subheading_text,
-          age_verification_text,
+          age_verification_message,
           button_text,
           age_verification_enabled,
           primary_font_color,
@@ -65,14 +56,14 @@ export const useGallery = (galleryId: string | undefined) => {
       console.log("Successfully fetched gallery:", data);
       return data as Gallery;
     },
-    retry: false, // Don't retry if gallery is not found
+    retry: false,
   });
 
   const deleteImage = async (image: { id: string; filePath: string }) => {
     try {
       console.log("Deleting image:", image);
       const { error } = await supabase
-        .from("gallery_images")
+        .from("product_media")
         .delete()
         .eq("id", image.id);
 

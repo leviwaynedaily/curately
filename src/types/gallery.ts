@@ -15,12 +15,11 @@ export type Gallery = {
   accent_font_color?: string | null;
   heading_text?: string | null;
   subheading_text?: string | null;
-  age_verification_text?: string | null;
+  age_verification_message?: string | null;
   button_text?: string | null;
   businesses?: {
     name: string;
   };
-  gallery_images?: GalleryImage[];
 };
 
 export type GalleryImage = {
