@@ -19,7 +19,7 @@ export const ProductTableActions = ({
 
   const handlePageToggle = () => {
     if (isFullPage) {
-      navigate(-1); // Go back to previous page
+      navigate("/admin"); // Changed from navigate(-1) to navigate("/admin")
     } else {
       navigate(`/admin/galleries/${galleryId}/products`);
     }
