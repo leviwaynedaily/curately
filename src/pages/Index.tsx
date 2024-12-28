@@ -74,16 +74,16 @@ const Index = () => {
 
           {/* Featured Storefronts Grid */}
           {storefronts && storefronts.length > 0 && (
-            <div className="w-full max-w-4xl mx-auto px-2 space-y-3 bounce-in" style={{ animationDelay: '0.7s' }}>
+            <div className="w-full max-w-3xl mx-auto px-2 space-y-6 bounce-in" style={{ animationDelay: '0.7s' }}>
               <h2 className="text-xl font-semibold text-center text-primary/90">Featured Galleries</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 place-items-center">
+              <div className="flex flex-wrap justify-center gap-6">
                 {storefronts.map((storefront) => (
                   <Link
                     key={storefront.id}
                     to={`/storefront/${storefront.id}`}
-                    className="group w-full flex items-center justify-center"
+                    className="group"
                   >
-                    <div className="aspect-square w-full max-w-[200px] bg-white/60 backdrop-blur-sm rounded-lg border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 p-4 flex items-center justify-center mx-auto">
+                    <div className="aspect-square w-[200px] bg-white/60 backdrop-blur-sm rounded-lg border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 p-4 flex items-center justify-center">
                       {storefront.site_logo ? (
                         <img
                           src={supabase.storage.from("gallery_images").getPublicUrl(storefront.site_logo).data.publicUrl}
