@@ -36,18 +36,18 @@ export const ProductMediaCarousel = ({
     .getPublicUrl(currentMedia.file_path).data.publicUrl;
 
   return (
-    <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+    <div className="relative w-full h-full group">
       {currentMedia.media_type === "video" ? (
         <video
           src={mediaUrl}
-          className="w-full h-full object-contain"
+          className="w-full h-full object-cover"
           controls
         />
       ) : (
         <img
           src={mediaUrl}
           alt=""
-          className="w-full h-full object-contain"
+          className="w-full h-full object-cover"
         />
       )}
 
@@ -56,7 +56,7 @@ export const ProductMediaCarousel = ({
           <Button
             variant="outline"
             size="icon"
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
+            className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-white"
             onClick={handlePrevious}
           >
             <ArrowLeft className="h-4 w-4" />
@@ -64,7 +64,7 @@ export const ProductMediaCarousel = ({
           <Button
             variant="outline"
             size="icon"
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
+            className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-white"
             onClick={handleNext}
           >
             <ArrowRight className="h-4 w-4" />
@@ -76,7 +76,7 @@ export const ProductMediaCarousel = ({
         <Button
           variant="outline"
           size="icon"
-          className="absolute top-2 right-2 bg-white/80 hover:bg-white"
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-white"
           onClick={() => onDownload(currentMedia.file_path)}
         >
           <Download className="h-4 w-4" />
