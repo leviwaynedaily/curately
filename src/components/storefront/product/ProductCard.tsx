@@ -44,10 +44,15 @@ export const ProductCard = ({
       onClick={handleCardClick}
     >
       {isAdmin && isEditMode && (
-        <div className="absolute top-2 left-2 z-10" onClick={(e) => e.stopPropagation()}>
+        <div 
+          className="absolute top-2 left-2 z-10" 
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect(product.id);
+          }}
+        >
           <Checkbox
             checked={isSelected}
-            onCheckedChange={() => onSelect(product.id)}
             className="bg-white/80 hover:bg-white/90 backdrop-blur-sm"
           />
         </div>
