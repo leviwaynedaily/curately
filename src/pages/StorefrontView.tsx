@@ -153,6 +153,7 @@ const StorefrontView = () => {
           instructionsEnabled={storefront.instructions_enabled}
           instructionsContent={storefront.instructions_content}
           instructionsButtonText={storefront.instructions_button_text}
+          accentColor={storefront.accent_color}
         />
       )}
     </div>

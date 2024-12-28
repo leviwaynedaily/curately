@@ -7,6 +7,7 @@ interface InstructionsContainerProps {
   content?: string | null;
   buttonText?: string | null;
   onConfirm: () => void;
+  accentColor?: string | null;
 }
 
 export const InstructionsContainer = ({
@@ -14,8 +15,9 @@ export const InstructionsContainer = ({
   content,
   buttonText = "Enter Site",
   onConfirm,
+  accentColor,
 }: InstructionsContainerProps) => {
-  console.log("Rendering InstructionsContainer", { logo, content, buttonText });
+  console.log("Rendering InstructionsContainer with accent color:", accentColor);
   
   return (
     <div className="fixed inset-0 z-50">
@@ -41,7 +43,11 @@ export const InstructionsContainer = ({
             
             <Button
               onClick={onConfirm}
-              className="w-full mt-auto bg-accent hover:bg-accent/90"
+              className="w-full mt-auto"
+              style={{
+                backgroundColor: accentColor || 'var(--accent-color, var(--primary))',
+                color: 'var(--accent-font-color, white)',
+              }}
             >
               {buttonText}
             </Button>

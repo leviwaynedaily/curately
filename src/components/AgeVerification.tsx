@@ -13,6 +13,7 @@ interface AgeVerificationProps {
   instructionsEnabled?: boolean;
   instructionsContent?: string | null;
   instructionsButtonText?: string | null;
+  accentColor?: string | null;
 }
 
 export const AgeVerification = (props: AgeVerificationProps) => {
@@ -22,7 +23,8 @@ export const AgeVerification = (props: AgeVerificationProps) => {
     console.log("Age verification completed", {
       instructionsEnabled: props.instructionsEnabled,
       instructionsContent: props.instructionsContent,
-      showInstructions
+      showInstructions,
+      accentColor: props.accentColor
     });
     
     if (props.instructionsEnabled) {
@@ -44,7 +46,8 @@ export const AgeVerification = (props: AgeVerificationProps) => {
     console.log("Rendering instructions screen", {
       logo: props.logo,
       content: props.instructionsContent,
-      buttonText: props.instructionsButtonText
+      buttonText: props.instructionsButtonText,
+      accentColor: props.accentColor
     });
     
     return (
@@ -53,6 +56,7 @@ export const AgeVerification = (props: AgeVerificationProps) => {
         content={props.instructionsContent}
         buttonText={props.instructionsButtonText}
         onConfirm={handleInstructionsConfirmed}
+        accentColor={props.accentColor}
       />
     );
   }
