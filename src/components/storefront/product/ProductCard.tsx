@@ -26,9 +26,9 @@ export const ProductCard = ({
   onDeleteProduct,
   isAdmin,
   isEditMode,
-  accentColor,
+  accentColor = "#000000", // Default to black if not provided
   allowDownload = false,
-  secondaryColor = "#00904a", // Default to our secondary green if not provided
+  secondaryColor = "#000000", // Default to black if not provided
 }: ProductCardProps) => {
   const handleCardClick = () => {
     if (isEditMode && isAdmin) {
