@@ -16,7 +16,10 @@ export type Gallery = {
   heading_text?: string | null;
   subheading_text?: string | null;
   age_verification_message?: string | null;
+  age_verification_text?: string | null;
   button_text?: string | null;
+  age_verification_enabled?: boolean;
+  password_required?: boolean;
   businesses?: {
     name: string;
   };

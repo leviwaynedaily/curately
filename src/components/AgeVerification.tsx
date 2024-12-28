@@ -6,8 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 
-export const AgeVerification = () => {
-  const { id } = useParams();
+interface AgeVerificationProps {
+  onVerified: () => void;
+  id: string;
+  logo?: string | null;
+  verificationText?: string | null;
+  buttonText?: string | null;
+}
+
+export const AgeVerification = ({
+  onVerified,
+  id,
+  logo,
+  verificationText,
+  buttonText
+}: AgeVerificationProps) => {
   const [password, setPassword] = useState("");
   const { toast } = useToast();
 
@@ -40,7 +53,7 @@ export const AgeVerification = () => {
       });
       return;
     }
-    // Handle successful password verification
+    onVerified();
   };
 
   if (isLoading) {
@@ -59,9 +72,9 @@ export const AgeVerification = () => {
         color: storefront?.primary_font_color || "#000000",
       }}
     >
-      {storefront?.logo && (
+      {logo && (
         <img
-          src={storefront.logo}
+          src={logo}
           alt="Logo"
           className="w-32 h-32 object-contain"
         />
@@ -70,8 +83,8 @@ export const AgeVerification = () => {
       <div className="text-center space-y-4 max-w-md">
         <h1 className="text-3xl font-bold">{storefront?.heading_text}</h1>
         <p className="text-xl">{storefront?.subheading_text}</p>
-        <p>{storefront?.age_verification_text}</p>
-        <Button>{storefront?.button_text || "Enter"}</Button>
+        <p>{verificationText || storefront?.age_verification_text}</p>
+        <Button onClick={onVerified}>{buttonText || storefront?.button_text || "Enter"}</Button>
       </div>
 
       {storefront?.password_required && (

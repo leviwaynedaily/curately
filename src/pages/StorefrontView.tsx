@@ -27,6 +27,14 @@ const StorefrontView = () => {
     setIsLoading(false);
   }, [id]);
 
+  const handleVerified = () => {
+    setIsVerified(true);
+  };
+
+  const handleUploadComplete = async () => {
+    await refetchGallery();
+  };
+
   if (isLoading || isGalleryLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
@@ -75,8 +83,8 @@ const StorefrontView = () => {
     <>
       {!isVerified && (
         <AgeVerification
-          onVerified={() => setIsVerified(true)}
-          tenantId={id as string}
+          onVerified={handleVerified}
+          id={id as string}
           logo={gallery.logo}
           verificationText={gallery.age_verification_text}
           buttonText={gallery.button_text}
@@ -86,7 +94,7 @@ const StorefrontView = () => {
         gallery={gallery}
         galleryId={id as string}
         onDeleteImage={deleteImage}
-        onUploadComplete={refetchGallery}
+        onUploadComplete={handleUploadComplete}
       />
     </>
   );
