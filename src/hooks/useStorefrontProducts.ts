@@ -36,8 +36,7 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
       const { count, error: countError } = await supabase
         .from("products")
         .select("*", { count: 'exact', head: true })
-        .eq("storefront_id", storefrontId)
-        .eq("status", "active");
+        .eq("storefront_id", storefrontId);
 
       console.log("Products count check:", { count, error: countError });
 
@@ -52,8 +51,7 @@ export const useStorefrontProducts = (storefrontId: string | undefined, isVerifi
             is_primary
           )
         `)
-        .eq("storefront_id", storefrontId)
-        .ilike("status", "active");  // Changed from eq to ilike to handle case sensitivity
+        .eq("storefront_id", storefrontId);
 
       if (error) {
         console.error("Error fetching products:", error);
