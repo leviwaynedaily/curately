@@ -4,9 +4,9 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import { ProductDetailsDialog } from "./product/ProductDetailsDialog";
 import { ProductMediaCarousel } from "./product/ProductMediaCarousel";
-import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash, X } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -29,7 +29,6 @@ export const StorefrontProductGrid = ({
 
   const handleProductClick = (product: Product) => {
     if (isEditMode) {
-      // In edit mode, toggle selection
       setSelectedProducts(prev => {
         const newSet = new Set(prev);
         if (newSet.has(product.id)) {
@@ -40,7 +39,6 @@ export const StorefrontProductGrid = ({
         return newSet;
       });
     } else {
-      // Normal mode, show product details
       setSelectedProduct(product);
     }
   };
@@ -55,6 +53,7 @@ export const StorefrontProductGrid = ({
     }
 
     try {
+      console.log("Deleting products:", Array.from(selectedProducts));
       const { error } = await supabase
         .from("products")
         .update({ status: "archived" })
@@ -63,11 +62,15 @@ export const StorefrontProductGrid = ({
       if (error) throw error;
 
       toast({
-        description: `Successfully archived ${selectedProducts.size} product(s)`
+        description: `Successfully deleted ${selectedProducts.size} product(s)`
       });
       
+      // Clear selections and exit edit mode
       setSelectedProducts(new Set());
-      // Ideally we would refresh the products list here
+      setIsEditMode(false);
+      
+      // Force reload the page to refresh the products list
+      window.location.reload();
     } catch (error) {
       console.error("Error deleting products:", error);
       toast({
@@ -88,17 +91,8 @@ export const StorefrontProductGrid = ({
               setSelectedProducts(new Set());
             }}
           >
-            {isEditMode ? (
-              <>
-                <X className="h-4 w-4 mr-2" />
-                Exit Edit Mode
-              </>
-            ) : (
-              <>
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Products
-              </>
-            )}
+            <Edit className="h-4 w-4 mr-2" />
+            {isEditMode ? "Exit Edit Mode" : "Edit Mode"}
           </Button>
           {isEditMode && (
             <Button
