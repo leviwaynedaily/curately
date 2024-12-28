@@ -46,13 +46,13 @@ export const AgeVerificationForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 age-verification-form">
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold tracking-tight">{headingText}</h2>
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-start space-x-3">
+        <div className="checkbox-wrapper">
           <Checkbox
             id="age-verification"
             checked={isChecked}
@@ -62,7 +62,7 @@ export const AgeVerificationForm = ({
           />
           <Label
             htmlFor="age-verification"
-            className="text-sm leading-none pt-1 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             {verificationText}
           </Label>
