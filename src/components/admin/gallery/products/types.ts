@@ -1,5 +1,6 @@
 export type Product = {
   id: string;
+  storefront_id: string;
   name: string;
   description: string | null;
   price: number | null;
