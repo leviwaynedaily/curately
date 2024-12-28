@@ -56,10 +56,10 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
 
     if (error) {
       console.error("Error verifying product ownership:", error);
-      throw error;
+      throw new Error("Failed to verify product ownership");
     }
 
-    if (data?.storefront?.business?.owner_id !== user?.id) {
+    if (!data || data.storefront.business.owner_id !== user?.id) {
       throw new Error("Unauthorized: You don't have permission to modify this product");
     }
 
@@ -79,6 +79,7 @@ export const useProductMedia = (productId: string, onMediaUpdate: () => void) =>
     console.log(`Starting media upload for ${files.length} files, product:`, productId);
 
     try {
+      // Verify ownership before proceeding with upload
       await verifyProductOwnership();
       
       const fileArray = Array.from(files);
