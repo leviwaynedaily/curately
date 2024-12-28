@@ -19,10 +19,13 @@ export const AgeVerification = (props: AgeVerificationProps) => {
   const [isAgeVerified, setIsAgeVerified] = useState(false);
 
   const handleAgeVerified = () => {
-    console.log("Age verification completed");
+    console.log("Age verification completed", {
+      instructionsEnabled: props.instructionsEnabled,
+      instructionsContent: props.instructionsContent
+    });
     setIsAgeVerified(true);
     
-    // If instructions are not enabled, complete verification immediately
+    // Only complete verification if instructions are not enabled
     if (!props.instructionsEnabled) {
       console.log("No instructions enabled, completing verification");
       props.onVerified();
@@ -30,7 +33,7 @@ export const AgeVerification = (props: AgeVerificationProps) => {
   };
 
   const handleInstructionsConfirmed = () => {
-    console.log("Instructions confirmed");
+    console.log("Instructions confirmed, completing verification");
     props.onVerified();
   };
 
