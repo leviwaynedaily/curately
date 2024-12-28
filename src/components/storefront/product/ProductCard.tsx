@@ -43,30 +43,30 @@ export const ProductCard = ({
       `}
       onClick={handleCardClick}
     >
-      {isAdmin && isEditMode && (
-        <div 
-          className="absolute top-2 left-2 z-10" 
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect(product.id);
-          }}
-        >
-          <Checkbox
-            checked={isSelected}
-            className="bg-white/80 hover:bg-white/90 backdrop-blur-sm"
+      <CardContent className="p-0 relative">
+        {isAdmin && isEditMode && (
+          <div 
+            className="absolute top-2 left-2 z-20" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(product.id);
+            }}
+          >
+            <Checkbox
+              checked={isSelected}
+              className="bg-white/80 hover:bg-white/90 backdrop-blur-sm"
+            />
+          </div>
+        )}
+        
+        {isAdmin && !isEditMode && (
+          <ProductCardActions 
+            product={product}
+            onDelete={onDeleteProduct}
+            onEdit={() => onProductClick(product)}
           />
-        </div>
-      )}
-      
-      {isAdmin && !isEditMode && (
-        <ProductCardActions 
-          product={product}
-          onDelete={onDeleteProduct}
-          onEdit={() => onProductClick(product)}
-        />
-      )}
+        )}
 
-      <CardContent className="p-0">
         <div className="aspect-square overflow-hidden bg-gray-100">
           {product.product_media && product.product_media.length > 0 ? (
             <ProductMediaCarousel 
