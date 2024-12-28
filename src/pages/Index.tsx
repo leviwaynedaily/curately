@@ -9,12 +9,10 @@ const Index = () => {
       <section className="relative py-20 px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center space-y-8 animate-fade-down">
-            <img
-              src="/curately-logo.png"
-              alt="Curately"
-              className="h-20 mx-auto mb-8"
-            />
-            <h1 className="text-5xl md:text-6xl font-bold text-secondary">
+            <div className="text-4xl md:text-6xl font-bold text-secondary tracking-tight">
+              <span className="text-accent">Curately</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-secondary">
               Your Digital Gallery,{" "}
               <span className="text-accent">Beautifully Curated</span>
             </h1>
