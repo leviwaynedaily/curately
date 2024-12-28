@@ -13,7 +13,7 @@ export const StorefrontHeader = ({ storefront, onLogoClick }: StorefrontHeaderPr
 
   return (
     <div className="text-center space-y-4 mb-8">
-      {logoUrl && (
+      {logoUrl ? (
         <div className="flex justify-center">
           <img
             src={logoUrl}
@@ -22,16 +22,17 @@ export const StorefrontHeader = ({ storefront, onLogoClick }: StorefrontHeaderPr
             onClick={onLogoClick}
           />
         </div>
+      ) : (
+        <h1 
+          className="text-3xl font-bold"
+          style={{ color: storefront.primary_font_color || '#000000' }}
+        >
+          {storefront.name}
+        </h1>
       )}
-      <h1 
-        className="text-3xl font-bold"
-        style={{ color: storefront.primary_font_color || '#000000' }}
-      >
-        {storefront.name}
-      </h1>
       {storefront.description && (
         <p 
-          className="text-lg max-w-2xl mx-auto"
+          className="text-base max-w-2xl mx-auto"
           style={{ color: storefront.secondary_font_color || '#4B5563' }}
         >
           {storefront.description}
