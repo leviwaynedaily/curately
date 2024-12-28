@@ -38,6 +38,7 @@ export const ProductManagement = ({ galleryId }: ProductManagementProps) => {
 
   const handleAddProduct = async () => {
     try {
+      console.log("Adding new product for gallery:", galleryId);
       const { error } = await supabase.from("products").insert({
         gallery_id: galleryId,
         name: "New Product",
@@ -60,7 +61,7 @@ export const ProductManagement = ({ galleryId }: ProductManagementProps) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+        <div className="animate-pulse text-muted-foreground">Loading products...</div>
       </div>
     );
   }
@@ -75,11 +76,21 @@ export const ProductManagement = ({ galleryId }: ProductManagementProps) => {
         </Button>
       </div>
 
-      <ProductTable
-        galleryId={galleryId}
-        products={products || []}
-        onProductUpdate={refetch}
-      />
+      {products?.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-64 border rounded-lg bg-muted/10">
+          <p className="text-muted-foreground mb-4">No products found</p>
+          <Button onClick={handleAddProduct} variant="outline" className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Add Your First Product
+          </Button>
+        </div>
+      ) : (
+        <ProductTable
+          galleryId={galleryId}
+          products={products || []}
+          onProductUpdate={refetch}
+        />
+      )}
     </div>
   );
 };
