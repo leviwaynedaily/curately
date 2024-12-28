@@ -28,32 +28,38 @@ const StorefrontView = () => {
     error: storefrontError 
   } = useStorefront(storefrontId);
 
-  // Fetch products
+  // Fetch products with media information
   const { data: products = [], isLoading: isProductsLoading } = useQuery({
-    queryKey: ["products", storefrontId],
+    queryKey: ["storefront-products", storefrontId],
     queryFn: async () => {
-      console.log("Fetching products for storefront:", storefrontId);
+      console.log("Fetching products for storefront view:", storefrontId);
       const { data, error } = await supabase
         .from("products")
         .select(`
           *,
-          product_media (*)
+          product_media (
+            id,
+            file_path,
+            is_primary
+          )
         `)
         .eq("storefront_id", storefrontId)
         .eq("status", "active");
 
       if (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching storefront products:", error);
         throw error;
       }
 
-      console.log("Products fetched:", data);
-      return data.map((product: Product) => ({
+      console.log("Storefront products fetched:", data);
+      
+      // Process products to include primary_media
+      return data.map((product: any) => ({
         ...product,
-        primary_media: product.product_media?.find(media => media.is_primary)?.file_path
+        primary_media: product.product_media?.find((media: any) => media.is_primary)?.file_path
       }));
     },
-    enabled: !!storefrontId,
+    enabled: !!storefrontId && isVerified,
   });
 
   // Filter and sort products
@@ -192,10 +198,16 @@ const StorefrontView = () => {
           onCategoryChange={setCategoryFilter}
           categories={categories}
         />
-        <StorefrontProductGrid 
-          products={filteredAndSortedProducts}
-          accentColor={storefront.accent_color}
-        />
+        {filteredAndSortedProducts.length > 0 ? (
+          <StorefrontProductGrid 
+            products={filteredAndSortedProducts}
+            accentColor={storefront.accent_color}
+          />
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No products found.</p>
+          </div>
+        )}
       </div>
       {!isVerified && (
         <AgeVerification
