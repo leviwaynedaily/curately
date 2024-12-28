@@ -1,18 +1,9 @@
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Edit, Save, X, Trash, Image as ImageIcon } from "lucide-react";
 import { Product } from "./types";
-import { supabase } from "@/integrations/supabase/client";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
+import { ProductTableCell } from "./table/ProductTableCell";
+import { ProductTableMedia } from "./table/ProductTableMedia";
 
 type ProductTableRowProps = {
   product: Product;
@@ -37,145 +28,42 @@ export const ProductTableRow = ({
   onProductChange,
   onMediaClick,
 }: ProductTableRowProps) => {
-  const [primaryMedia, setPrimaryMedia] = useState<string | null>(null);
-  const [isLoadingMedia, setIsLoadingMedia] = useState(true);
+  const handleCellChange = (field: keyof Product) => (value: any) => {
+    onProductChange(field, value);
+  };
 
-  useEffect(() => {
-    const fetchPrimaryMedia = async () => {
-      setIsLoadingMedia(true);
-      try {
-        console.log("Fetching primary media for product:", product.id);
-        const { data, error } = await supabase
-          .from("product_media")
-          .select("file_path")
-          .eq("product_id", product.id)
-          .eq("is_primary", true)
-          .maybeSingle();
-
-        if (error) {
-          console.error("Error fetching primary media:", error);
-          return;
-        }
-
-        if (data) {
-          setPrimaryMedia(data.file_path);
-        }
-      } catch (error) {
-        console.error("Error in fetchPrimaryMedia:", error);
-      } finally {
-        setIsLoadingMedia(false);
-      }
-    };
-
-    fetchPrimaryMedia();
-  }, [product.id]);
+  const handleCellEdit = () => {
+    if (!isEditing) {
+      onEdit(product);
+    }
+  };
 
   return (
     <TableRow>
       <TableCell>
         <div className="flex items-center gap-2">
-          {isLoadingMedia ? (
-            <div className="w-10 h-10 bg-muted animate-pulse rounded" />
-          ) : primaryMedia ? (
-            <img
-              src={supabase.storage.from("gallery_images").getPublicUrl(primaryMedia).data.publicUrl}
-              alt=""
-              className="w-10 h-10 object-cover rounded"
-            />
-          ) : (
-            <div className="w-10 h-10 bg-muted rounded flex items-center justify-center">
-              <ImageIcon className="w-4 h-4 text-muted-foreground" />
-            </div>
-          )}
-          {isEditing ? (
-            <Input
-              value={editedProduct?.name || ""}
-              onChange={(e) => onProductChange("name", e.target.value)}
-              className="w-full"
-            />
-          ) : (
-            product.name
-          )}
+          <ProductTableMedia productId={product.id} />
+          <ProductTableCell
+            field="name"
+            value={isEditing ? editedProduct?.name : product.name}
+            isEditing={isEditing}
+            onEdit={handleCellEdit}
+            onChange={handleCellChange("name")}
+          />
         </div>
       </TableCell>
-      <TableCell>
-        {isEditing ? (
-          <Textarea
-            value={editedProduct?.description || ""}
-            onChange={(e) => onProductChange("description", e.target.value)}
-            className="w-full min-h-[60px]"
-          />
-        ) : (
-          product.description
-        )}
-      </TableCell>
-      <TableCell>
-        {isEditing ? (
-          <Input
-            type="number"
-            value={editedProduct?.price || ""}
-            onChange={(e) => onProductChange("price", parseFloat(e.target.value))}
-            className="w-full"
-          />
-        ) : (
-          product.price
-        )}
-      </TableCell>
-      <TableCell>
-        {isEditing ? (
-          <Input
-            value={editedProduct?.sku || ""}
-            onChange={(e) => onProductChange("sku", e.target.value)}
-            className="w-full"
-          />
-        ) : (
-          product.sku
-        )}
-      </TableCell>
-      <TableCell>
-        {isEditing ? (
-          <Input
-            value={editedProduct?.category || ""}
-            onChange={(e) => onProductChange("category", e.target.value)}
-            className="w-full"
-          />
-        ) : (
-          product.category
-        )}
-      </TableCell>
-      <TableCell>
-        {isEditing ? (
-          <Input
-            type="number"
-            value={editedProduct?.stock_quantity || ""}
-            onChange={(e) => onProductChange("stock_quantity", parseInt(e.target.value))}
-            className="w-full"
-          />
-        ) : (
-          product.stock_quantity
-        )}
-      </TableCell>
-      <TableCell>
-        {isEditing ? (
-          <Select
-            value={editedProduct?.status || ""}
-            onValueChange={(value) => onProductChange("status", value)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-            </SelectContent>
-          </Select>
-        ) : (
-          <span className={`capitalize ${product.status === 'active' ? 'text-green-600' : 'text-gray-500'}`}>
-            {product.status}
-          </span>
-        )}
-      </TableCell>
+
+      {(["description", "price", "sku", "category", "stock_quantity", "status"] as const).map((field) => (
+        <ProductTableCell
+          key={field}
+          field={field}
+          value={isEditing ? editedProduct?.[field] : product[field]}
+          isEditing={isEditing}
+          onEdit={handleCellEdit}
+          onChange={handleCellChange(field)}
+        />
+      ))}
+
       <TableCell>
         <div className="flex items-center gap-2">
           {isEditing ? (

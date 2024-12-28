@@ -1,12 +1,11 @@
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-type SortField = "name" | "price" | "sku" | "category" | "stock_quantity" | "status";
+import { Product } from "./types";
 
 type ProductTableHeaderProps = {
-  onSort: (field: SortField) => void;
-  sortField: SortField | null;
+  onSort: (field: keyof Product) => void;
+  sortField: keyof Product | null;
   sortDirection: "asc" | "desc" | null;
 };
 
@@ -15,7 +14,7 @@ export const ProductTableHeader = ({
   sortField,
   sortDirection,
 }: ProductTableHeaderProps) => {
-  const SortableHeader = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
+  const SortableHeader = ({ field, children }: { field: keyof Product; children: React.ReactNode }) => (
     <TableHead>
       <Button
         variant="ghost"
