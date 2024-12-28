@@ -42,43 +42,51 @@ export const ProductMediaDialog = ({
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
 
     setIsUploading(true);
-    console.log("Starting media upload for product:", product.id);
+    console.log(`Starting media upload for ${files.length} files, product:`, product.id);
 
     try {
-      // First upload the file to storage
-      const fileExt = file.name.split(".").pop();
-      const filePath = `${product.id}/${crypto.randomUUID()}.${fileExt}`;
-      const mediaType = file.type.startsWith("video/") ? "video" : "image";
+      // Convert FileList to array for easier handling
+      const fileArray = Array.from(files);
+      
+      for (const file of fileArray) {
+        // Upload each file to storage
+        const fileExt = file.name.split(".").pop();
+        const filePath = `${product.id}/${crypto.randomUUID()}.${fileExt}`;
+        const mediaType = file.type.startsWith("video/") ? "video" : "image";
 
-      console.log("Uploading file to storage...");
-      const { error: uploadError } = await supabase.storage
-        .from("gallery_images")
-        .upload(filePath, file);
+        console.log(`Uploading ${mediaType} to storage:`, file.name);
+        const { error: uploadError } = await supabase.storage
+          .from("gallery_images")
+          .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error("Error uploading file:", file.name, uploadError);
+          throw uploadError;
+        }
 
-      // Then create the media record with the product_id
-      console.log("Creating media record with product_id:", product.id);
-      const { error: dbError } = await supabase
-        .from("product_media")
-        .insert([{
-          product_id: product.id,
-          file_path: filePath,
-          media_type: mediaType,
-          is_primary: media.length === 0,
-          title: file.name,
-        }]);
+        // Create media record for each file
+        console.log("Creating media record for:", file.name);
+        const { error: dbError } = await supabase
+          .from("product_media")
+          .insert([{
+            product_id: product.id,
+            file_path: filePath,
+            media_type: mediaType,
+            is_primary: media.length === 0 && fileArray.indexOf(file) === 0, // First file of first upload is primary
+            title: file.name,
+          }]);
 
-      if (dbError) {
-        console.error("Error creating media record:", dbError);
-        throw dbError;
+        if (dbError) {
+          console.error("Error creating media record:", dbError);
+          throw dbError;
+        }
       }
 
-      toast({ description: "Media uploaded successfully" });
+      toast({ description: `Successfully uploaded ${fileArray.length} files` });
       fetchMedia();
       onMediaUpdate();
     } catch (error) {
@@ -178,6 +186,7 @@ export const ProductMediaDialog = ({
             id="media-upload"
             type="file"
             accept="image/*,video/*"
+            multiple
             className="hidden"
             onChange={handleFileUpload}
             disabled={isUploading}
