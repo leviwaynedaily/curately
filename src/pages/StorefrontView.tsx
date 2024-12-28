@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Home, AlertCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
-const GalleryView = () => {
+const StorefrontView = () => {
   const { id } = useParams();
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +30,7 @@ const GalleryView = () => {
   if (isLoading || isGalleryLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
-        <div className="animate-pulse text-xl text-gray-600 mb-4">Loading gallery...</div>
+        <div className="animate-pulse text-xl text-gray-600 mb-4">Loading storefront...</div>
         <div className="w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -43,7 +43,7 @@ const GalleryView = () => {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>
-            An error occurred while loading the gallery. Please try again later.
+            An error occurred while loading the storefront. Please try again later.
           </AlertDescription>
         </Alert>
         <Link to="/">
@@ -59,8 +59,8 @@ const GalleryView = () => {
   if (!gallery) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
-        <div className="text-xl text-gray-600 mb-4">Gallery not found</div>
-        <p className="text-gray-500 mb-6">The gallery you're looking for doesn't exist or has been removed.</p>
+        <div className="text-xl text-gray-600 mb-4">Storefront not found</div>
+        <p className="text-gray-500 mb-6">The storefront you're looking for doesn't exist or has been removed.</p>
         <Link to="/">
           <Button variant="outline" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
@@ -90,4 +90,4 @@ const GalleryView = () => {
   );
 };
 
-export default GalleryView;
+export default StorefrontView;

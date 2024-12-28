@@ -116,7 +116,7 @@ export const ProductManagement = ({ storefrontId }: ProductManagementProps) => {
         </div>
       ) : (
         <ProductTable
-          storefrontId={storefrontId}
+          galleryId={storefrontId}
           products={products}
           onProductUpdate={refetch}
         />
