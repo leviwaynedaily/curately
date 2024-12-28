@@ -12,7 +12,7 @@ export const StorefrontHeader = ({ storefront }: StorefrontHeaderProps) => {
         <img
           src={supabase.storage.from("gallery_images").getPublicUrl(storefront.site_logo).data.publicUrl}
           alt={storefront.name}
-          className="h-32 object-contain" // Changed from h-16 to h-32
+          className="h-48 object-contain" // Changed from h-32 to h-48
         />
       ) : (
         <h1 className="text-3xl font-bold text-center">{storefront.name}</h1>
