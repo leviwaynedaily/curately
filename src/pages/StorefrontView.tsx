@@ -8,7 +8,7 @@ import { Home, AlertCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const StorefrontView = () => {
-  const { id } = useParams();
+  const { storefrontId } = useParams();
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { 
@@ -17,17 +17,19 @@ const StorefrontView = () => {
     error: galleryError,
     deleteImage, 
     refetchGallery 
-  } = useGallery(id);
+  } = useGallery(storefrontId);
 
   useEffect(() => {
     const ageVerified = localStorage.getItem("age-verified") === "true";
-    const authenticated = localStorage.getItem(`gallery-${id}-auth`) === "true";
+    const authenticated = localStorage.getItem(`gallery-${storefrontId}-auth`) === "true";
     
     setIsVerified(ageVerified && authenticated);
     setIsLoading(false);
-  }, [id]);
+  }, [storefrontId]);
 
   const handleVerified = () => {
+    localStorage.setItem("age-verified", "true");
+    localStorage.setItem(`gallery-${storefrontId}-auth`, "true");
     setIsVerified(true);
   };
 
@@ -84,18 +86,20 @@ const StorefrontView = () => {
       {!isVerified && (
         <AgeVerification
           onVerified={handleVerified}
-          id={id as string}
+          id={storefrontId as string}
           logo={gallery.logo}
           verificationText={gallery.age_verification_text}
           buttonText={gallery.button_text}
         />
       )}
-      <GalleryContent
-        gallery={gallery}
-        galleryId={id as string}
-        onDeleteImage={deleteImage}
-        onUploadComplete={handleUploadComplete}
-      />
+      {isVerified && (
+        <GalleryContent
+          gallery={gallery}
+          galleryId={storefrontId as string}
+          onDeleteImage={deleteImage}
+          onUploadComplete={handleUploadComplete}
+        />
+      )}
     </>
   );
 };

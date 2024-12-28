@@ -74,8 +74,8 @@ export const GalleryTable = ({
             </TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                <a
-                  href={`/storefront/${gallery.id}`}
+                <Link
+                  to={`/storefront/${gallery.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -86,7 +86,7 @@ export const GalleryTable = ({
                   >
                     <ExternalLink className="h-4 w-4" />
                   </Button>
-                </a>
+                </Link>
                 <Button
                   variant="ghost"
                   size="icon"
