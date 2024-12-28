@@ -17,6 +17,7 @@ type StorefrontContentProps = {
   categories: string[];
   viewMode: "grid" | "list";
   onViewModeChange: (mode: "grid" | "list") => void;
+  onLogoClick?: () => void;
 };
 
 export const StorefrontContent = ({
@@ -31,13 +32,11 @@ export const StorefrontContent = ({
   categories,
   viewMode,
   onViewModeChange,
+  onLogoClick,
 }: StorefrontContentProps) => {
-  // For now, we'll hardcode this. In a future update, this should come from storefront settings
-  const allowDownload = false;
-
   return (
     <div className="container mx-auto px-4 py-8">
-      <StorefrontHeader storefront={storefront} />
+      <StorefrontHeader storefront={storefront} onLogoClick={onLogoClick} />
       <div className="space-y-4">
         <StorefrontFilters
           searchTerm={searchTerm}
@@ -56,7 +55,7 @@ export const StorefrontContent = ({
               products={products}
               accentColor={storefront.accent_color}
               secondaryColor={storefront.secondary_color}
-              allowDownload={allowDownload}
+              allowDownload={false}
             />
           ) : (
             <StorefrontProductList

@@ -1,30 +1,41 @@
-import { supabase } from "@/integrations/supabase/client";
 import { Storefront } from "@/types/storefront";
+import { supabase } from "@/integrations/supabase/client";
 
-type StorefrontHeaderProps = {
+interface StorefrontHeaderProps {
   storefront: Storefront;
-};
+  onLogoClick?: () => void;
+}
 
-export const StorefrontHeader = ({ storefront }: StorefrontHeaderProps) => {
-  console.log("Rendering StorefrontHeader with logo:", storefront.site_logo);
-  
-  const getImageUrl = (path: string | null) => {
-    if (!path) return null;
-    return supabase.storage
-      .from("gallery_images")
-      .getPublicUrl(path).data.publicUrl;
-  };
+export const StorefrontHeader = ({ storefront, onLogoClick }: StorefrontHeaderProps) => {
+  const logoUrl = storefront.site_logo
+    ? supabase.storage.from("gallery_images").getPublicUrl(storefront.site_logo).data.publicUrl
+    : null;
 
   return (
-    <div className="flex justify-center mb-12">
-      {storefront.site_logo ? (
-        <img
-          src={getImageUrl(storefront.site_logo)}
-          alt={storefront.name}
-          className="h-48 object-contain"
-        />
-      ) : (
-        <h1 className="text-3xl font-bold text-center">{storefront.name}</h1>
+    <div className="text-center space-y-4 mb-8">
+      {logoUrl && (
+        <div className="flex justify-center">
+          <img
+            src={logoUrl}
+            alt={`${storefront.name} logo`}
+            className="h-32 w-auto object-contain cursor-pointer hover:opacity-90 transition-opacity"
+            onClick={onLogoClick}
+          />
+        </div>
+      )}
+      <h1 
+        className="text-3xl font-bold"
+        style={{ color: storefront.primary_font_color || '#000000' }}
+      >
+        {storefront.name}
+      </h1>
+      {storefront.description && (
+        <p 
+          className="text-lg max-w-2xl mx-auto"
+          style={{ color: storefront.secondary_font_color || '#4B5563' }}
+        >
+          {storefront.description}
+        </p>
       )}
     </div>
   );

@@ -21,9 +21,17 @@ export const useStorefrontState = (storefrontId: string | undefined) => {
     setIsVerified(true);
   };
 
+  const resetVerification = () => {
+    console.log("Resetting verification state");
+    localStorage.removeItem("age-verified");
+    localStorage.removeItem(`gallery-${storefrontId}-auth`);
+    setIsVerified(false);
+  };
+
   return {
     isVerified,
     isLoading,
     handleVerified,
+    resetVerification,
   };
 };
