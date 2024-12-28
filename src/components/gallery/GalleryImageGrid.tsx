@@ -4,6 +4,7 @@ import { GallerySelectionControls } from "./GallerySelectionControls";
 import { GalleryImageItem } from "./GalleryImageItem";
 import { GalleryDialogs } from "./GalleryDialogs";
 import { useToast } from "@/components/ui/use-toast";
+import { useImageSelection } from "@/hooks/useImageSelection";
 
 type GalleryImageGridProps = {
   images: StorefrontImage[];
