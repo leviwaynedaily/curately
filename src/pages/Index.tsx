@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { GalleryGrid } from "@/components/gallery/GalleryGrid";
 import { ArrowRight, Cloud, Image, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -66,16 +65,6 @@ const Index = () => {
               </p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Gallery Section */}
-      <section className="py-20 px-8">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-secondary text-center mb-12">
-            Featured Galleries
-          </h2>
-          <GalleryGrid />
         </div>
       </section>
     </div>
