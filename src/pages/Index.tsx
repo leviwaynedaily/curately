@@ -56,30 +56,18 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Industries Section - More Subtle */}
+          {/* Industries Section - Simplified with Animated Icons */}
           <div className="w-full max-w-4xl mx-auto px-4">
-            <h2 className="text-lg font-medium text-primary/80 mb-4 text-center">Industries We Serve</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-4 rounded-lg bg-white/40 backdrop-blur-sm border border-primary/5 hover:border-primary/10 transition-all duration-300 flex flex-col items-center group">
-                <Cannabis className="h-6 w-6 text-primary/60 group-hover:text-primary/80 transition-colors mb-2" />
-                <span className="text-sm font-medium text-slate/70 group-hover:text-slate/80">Cannabis</span>
-              </div>
-              <div className="p-4 rounded-lg bg-white/40 backdrop-blur-sm border border-primary/5 hover:border-primary/10 transition-all duration-300 flex flex-col items-center group">
-                <Building2 className="h-6 w-6 text-primary/60 group-hover:text-primary/80 transition-colors mb-2" />
-                <span className="text-sm font-medium text-slate/70 group-hover:text-slate/80">Dispensaries</span>
-              </div>
-              <div className="p-4 rounded-lg bg-white/40 backdrop-blur-sm border border-primary/5 hover:border-primary/10 transition-all duration-300 flex flex-col items-center group">
-                <Factory className="h-6 w-6 text-primary/60 group-hover:text-primary/80 transition-colors mb-2" />
-                <span className="text-sm font-medium text-slate/70 group-hover:text-slate/80">Producers</span>
-              </div>
-              <div className="p-4 rounded-lg bg-white/40 backdrop-blur-sm border border-primary/5 hover:border-primary/10 transition-all duration-300 flex flex-col items-center group">
-                <Package2 className="h-6 w-6 text-primary/60 group-hover:text-primary/80 transition-colors mb-2" />
-                <span className="text-sm font-medium text-slate/70 group-hover:text-slate/80">Products</span>
-              </div>
+            <h2 className="text-lg font-medium text-primary/80 mb-8 text-center">Industries We Serve</h2>
+            <div className="flex justify-center gap-12 flex-wrap">
+              <Cannabis className="h-12 w-12 text-primary/60 hover:text-primary transition-all duration-300 hover:scale-110 cursor-pointer animate-fade-in" />
+              <Building2 className="h-12 w-12 text-primary/60 hover:text-primary transition-all duration-300 hover:scale-110 cursor-pointer animate-fade-in [animation-delay:200ms]" />
+              <Factory className="h-12 w-12 text-primary/60 hover:text-primary transition-all duration-300 hover:scale-110 cursor-pointer animate-fade-in [animation-delay:400ms]" />
+              <Package2 className="h-12 w-12 text-primary/60 hover:text-primary transition-all duration-300 hover:scale-110 cursor-pointer animate-fade-in [animation-delay:600ms]" />
             </div>
           </div>
 
-          {/* Feature Cards Grid - Simplified */}
+          {/* Feature Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-4xl mx-auto px-4">
             <div className="p-5 rounded-lg bg-white/40 backdrop-blur-sm border border-primary/5 hover:border-primary/10 transition-all duration-300 group">
               <Cloud className="h-6 w-6 text-primary/60 group-hover:text-primary/80 transition-colors mb-2 mx-auto" />
@@ -114,7 +102,7 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Footer - Simplified */}
+      {/* Footer */}
       <footer className="w-full bg-white/5 py-4 px-4 sm:px-8 backdrop-blur-sm border-t border-primary/5">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 text-slate/60">
