@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useStorefront } from "@/hooks/useStorefront";
 import { useStorefrontProducts } from "@/hooks/useStorefrontProducts";
@@ -9,6 +9,7 @@ import { AgeVerification } from "@/components/AgeVerification";
 import { StorefrontContent } from "@/components/storefront/StorefrontContent";
 import { StorefrontError } from "@/components/storefront/StorefrontError";
 import { StorefrontLoadingSkeleton } from "@/components/storefront/StorefrontLoadingSkeleton";
+import { supabase } from "@/integrations/supabase/client";
 
 const StorefrontView = () => {
   const { storefrontId } = useParams();
@@ -32,6 +33,50 @@ const StorefrontView = () => {
   } = useStorefrontState(storefrontId);
 
   useStorefrontMetadata(storefront);
+
+  // Update PWA manifest dynamically
+  useEffect(() => {
+    if (storefront) {
+      const manifest = {
+        name: storefront.name,
+        short_name: storefront.name,
+        description: storefront.description || `Welcome to ${storefront.name}`,
+        start_url: `/storefront/${storefrontId}`,
+        display: "standalone",
+        background_color: storefront.primary_color || "#ffffff",
+        theme_color: storefront.accent_color || "#2A6041",
+        icons: [
+          {
+            src: storefront.site_logo 
+              ? supabase.storage.from("gallery_images").getPublicUrl(storefront.site_logo).data.publicUrl 
+              : "/icons/icon-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any maskable"
+          }
+        ]
+      };
+
+      const link = document.querySelector('link[rel="manifest"]');
+      if (link) {
+        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        const manifestURL = URL.createObjectURL(blob);
+        link.setAttribute('href', manifestURL);
+      }
+
+      // Update theme color
+      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeColorMeta) {
+        themeColorMeta.setAttribute('content', storefront.accent_color || "#2A6041");
+      }
+
+      // Update apple-mobile-web-app-title
+      const appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+      if (appleTitleMeta) {
+        appleTitleMeta.setAttribute('content', storefront.name);
+      }
+    }
+  }, [storefront, storefrontId]);
 
   const {
     data: products = [],
@@ -68,8 +113,8 @@ const StorefrontView = () => {
     return <StorefrontLoadingSkeleton />;
   }
 
-  if (storefrontError || productsError) {
-    console.error("Error loading storefront:", { storefrontError, productsError });
+  if (storefrontError) {
+    console.error("Error loading storefront:", storefrontError);
     return <StorefrontError />;
   }
 
