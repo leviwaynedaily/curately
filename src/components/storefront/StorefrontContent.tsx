@@ -55,6 +55,7 @@ export const StorefrontContent = ({
             <StorefrontProductGrid 
               products={products}
               accentColor={storefront.accent_color}
+              secondaryColor={storefront.secondary_color}
               allowDownload={allowDownload}
             />
           ) : (

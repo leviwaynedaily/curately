@@ -11,12 +11,14 @@ import { ProductCard } from "./product/ProductCard";
 type StorefrontProductGridProps = {
   products: Product[];
   accentColor?: string;
+  secondaryColor?: string;
   allowDownload?: boolean;
 };
 
 export const StorefrontProductGrid = ({ 
   products,
   accentColor,
+  secondaryColor,
   allowDownload = false
 }: StorefrontProductGridProps) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -132,6 +134,7 @@ export const StorefrontProductGrid = ({
             isEditMode={isEditMode}
             accentColor={accentColor}
             allowDownload={allowDownload}
+            secondaryColor={secondaryColor}
           />
         ))}
       </div>

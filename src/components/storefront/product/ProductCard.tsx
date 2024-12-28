@@ -15,6 +15,7 @@ type ProductCardProps = {
   isEditMode: boolean;
   accentColor?: string;
   allowDownload?: boolean;
+  secondaryColor?: string;
 };
 
 export const ProductCard = ({
@@ -27,6 +28,7 @@ export const ProductCard = ({
   isEditMode,
   accentColor,
   allowDownload = false,
+  secondaryColor = "#00904a", // Default to our secondary green if not provided
 }: ProductCardProps) => {
   const handleCardClick = () => {
     if (isEditMode && isAdmin) {
@@ -90,9 +92,9 @@ export const ProductCard = ({
               <span 
                 className="inline-block px-2 py-1 text-xs rounded-full whitespace-nowrap"
                 style={{ 
-                  backgroundColor: `#7E69AB15`,
-                  color: '#7E69AB',
-                  border: `1px solid #7E69AB30`
+                  backgroundColor: `${secondaryColor}15`,
+                  color: secondaryColor,
+                  border: `1px solid ${secondaryColor}30`
                 }}
               >
                 {product.category}
