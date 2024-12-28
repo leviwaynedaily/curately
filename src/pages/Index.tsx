@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Cloud, Image as GalleryIcon, Lock } from "lucide-react";
+import { ArrowRight, Cloud, Image as GalleryIcon, Lock, LockKeyhole } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -9,7 +9,8 @@ const Index = () => {
       <section className="w-full py-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-neutral to-white">
         <div className="max-w-7xl mx-auto w-full">
           <div className="text-center space-y-4 animate-fade-down w-full">
-            <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary tracking-tight mb-2">
+            <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary tracking-tight mb-2 flex items-center justify-center gap-3">
+              <LockKeyhole className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 text-accent" />
               <span className="text-accent">Curately</span>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary leading-tight mb-2">
