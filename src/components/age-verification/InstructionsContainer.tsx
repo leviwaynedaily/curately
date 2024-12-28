@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { AgeVerificationLogo } from "./AgeVerificationLogo";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface InstructionsContainerProps {
   logo?: string | null;
@@ -21,20 +22,26 @@ export const InstructionsContainer = ({
       <div className="absolute inset-0 backdrop-blur-md bg-black/30" />
       
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-2xl bg-white/95 backdrop-blur-sm p-8 rounded-xl shadow-2xl">
-          {logo && <AgeVerificationLogo logo={logo} />}
+        <div className="w-full max-w-2xl bg-white/95 backdrop-blur-sm p-8 rounded-xl shadow-2xl max-h-[90vh] flex flex-col">
+          {logo && (
+            <div className="flex-shrink-0">
+              <AgeVerificationLogo logo={logo} />
+            </div>
+          )}
           
-          <div className="mt-6 space-y-6">
+          <div className="mt-6 flex flex-col flex-grow min-h-0">
             {content && (
-              <div 
-                className="prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: content }}
-              />
+              <ScrollArea className="flex-grow">
+                <div 
+                  className="prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
+              </ScrollArea>
             )}
             
             <Button
               onClick={onConfirm}
-              className="w-full"
+              className="w-full mt-6 flex-shrink-0"
             >
               {buttonText}
             </Button>
