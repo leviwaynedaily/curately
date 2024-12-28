@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Gallery } from "@/types/gallery";
+import { Storefront } from "@/types/storefront";
 import { useToast } from "@/components/ui/use-toast";
 
 export const useGallery = (galleryId: string | undefined) => {
@@ -54,7 +54,7 @@ export const useGallery = (galleryId: string | undefined) => {
       }
 
       console.log("Successfully fetched storefront:", data);
-      return data as Gallery;
+      return data as Storefront;
     },
     retry: false,
   });
