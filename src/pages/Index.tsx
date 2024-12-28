@@ -1,8 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Lock, Image as GalleryIcon, Cloud, Cannabis, Building2, Factory, Package2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
+  const { data: storefronts } = useQuery({
+    queryKey: ["public-storefronts"],
+    queryFn: async () => {
+      console.log("Fetching public storefronts");
+      const { data, error } = await supabase
+        .from("storefronts")
+        .select("*")
+        .eq("status", "active");
+      
+      if (error) throw error;
+      console.log("Fetched storefronts:", data);
+      return data;
+    },
+  });
+
   return (
     <div className="h-screen flex flex-col bg-gradient-to-b from-primary/10 via-primary/20 to-neutral/90 overflow-hidden">
       <main className="flex-grow flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-6">
@@ -55,6 +72,36 @@ const Index = () => {
               </Button>
             </div>
           </div>
+
+          {/* Featured Storefronts Grid */}
+          {storefronts && storefronts.length > 0 && (
+            <div className="w-full max-w-6xl mx-auto px-4 space-y-8 bounce-in" style={{ animationDelay: '0.7s' }}>
+              <h2 className="text-2xl font-semibold text-center text-primary/90">Featured Galleries</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                {storefronts.map((storefront) => (
+                  <Link
+                    key={storefront.id}
+                    to={`/storefront/${storefront.id}`}
+                    className="group"
+                  >
+                    <div className="aspect-square bg-white/60 backdrop-blur-sm rounded-lg border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 p-4 flex items-center justify-center">
+                      {storefront.site_logo ? (
+                        <img
+                          src={supabase.storage.from("gallery_images").getPublicUrl(storefront.site_logo).data.publicUrl}
+                          alt={storefront.name}
+                          className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="text-lg font-medium text-primary/80 text-center group-hover:text-primary transition-colors">
+                          {storefront.name}
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Industries Section - Icons Only */}
           <div className="w-full max-w-4xl mx-auto px-4">
