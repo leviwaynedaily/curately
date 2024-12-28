@@ -20,16 +20,28 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#1E293B", // Deep tech blue
-          foreground: "#F8FAFC", // Clean white
+          DEFAULT: "#2A6041", // Deep Green
+          foreground: "#F5F5DC", // Soft Beige
         },
         secondary: {
-          DEFAULT: "#F8FAFC", // Clean white
-          foreground: "#1E293B", // Deep tech blue
+          DEFAULT: "#333333", // Charcoal Gray
+          foreground: "#F5F5DC", // Soft Beige
         },
         accent: {
-          DEFAULT: "#0EA5E9", // Bright tech blue
-          foreground: "#FFFFFF",
+          DEFAULT: "#D4AF37", // Gold
+          foreground: "#333333", // Charcoal Gray
+        },
+        slate: {
+          DEFAULT: "#4A6572", // Slate Blue
+          foreground: "#F5F5DC", // Soft Beige
+        },
+        neutral: {
+          DEFAULT: "#F5F5DC", // Soft Beige
+          foreground: "#333333", // Charcoal Gray
+        },
+        light: {
+          DEFAULT: "#E8E8E8", // Light Gray
+          foreground: "#333333", // Charcoal Gray
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
