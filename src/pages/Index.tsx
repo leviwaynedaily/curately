@@ -1,30 +1,34 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Cloud, Image, Lock } from "lucide-react";
+import { ArrowRight, Cloud, Image as GalleryIcon, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-neutral">
+    <div className="min-h-screen bg-gradient-to-b from-neutral to-white">
       {/* Hero Section */}
-      <section className="relative py-20 px-8">
+      <section className="relative py-32 px-8 bg-gradient-to-b from-neutral to-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center space-y-8 animate-fade-down">
-            <div className="text-4xl md:text-6xl font-bold text-primary tracking-tight">
+          <div className="text-center space-y-12 animate-fade-down">
+            <div className="text-5xl md:text-6xl font-bold text-primary tracking-tight">
               <span className="text-accent">Curately</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-secondary">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-secondary leading-tight">
               Your Digital Gallery,{" "}
               <span className="text-primary">Beautifully Curated</span>
             </h1>
-            <p className="text-xl text-slate max-w-2xl mx-auto">
+            <p className="text-lg text-slate max-w-2xl mx-auto font-light leading-relaxed">
               Showcase your products and collections with our elegant, secure, and
               customizable gallery platform. Perfect for photographers, artists, and
               businesses.
             </p>
-            <div className="flex justify-center gap-4">
-              <Button asChild size="lg" className="bg-accent text-secondary hover:bg-accent/90">
+            <div className="flex justify-center gap-4 pt-4">
+              <Button 
+                asChild 
+                size="lg" 
+                className="bg-primary text-neutral hover:bg-accent hover:text-neutral hover:scale-105 transition-all duration-300 rounded-full px-8 py-6 text-lg"
+              >
                 <Link to="/login">
-                  Sign In <ArrowRight className="ml-2 h-4 w-4" />
+                  Sign In <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
             </div>
@@ -33,31 +37,37 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-8 bg-light">
+      <section className="py-32 px-8 bg-gradient-to-b from-white to-light">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-primary text-center mb-12">
+          <h2 className="text-4xl font-bold text-primary text-center mb-16">
             Why Choose Curately?
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6 bg-neutral rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-              <Cloud className="h-12 w-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2 text-secondary">Cloud-Based</h3>
-              <p className="text-slate">
+          <div className="grid md:grid-cols-3 gap-12">
+            <div className="p-8 bg-neutral rounded-xl border border-secondary/10 shadow-lg hover:shadow-xl hover:bg-light hover:scale-105 transition-all duration-300">
+              <Cloud className="h-16 w-16 text-primary mb-6 mx-auto" />
+              <h3 className="text-2xl font-semibold mb-4 text-secondary text-center">
+                Cloud-Based
+              </h3>
+              <p className="text-slate text-center leading-relaxed">
                 Access your galleries anywhere, anytime. Your content is always
                 secure and available.
               </p>
             </div>
-            <div className="p-6 bg-neutral rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-              <Image className="h-12 w-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2 text-secondary">Beautiful Display</h3>
-              <p className="text-slate">
+            <div className="p-8 bg-neutral rounded-xl border border-secondary/10 shadow-lg hover:shadow-xl hover:bg-light hover:scale-105 transition-all duration-300">
+              <GalleryIcon className="h-16 w-16 text-primary mb-6 mx-auto" />
+              <h3 className="text-2xl font-semibold mb-4 text-secondary text-center">
+                Beautiful Display
+              </h3>
+              <p className="text-slate text-center leading-relaxed">
                 Showcase your work with elegant layouts and customizable themes.
               </p>
             </div>
-            <div className="p-6 bg-neutral rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-              <Lock className="h-12 w-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2 text-secondary">Secure Access</h3>
-              <p className="text-slate">
+            <div className="p-8 bg-neutral rounded-xl border border-secondary/10 shadow-lg hover:shadow-xl hover:bg-light hover:scale-105 transition-all duration-300">
+              <Lock className="h-16 w-16 text-primary mb-6 mx-auto" />
+              <h3 className="text-2xl font-semibold mb-4 text-secondary text-center">
+                Secure Access
+              </h3>
+              <p className="text-slate text-center leading-relaxed">
                 Control who sees your content with password protection and
                 age verification.
               </p>
@@ -65,6 +75,26 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-secondary py-12 px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-8 text-neutral">
+            <Link to="#" className="hover:text-slate transition-colors">
+              About
+            </Link>
+            <Link to="#" className="hover:text-slate transition-colors">
+              Contact
+            </Link>
+            <Link to="#" className="hover:text-slate transition-colors">
+              Privacy Policy
+            </Link>
+          </div>
+          <div className="text-center mt-8 text-neutral/60 text-sm">
+            © {new Date().getFullYear()} Curately. All rights reserved.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
