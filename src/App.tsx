@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import GalleryView from "./pages/GalleryView";
+import ProductManagement from "./pages/ProductManagement";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Admin />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/galleries/:galleryId/products"
+              element={
+                <ProtectedRoute>
+                  <ProductManagement />
                 </ProtectedRoute>
               }
             />
