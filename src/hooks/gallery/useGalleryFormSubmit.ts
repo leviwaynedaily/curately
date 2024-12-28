@@ -1,10 +1,9 @@
 import { supabase } from "@/integrations/supabase/client";
 import { GalleryFormValues } from "@/lib/validations/gallery";
-import { type Toast } from "@/hooks/use-toast";
 import { QueryClient } from "@tanstack/react-query";
 
 export const useGalleryFormSubmit = (
-  toast: ({ description }: { description: string; variant?: "default" | "destructive" }) => void,
+  toast: (props: { description: string; variant?: "default" | "destructive" }) => void,
   queryClient: QueryClient,
   onClose: () => void,
   gallery?: { id: string }
