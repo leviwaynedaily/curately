@@ -29,7 +29,7 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
 
     try {
       const fileExt = file.name.split(".").pop();
-      const filePath = `pwa-icons/a${crypto.randomUUID()}.${fileExt}`;
+      const filePath = `pwa-icons/${crypto.randomUUID()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from("gallery_images")
@@ -42,14 +42,12 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
 
       console.log(`PWA icon ${size}x${size} uploaded successfully to path:`, filePath);
 
-      // Update form value
       form.setValue(fieldName, filePath, { 
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true
       });
 
-      // Log the current form values after setting
       console.log("Form values after setting PWA icon:", form.getValues());
       
       toast({ description: `${size}x${size} PWA icon uploaded successfully` });
