@@ -6,12 +6,14 @@ type PWAIconUploadButtonProps = {
   isUploading: boolean;
   uploadId: string;
   onFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  accept: string;
 };
 
 export const PWAIconUploadButton = ({
   isUploading,
   uploadId,
   onFileSelect,
+  accept,
 }: PWAIconUploadButtonProps) => {
   return (
     <div>
@@ -28,7 +30,7 @@ export const PWAIconUploadButton = ({
       <Input
         id={uploadId}
         type="file"
-        accept="image/png"
+        accept={accept}
         className="hidden"
         onChange={onFileSelect}
         disabled={isUploading}

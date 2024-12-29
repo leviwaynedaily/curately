@@ -104,6 +104,7 @@ export const PWAIconUploadField = ({ form, size }: PWAIconUploadFieldProps) => {
                   isUploading={isUploading}
                   uploadId={uploadId}
                   onFileSelect={handleIconUpload}
+                  accept="image/png"
                 />
               )}
             </div>
