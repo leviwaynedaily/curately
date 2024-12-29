@@ -1,18 +1,35 @@
 export const getStorefrontFilePath = (storefrontId: string, fileType: string, fileExt: string) => {
-  const fileTypes = {
-    site_logo: 'site-logo',
-    logo: 'verification-logo',
-    pwa_icon_192: 'pwa-192',
-    pwa_icon_512: 'pwa-512',
-    screenshot_desktop: 'screenshot-desktop',
-    screenshot_mobile: 'screenshot-mobile',
-    favicon: 'favicon'
-  };
-
-  const type = fileTypes[fileType as keyof typeof fileTypes];
-  if (!type) {
-    throw new Error(`Invalid file type: ${fileType}`);
+  // Settings files (logos, PWA icons, screenshots)
+  if (fileType.startsWith('pwa_icon_')) {
+    const size = fileType.split('_')[2]; // Extract 192 or 512
+    return `${storefrontId}/settings/pwa/icon-${size}.${fileExt}`;
+  }
+  
+  if (fileType === 'screenshot_desktop' || fileType === 'screenshot_mobile') {
+    const device = fileType.split('_')[1]; // Extract desktop or mobile
+    return `${storefrontId}/settings/screenshots/${device}.${fileExt}`;
+  }
+  
+  if (fileType === 'logo' || fileType === 'site_logo') {
+    return `${storefrontId}/settings/logos/${fileType}.${fileExt}`;
   }
 
-  return `${storefrontId}/${type}.${fileExt}`;
+  if (fileType === 'favicon') {
+    return `${storefrontId}/settings/favicon.${fileExt}`;
+  }
+
+  // Product files
+  if (fileType === 'product_media') {
+    const uniqueId = crypto.randomUUID();
+    return `${storefrontId}/products/${uniqueId}.${fileExt}`;
+  }
+
+  // Default case
+  return `${storefrontId}/${fileType}.${fileExt}`;
+};
+
+export const getProductMediaPath = (storefrontId: string, productId: string, fileName: string) => {
+  const fileExt = fileName.split('.').pop();
+  const uniqueId = crypto.randomUUID();
+  return `${storefrontId}/products/${productId}/${uniqueId}.${fileExt}`;
 };

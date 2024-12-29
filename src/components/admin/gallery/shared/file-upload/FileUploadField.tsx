@@ -3,7 +3,7 @@ import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
 import { FileUploadButton } from "./FileUploadButton";
 import { FileUploadPreview } from "./FileUploadPreview";
-import { useFileUpload } from "./useFileUpload";
+import { useStorefrontFileUpload } from "@/hooks/useStorefrontFileUpload";
 
 type FileUploadFieldProps = {
   form: UseFormReturn<GalleryFormValues>;
@@ -20,11 +20,41 @@ export const FileUploadField = ({
   fileType,
   label,
   description,
-  accept
+  accept = "image/*"
 }: FileUploadFieldProps) => {
-  const { isUploading, handleFileUpload, clearFile } = useFileUpload(form, fieldName, fileType);
+  const storefrontId = form.getValues("id");
+  const { isUploading, uploadFile, deleteFile } = useStorefrontFileUpload(storefrontId);
   const uploadId = `${fieldName}-upload`;
   const fieldValue = form.watch(fieldName);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !storefrontId) return;
+
+    try {
+      const filePath = await uploadFile(file, fileType);
+      
+      form.setValue(fieldName, filePath, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true
+      });
+    } catch (error) {
+      console.error(`${fileType} upload failed:`, error);
+    }
+  };
+
+  const handleClearFile = async () => {
+    if (typeof fieldValue === 'string') {
+      await deleteFile(fieldValue);
+    }
+    
+    form.setValue(fieldName, "", {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true
+    });
+  };
 
   return (
     <FormField
@@ -43,7 +73,7 @@ export const FileUploadField = ({
               {typeof fieldValue === 'string' && fieldValue ? (
                 <FileUploadPreview
                   filePath={fieldValue}
-                  onClear={clearFile}
+                  onClear={handleClearFile}
                   label={label}
                 />
               ) : (
