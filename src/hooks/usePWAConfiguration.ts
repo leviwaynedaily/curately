@@ -71,12 +71,11 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       console.log("Icons array length:", icons.length);
       console.log("Final icons configuration:", icons);
 
-      // Remove any existing manifest link
-      const existingLink = document.querySelector('link[rel="manifest"]');
+      // Remove any existing manifest link and clean up old Blob URL
+      const existingLink = document.querySelector('link[rel="manifest"]') as HTMLLinkElement;
       if (existingLink) {
         const oldBlobUrl = existingLink.href;
         existingLink.remove();
-        // Clean up old Blob URL
         if (oldBlobUrl.startsWith('blob:')) {
           URL.revokeObjectURL(oldBlobUrl);
         }
