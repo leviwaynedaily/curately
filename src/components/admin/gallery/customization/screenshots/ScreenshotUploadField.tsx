@@ -46,11 +46,7 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
 
       console.log(`${type} screenshot uploaded successfully, file path:`, filePath);
       
-      form.setValue(fieldName, filePath, {
-        shouldDirty: true,
-        shouldTouch: true,
-        shouldValidate: true
-      });
+      form.setValue(fieldName, filePath);
 
       toast({ description: `${type} screenshot uploaded successfully` });
     } catch (error) {
@@ -78,11 +74,7 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
           throw deleteError;
         }
 
-        form.setValue(fieldName, "", {
-          shouldDirty: true,
-          shouldTouch: true,
-          shouldValidate: true
-        });
+        form.setValue(fieldName, "");
 
         toast({ description: `${type} screenshot removed` });
       } catch (error) {
