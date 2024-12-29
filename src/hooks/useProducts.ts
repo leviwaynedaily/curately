@@ -22,6 +22,11 @@ export const useProducts = (storefrontId: string) => {
         throw productsError;
       }
 
+      if (!productsData?.length) {
+        console.log("No products found for storefront:", storefrontId);
+        return [];
+      }
+
       // Then fetch media for all products
       const productIds = productsData.map(p => p.id);
       const { data: mediaData, error: mediaError } = await supabase
@@ -37,7 +42,7 @@ export const useProducts = (storefrontId: string) => {
       // Combine products with their media
       const productsWithMedia = productsData.map(product => ({
         ...product,
-        product_media: mediaData.filter(media => media.product_id === product.id)
+        product_media: mediaData?.filter(media => media.product_id === product.id) || []
       }));
 
       console.log("Products fetched successfully:", productsWithMedia);
