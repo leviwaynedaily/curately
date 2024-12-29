@@ -19,3 +19,8 @@ export const unregisterServiceWorker = async () => {
     console.log('Service workers are not supported in this browser');
   }
 };
+
+// Make it available globally for console access
+if (typeof window !== 'undefined') {
+  (window as any).unregisterServiceWorker = unregisterServiceWorker;
+}
