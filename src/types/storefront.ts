@@ -40,4 +40,7 @@ export type StorefrontImage = {
   media_type?: string | null;
   price?: number | null;
   is_featured?: boolean | null;
+  created_at?: string;
+  updated_at?: string;
+  product_id?: string | null;
 };
