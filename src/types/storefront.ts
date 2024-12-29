@@ -30,6 +30,8 @@ export type Storefront = {
   pwa_icon_192?: string;
   pwa_icon_512?: string;
   show_description?: boolean;
+  screenshot_desktop?: string;
+  screenshot_mobile?: string;
 };
 
 export type StorefrontImage = {
