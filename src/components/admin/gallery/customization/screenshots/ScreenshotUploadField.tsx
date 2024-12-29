@@ -63,7 +63,7 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
   const clearScreenshot = async () => {
     const currentPath = form.getValues(fieldName);
     
-    if (currentPath) {
+    if (currentPath && typeof currentPath === 'string') {
       try {
         const { error: deleteError } = await supabase.storage
           .from("gallery_images")
@@ -103,7 +103,7 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
             {field.value ? (
               <div className="relative w-full max-w-md">
                 <img
-                  src={supabase.storage.from("gallery_images").getPublicUrl(field.value).data.publicUrl}
+                  src={supabase.storage.from("gallery_images").getPublicUrl(field.value as string).data.publicUrl}
                   alt={`${type} screenshot`}
                   className="w-full h-auto object-contain rounded-lg border"
                 />
