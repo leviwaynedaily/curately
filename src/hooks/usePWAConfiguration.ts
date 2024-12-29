@@ -69,6 +69,8 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           form_factor: "wide",
           label: "Desktop view"
         });
+      } else {
+        console.warn("No desktop screenshot found in storefront configuration");
       }
       
       if (storefront.screenshot_mobile) {
@@ -85,6 +87,8 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           form_factor: "narrow",
           label: "Mobile view"
         });
+      } else {
+        console.warn("No mobile screenshot found in storefront configuration");
       }
 
       // Get the base URL for the site
@@ -127,6 +131,8 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       // Create and inject dynamic manifest
       const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
       const manifestURL = URL.createObjectURL(manifestBlob);
+      console.log("Created new manifest blob URL:", manifestURL);
+      console.log("Manifest content:", JSON.stringify(manifest, null, 2));
 
       // Add new manifest link
       const link = document.createElement('link');
