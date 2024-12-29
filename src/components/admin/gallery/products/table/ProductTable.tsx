@@ -30,6 +30,8 @@ type ProductTableProps = {
   onProductUpdate: () => void;
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
+  selectedTag: string;
+  setSelectedTag: (tag: string) => void;
 };
 
 export const ProductTable = ({
@@ -57,6 +59,8 @@ export const ProductTable = ({
   onProductUpdate,
   selectedCategory,
   setSelectedCategory,
+  selectedTag,
+  setSelectedTag,
 }: ProductTableProps) => {
   // Create a wrapper function to convert single ID to array for deletion
   const handleSingleDelete = (id: string) => {
@@ -90,6 +94,8 @@ export const ProductTable = ({
             products={products}
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
+            selectedTag={selectedTag}
+            setSelectedTag={setSelectedTag}
           />
           <ProductTableBody
             products={products}

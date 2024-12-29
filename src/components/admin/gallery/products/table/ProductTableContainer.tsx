@@ -27,6 +27,7 @@ export const ProductTableContainer = ({
   const [showHiddenFields, setShowHiddenFields] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedTag, setSelectedTag] = useState("");
   const { toast } = useToast();
 
   const handleSelectAll = (checked: boolean) => {
@@ -68,22 +69,10 @@ export const ProductTableContainer = ({
     }
   };
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = 
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesCategory = !selectedCategory || product.category === selectedCategory;
-
-    return matchesSearch && matchesCategory;
-  });
-
   return (
     <div className="space-y-4">
       <ProductTableSection
-        products={filteredProducts}
+        products={products}
         editingId={editingId}
         editedProduct={editedProduct}
         showHiddenFields={showHiddenFields}
@@ -94,6 +83,8 @@ export const ProductTableContainer = ({
         setSearchTerm={setSearchTerm}
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
+        selectedTag={selectedTag}
+        setSelectedTag={setSelectedTag}
         onSort={setSortField}
         onToggleHiddenFields={() => setShowHiddenFields(!showHiddenFields)}
         onSelectAll={handleSelectAll}
