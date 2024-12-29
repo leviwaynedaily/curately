@@ -11,6 +11,7 @@ import { StorefrontHeader } from "@/components/admin/gallery/edit/StorefrontHead
 import { GalleryFormValues } from "@/lib/validations/gallery";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { Form } from "@/components/ui/form";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
@@ -50,9 +51,14 @@ const StorefrontEdit = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold">Edit Storefront</h1>
-        </div>
+        <Breadcrumb>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/admin">Storefronts</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbItem isCurrentPage>
+            <BreadcrumbLink>{storefront.name}</BreadcrumbLink>
+          </BreadcrumbItem>
+        </Breadcrumb>
 
         <StorefrontHeader storefront={storefront} />
         
