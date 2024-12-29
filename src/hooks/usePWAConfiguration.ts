@@ -16,13 +16,10 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       
       if (storefront.pwa_icon_192) {
         const icon192Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl;
-        console.log("Adding 192x192 icon:", {
-          path: storefront.pwa_icon_192,
-          url: icon192Url
-        });
+        console.log("Adding 192x192 icon with full URL:", icon192Url);
         
         icons.push({
-          src: icon192Url, // Using full public URL
+          src: icon192Url,
           sizes: "192x192",
           type: "image/png",
           purpose: "any maskable"
@@ -33,13 +30,10 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       
       if (storefront.pwa_icon_512) {
         const icon512Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_512).data.publicUrl;
-        console.log("Adding 512x512 icon:", {
-          path: storefront.pwa_icon_512,
-          url: icon512Url
-        });
+        console.log("Adding 512x512 icon with full URL:", icon512Url);
         
         icons.push({
-          src: icon512Url, // Using full public URL
+          src: icon512Url,
           sizes: "512x512",
           type: "image/png",
           purpose: "any maskable"
@@ -50,7 +44,10 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
 
       console.log("Final PWA Icons configuration:", {
         totalIcons: icons.length,
-        icons: icons
+        icons: icons.map(icon => ({
+          size: icon.sizes,
+          url: icon.src
+        }))
       });
 
       // Create dynamic manifest
