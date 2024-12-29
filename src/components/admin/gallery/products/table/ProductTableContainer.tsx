@@ -1,27 +1,27 @@
 import { useState } from "react";
-import { Product } from "../types";
 import { Table } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { ProductTableHeader } from "../ProductTableHeader";
-import { ProductTableBody } from "./ProductTableBody";
-import { ProductBulkActions } from "./ProductBulkActions";
-import { ProductMediaDialog } from "../ProductMediaDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { ProductTableHeader } from "../ProductTableHeader";
+import { ProductTableBody } from "./ProductTableBody";
+import { Product } from "../types";
+import { Input } from "@/components/ui/input";
+import { ProductBulkActions } from "./ProductBulkActions";
+import { ProductMediaDialog } from "../ProductMediaDialog";
 
-type ProductTableContainerProps = {
+type ProductTableProps = {
   storefrontId: string;
   products: Product[];
   onProductUpdate: () => void;
   onDuplicate: (productIds: string[]) => void;
 };
 
-export const ProductTableContainer = ({
+export const ProductTable = ({
   storefrontId,
   products,
   onProductUpdate,
   onDuplicate,
-}: ProductTableContainerProps) => {
+}: ProductTableProps) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedProduct, setEditedProduct] = useState<Product | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -76,39 +76,50 @@ export const ProductTableContainer = ({
     setEditedProduct(product);
   };
 
+  const handleProductChange = (field: keyof Product, value: any) => {
+    setEditedProduct((prev) =>
+      prev ? { ...prev, [field]: value } : null
+    );
+  };
+
   const handleSave = async () => {
     if (!editedProduct) return;
     
     try {
+      console.log("Saving product update:", editedProduct);
+      
+      // Only send the fields that can be updated
+      const updateData = {
+        name: editedProduct.name,
+        description: editedProduct.description,
+        price: editedProduct.price,
+        sku: editedProduct.sku,
+        category: editedProduct.category,
+        stock_quantity: editedProduct.stock_quantity,
+        status: editedProduct.status
+      };
+
       const { error } = await supabase
-        .from("products")
-        .update(editedProduct)
-        .eq("id", editedProduct.id);
+        .from('products')
+        .update(updateData)
+        .eq('id', editedProduct.id)
+        .select()
+        .single();
 
       if (error) throw error;
 
+      console.log("Product updated successfully");
       toast({ description: "Product updated successfully" });
       setEditingId(null);
       setEditedProduct(null);
       onProductUpdate();
     } catch (error) {
-      console.error("Error updating product:", error);
+      console.error('Error updating product:', error);
       toast({
         variant: "destructive",
-        description: "Failed to update product",
+        description: "Failed to update product"
       });
     }
-  };
-
-  const handleCancel = () => {
-    setEditingId(null);
-    setEditedProduct(null);
-  };
-
-  const handleProductChange = (field: keyof Product, value: any) => {
-    setEditedProduct((prev) =>
-      prev ? { ...prev, [field]: value } : null
-    );
   };
 
   const handleSort = (field: keyof Product) => {
@@ -149,7 +160,7 @@ export const ProductTableContainer = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-4 px-1">
+      <div className="flex items-center gap-4">
         <ProductBulkActions
           selectedProducts={selectedProducts}
           onDuplicate={onDuplicate}
@@ -161,7 +172,7 @@ export const ProductTableContainer = ({
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm ml-0"
+          className="max-w-sm"
         />
       </div>
 
@@ -173,8 +184,6 @@ export const ProductTableContainer = ({
             sortDirection={sortDirection}
             showHiddenFields={showHiddenFields}
             onToggleHiddenFields={() => setShowHiddenFields(!showHiddenFields)}
-            allSelected={selectedProducts.size === products.length}
-            onSelectAll={handleSelectAll}
           />
           <ProductTableBody
             products={filteredAndSortedProducts}
@@ -182,7 +191,10 @@ export const ProductTableContainer = ({
             editedProduct={editedProduct}
             onEdit={handleEdit}
             onSave={handleSave}
-            onCancel={handleCancel}
+            onCancel={() => {
+              setEditingId(null);
+              setEditedProduct(null);
+            }}
             onDelete={(id) => handleBulkDelete([id])}
             onProductChange={handleProductChange}
             onMediaClick={setSelectedProduct}
