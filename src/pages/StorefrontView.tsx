@@ -37,6 +37,11 @@ const StorefrontView = () => {
   // Update PWA manifest dynamically
   useEffect(() => {
     if (storefront) {
+      console.log("Updating PWA manifest with icons:", {
+        pwa_icon_192: storefront.pwa_icon_192,
+        pwa_icon_512: storefront.pwa_icon_512
+      });
+
       const manifest = {
         name: storefront.name,
         short_name: storefront.name,
@@ -46,16 +51,22 @@ const StorefrontView = () => {
         background_color: storefront.primary_color || "#ffffff",
         theme_color: storefront.accent_color || "#2A6041",
         icons: [
-          {
-            src: storefront.site_logo 
-              ? supabase.storage.from("gallery_images").getPublicUrl(storefront.site_logo).data.publicUrl 
-              : "/icons/icon-192x192.png",
+          storefront.pwa_icon_192 && {
+            src: supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl,
             sizes: "192x192",
             type: "image/png",
             purpose: "any maskable"
+          },
+          storefront.pwa_icon_512 && {
+            src: supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_512).data.publicUrl,
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable"
           }
-        ]
+        ].filter(Boolean)
       };
+
+      console.log("Generated PWA manifest:", manifest);
 
       const link = document.querySelector('link[rel="manifest"]');
       if (link) {
@@ -74,6 +85,20 @@ const StorefrontView = () => {
       const appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
       if (appleTitleMeta) {
         appleTitleMeta.setAttribute('content', storefront.name);
+      }
+
+      // Add apple touch icon meta tags
+      if (storefront.pwa_icon_192) {
+        let appleTouchIcon = document.querySelector('link[rel="apple-touch-icon"]');
+        if (!appleTouchIcon) {
+          appleTouchIcon = document.createElement('link');
+          appleTouchIcon.setAttribute('rel', 'apple-touch-icon');
+          document.head.appendChild(appleTouchIcon);
+        }
+        appleTouchIcon.setAttribute(
+          'href',
+          supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl
+        );
       }
     }
   }, [storefront, storefrontId]);
