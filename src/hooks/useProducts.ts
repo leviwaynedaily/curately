@@ -9,26 +9,39 @@ export const useProducts = (storefrontId: string) => {
     queryKey: ["products", storefrontId],
     queryFn: async () => {
       console.log("Fetching products for storefront:", storefrontId);
-      const { data, error } = await supabase
+      
+      // First fetch products
+      const { data: productsData, error: productsError } = await supabase
         .from("products")
-        .select(`
-          *,
-          product_media (
-            id,
-            file_path,
-            is_primary
-          )
-        `)
+        .select("*")
         .eq("storefront_id", storefrontId)
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("Error fetching products:", error);
-        throw error;
+      if (productsError) {
+        console.error("Error fetching products:", productsError);
+        throw productsError;
       }
 
-      console.log("Products fetched successfully:", data);
-      return data as Product[];
+      // Then fetch media for all products
+      const productIds = productsData.map(p => p.id);
+      const { data: mediaData, error: mediaError } = await supabase
+        .from("product_media")
+        .select("*")
+        .in("product_id", productIds);
+
+      if (mediaError) {
+        console.error("Error fetching product media:", mediaError);
+        throw mediaError;
+      }
+
+      // Combine products with their media
+      const productsWithMedia = productsData.map(product => ({
+        ...product,
+        product_media: mediaData.filter(media => media.product_id === product.id)
+      }));
+
+      console.log("Products fetched successfully:", productsWithMedia);
+      return productsWithMedia as Product[];
     },
   });
 
