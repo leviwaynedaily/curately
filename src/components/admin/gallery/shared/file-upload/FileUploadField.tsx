@@ -24,6 +24,7 @@ export const FileUploadField = ({
 }: FileUploadFieldProps) => {
   const { isUploading, handleFileUpload, clearFile } = useFileUpload(form, fieldName, fileType);
   const uploadId = `${fieldName}-upload`;
+  const fieldValue = form.watch(fieldName);
 
   return (
     <FormField
@@ -39,9 +40,9 @@ export const FileUploadField = ({
           )}
           <FormControl>
             <div className="space-y-4">
-              {field.value ? (
+              {typeof fieldValue === 'string' && fieldValue ? (
                 <FileUploadPreview
-                  filePath={field.value}
+                  filePath={fieldValue}
                   onClear={clearFile}
                   label={label}
                 />
