@@ -29,6 +29,8 @@ export const gallerySchema = z.object({
   show_description: z.boolean().optional().default(true),
   pwa_icon_192: z.string().optional(),
   pwa_icon_512: z.string().optional(),
+  screenshot_desktop: z.string().optional(),
+  screenshot_mobile: z.string().optional(),
 });
 
 export type GalleryFormValues = z.infer<typeof gallerySchema>;
