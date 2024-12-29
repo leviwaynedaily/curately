@@ -45,7 +45,7 @@ export const GalleryScreenshotsSection = ({ form }: GalleryScreenshotsSectionPro
 
       console.log(`Uploading ${type} screenshot to path:`, filePath);
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from("gallery_images")
         .upload(filePath, file);
 
@@ -54,16 +54,9 @@ export const GalleryScreenshotsSection = ({ form }: GalleryScreenshotsSectionPro
         throw uploadError;
       }
 
-      console.log(`${type} screenshot uploaded successfully:`, uploadData);
+      console.log(`${type} screenshot uploaded successfully to path:`, filePath);
 
-      // Get the public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from("gallery_images")
-        .getPublicUrl(filePath);
-      
-      console.log(`Public URL for ${type} screenshot:`, publicUrl);
-
-      // Set the form value and validate
+      // Set the form value with the file path
       form.setValue(fieldName, filePath, { 
         shouldDirty: true,
         shouldTouch: true,
@@ -71,10 +64,8 @@ export const GalleryScreenshotsSection = ({ form }: GalleryScreenshotsSectionPro
       });
 
       // Log form state after update
-      const formValues = form.getValues();
-      console.log(`Form values after setting ${type} screenshot:`, {
-        formValues,
-        specificField: formValues[fieldName],
+      console.log(`Form state after setting ${type} screenshot:`, {
+        values: form.getValues(),
         isDirty: form.formState.isDirty,
         touchedFields: form.formState.touchedFields
       });
@@ -84,29 +75,48 @@ export const GalleryScreenshotsSection = ({ form }: GalleryScreenshotsSectionPro
       console.error(`${type} screenshot upload failed:`, error);
       toast({
         variant: "destructive",
-        description: error instanceof Error ? error.message : `Failed to upload ${type} screenshot. Please try again.`,
+        description: error instanceof Error ? error.message : `Failed to upload ${type} screenshot`,
       });
     } finally {
       setUploading(false);
     }
   };
 
-  const clearScreenshot = (type: "desktop" | "mobile") => {
+  const clearScreenshot = async (type: "desktop" | "mobile") => {
     const fieldName = type === "desktop" ? "screenshot_desktop" : "screenshot_mobile";
-    console.log(`Clearing ${type} screenshot`);
+    const currentPath = form.getValues(fieldName);
     
-    form.setValue(fieldName, "", { 
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true
-    });
+    console.log(`Clearing ${type} screenshot:`, currentPath);
+    
+    if (currentPath) {
+      try {
+        // Delete the file from storage
+        const { error: deleteError } = await supabase.storage
+          .from("gallery_images")
+          .remove([currentPath]);
 
-    // Log form state after clearing
-    console.log(`Form state after clearing ${type} screenshot:`, {
-      values: form.getValues(),
-      isDirty: form.formState.isDirty,
-      touchedFields: form.formState.touchedFields
-    });
+        if (deleteError) {
+          console.error(`Error deleting ${type} screenshot:`, deleteError);
+          throw deleteError;
+        }
+
+        // Clear the form value
+        form.setValue(fieldName, "", { 
+          shouldDirty: true,
+          shouldTouch: true,
+          shouldValidate: true
+        });
+
+        console.log(`Successfully cleared ${type} screenshot`);
+        toast({ description: `${type} screenshot removed` });
+      } catch (error) {
+        console.error(`Error clearing ${type} screenshot:`, error);
+        toast({
+          variant: "destructive",
+          description: `Failed to remove ${type} screenshot`
+        });
+      }
+    }
   };
 
   const renderScreenshotField = (type: "desktop" | "mobile") => {
@@ -164,7 +174,7 @@ export const GalleryScreenshotsSection = ({ form }: GalleryScreenshotsSectionPro
                       className="w-full"
                     >
                       <Upload className="h-4 w-4 mr-2" />
-                      {isUploading ? "Uploading..." : `Upload Screenshot`}
+                      {isUploading ? "Uploading..." : "Upload Screenshot"}
                     </Button>
                     <Input
                       id={uploadId}
