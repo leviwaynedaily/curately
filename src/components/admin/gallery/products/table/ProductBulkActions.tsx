@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -5,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Copy, MoreHorizontal, Trash } from "lucide-react";
+import { Copy, Loader2, MoreHorizontal, Trash } from "lucide-react";
 import { Product } from "../types";
 
 type ProductBulkActionsProps = {
@@ -22,16 +23,29 @@ export const ProductBulkActions = ({
   onDelete,
   products,
 }: ProductBulkActionsProps) => {
+  const [isDuplicating, setIsDuplicating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   if (products.length === 0) return null;
 
-  const handleDuplicate = () => {
+  const handleDuplicate = async () => {
     console.log("Duplicating selected products:", Array.from(selectedProducts));
-    onDuplicate(Array.from(selectedProducts));
+    setIsDuplicating(true);
+    try {
+      await onDuplicate(Array.from(selectedProducts));
+    } finally {
+      setIsDuplicating(false);
+    }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     console.log("Deleting selected products:", Array.from(selectedProducts));
-    onDelete(Array.from(selectedProducts));
+    setIsDeleting(true);
+    try {
+      await onDelete(Array.from(selectedProducts));
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -45,16 +59,39 @@ export const ProductBulkActions = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={handleDuplicate}>
-              <Copy className="h-4 w-4 mr-2" />
-              Duplicate
+            <DropdownMenuItem 
+              onClick={handleDuplicate}
+              disabled={isDuplicating}
+              className="flex items-center"
+            >
+              {isDuplicating ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Duplicating...
+                </>
+              ) : (
+                <>
+                  <Copy className="h-4 w-4 mr-2" />
+                  Duplicate
+                </>
+              )}
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="text-destructive"
+              className="text-destructive flex items-center"
               onClick={handleDelete}
+              disabled={isDeleting}
             >
-              <Trash className="h-4 w-4 mr-2" />
-              Delete
+              {isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash className="h-4 w-4 mr-2" />
+                  Delete
+                </>
+              )}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
