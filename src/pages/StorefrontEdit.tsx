@@ -8,6 +8,7 @@ import { GalleryInstructionsFields } from "@/components/admin/gallery/GalleryIns
 import { GalleryVerificationFields } from "@/components/admin/gallery/GalleryVerificationFields";
 import { StorefrontBasicInfo } from "@/components/admin/gallery/edit/StorefrontBasicInfo";
 import { StorefrontHeader } from "@/components/admin/gallery/edit/StorefrontHeader";
+import { GalleryFormValues } from "@/lib/validations/gallery";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
@@ -32,7 +33,7 @@ const StorefrontEdit = () => {
     },
   });
 
-  const form = useForm({
+  const form = useForm<GalleryFormValues>({
     defaultValues: storefront,
   });
 

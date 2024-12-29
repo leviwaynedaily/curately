@@ -10,6 +10,7 @@ import { GallerySiteLogoField } from "../GallerySiteLogoField";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Form } from "@/components/ui/form";
+import { GalleryFormValues } from "@/lib/validations/gallery";
 
 type StorefrontBasicInfoProps = {
   storefront: any;
@@ -20,16 +21,18 @@ export const StorefrontBasicInfo = ({ storefront }: StorefrontBasicInfoProps) =>
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm({
+  const form = useForm<GalleryFormValues>({
     defaultValues: {
       name: storefront.name || "",
       description: storefront.description || "",
       logo: storefront.logo || "",
       site_logo: storefront.site_logo || "",
+      business_id: storefront.business_id || "",
+      status: storefront.status || "active",
     },
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: GalleryFormValues) => {
     setIsLoading(true);
     console.log("Updating storefront basic info:", values);
 
