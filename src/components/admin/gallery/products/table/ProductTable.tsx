@@ -102,6 +102,7 @@ export const ProductTable = ({
             showHiddenFields={showHiddenFields}
             selectedProducts={selectedProducts}
             onToggleProduct={onToggleProduct}
+            onDuplicate={onDuplicate}
           />
         </Table>
       </div>
