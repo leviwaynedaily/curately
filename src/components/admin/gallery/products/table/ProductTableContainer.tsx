@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Product } from "../types";
-import { ProductTable } from "./ProductTable";
+import { Table } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { ProductTableHeader } from "../ProductTableHeader";
+import { ProductTableBody } from "./ProductTableBody";
+import { ProductBulkActions } from "./ProductBulkActions";
+import { ProductMediaDialog } from "../ProductMediaDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
