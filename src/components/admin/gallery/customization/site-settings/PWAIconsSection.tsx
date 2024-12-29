@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { getStorefrontFilePath } from "@/utils/storefrontFileUtils";
 
 type PWAIconsSectionProps = {
   form: UseFormReturn<GalleryFormValues>;
@@ -28,7 +29,6 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
     console.log(`Starting PWA icon ${size}x${size} upload...`, { file });
 
     try {
-      // Validate file type
       if (!file.type.includes('png')) {
         throw new Error('Please upload a PNG file');
       }
@@ -39,7 +39,7 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
       }
 
       const fileExt = file.name.split(".").pop();
-      const filePath = `${storefrontId}/settings/pwa/icon-${size}.${fileExt}`;
+      const filePath = getStorefrontFilePath(storefrontId, `pwa_icon_${size}`, fileExt || 'png');
 
       console.log(`Uploading ${size}x${size} icon to path:`, filePath);
 
