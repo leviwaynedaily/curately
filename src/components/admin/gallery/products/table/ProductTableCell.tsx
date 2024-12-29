@@ -30,6 +30,7 @@ export const ProductTableCell = ({
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
+      console.log("Setting up edit mode for field:", field);
       // Add a small delay before focusing to prevent immediate blur
       const timeoutId = setTimeout(() => {
         inputRef.current?.focus();
@@ -37,7 +38,7 @@ export const ProductTableCell = ({
       }, 100);
       return () => clearTimeout(timeoutId);
     }
-  }, [isEditing]);
+  }, [isEditing, field]);
 
   const handleDoubleClick = (e: React.MouseEvent) => {
     console.log("Double click detected on field:", field);
@@ -58,9 +59,14 @@ export const ProductTableCell = ({
     }
   };
 
-  const handleBlur = () => {
+  const handleBlur = (e: React.FocusEvent) => {
     console.log("Blur event triggered for field:", field, "shouldPreventBlur:", shouldPreventBlur);
-    if (isEditing && !shouldPreventBlur) {
+    // Check if the related target is within the same cell
+    const isRelatedTargetWithinCell = e.relatedTarget && 
+      (e.currentTarget.contains(e.relatedTarget as Node) || 
+       e.currentTarget === e.relatedTarget);
+
+    if (isEditing && !shouldPreventBlur && !isRelatedTargetWithinCell) {
       onSave?.();
     }
   };
