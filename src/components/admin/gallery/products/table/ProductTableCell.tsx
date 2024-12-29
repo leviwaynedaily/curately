@@ -33,7 +33,9 @@ export const ProductTableCell = ({
     }
   }, [isEditing]);
 
-  const handleDoubleClick = () => {
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    console.log("Double click detected on field:", field);
+    e.preventDefault();
     if (!isEditing) {
       onEdit();
     }
