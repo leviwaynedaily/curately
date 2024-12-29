@@ -13,6 +13,8 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       
       // Create array of icons, filtering out undefined ones
       const icons = [];
+      const baseUrl = 'https://www.curately.shop';
+      const storefrontPath = `/storefront/${storefront.id}`;
       
       if (storefront.pwa_icon_192) {
         const icon192Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl;
@@ -27,8 +29,6 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           type: "image/png",
           purpose: "any maskable"
         });
-      } else {
-        console.warn("192x192 PWA icon is not set");
       }
       
       if (storefront.pwa_icon_512) {
@@ -44,8 +44,6 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           type: "image/png",
           purpose: "any maskable"
         });
-      } else {
-        console.warn("512x512 PWA icon is not set");
       }
 
       console.log("Final PWA Icons configuration:", {
@@ -53,10 +51,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         icons: icons
       });
 
-      // Create dynamic manifest with hardcoded domain
-      const baseUrl = 'https://www.curately.shop';
-      const storefrontPath = `/storefront/${storefront.id}`;
-      
+      // Create dynamic manifest
       const manifest = {
         name: storefront.name,
         short_name: storefront.name,
