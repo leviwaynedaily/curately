@@ -6,9 +6,32 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
   useEffect(() => {
     if (storefront) {
       console.log("Configuring PWA for storefront:", storefront.name);
+      
+      // Create array of icons, filtering out undefined ones
+      const icons = [];
+      
+      if (storefront.pwa_icon_192) {
+        icons.push({
+          src: supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl,
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "any maskable"
+        });
+      }
+      
+      if (storefront.pwa_icon_512) {
+        icons.push({
+          src: supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_512).data.publicUrl,
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any maskable"
+        });
+      }
+
       console.log("PWA Icons configuration:", {
-        icon192: storefront.pwa_icon_192,
-        icon512: storefront.pwa_icon_512
+        icon192: storefront.pwa_icon_192 || 'not set',
+        icon512: storefront.pwa_icon_512 || 'not set',
+        iconsArray: icons
       });
 
       // Create dynamic manifest
@@ -21,24 +44,10 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         display: "standalone",
         background_color: storefront.primary_color || "#ffffff",
         theme_color: storefront.accent_color || "#2A6041",
-        icons: [
-          storefront.pwa_icon_192 && {
-            src: supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl,
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "any maskable"
-          },
-          storefront.pwa_icon_512 && {
-            src: supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_512).data.publicUrl,
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any maskable"
-          }
-        ].filter(Boolean)
+        icons: icons
       };
 
       console.log("Generated manifest:", manifest);
-      console.log("PWA icons in manifest:", manifest.icons);
 
       // Create and inject dynamic manifest
       const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
