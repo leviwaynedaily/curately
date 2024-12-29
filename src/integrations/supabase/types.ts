@@ -44,6 +44,27 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_media: {
         Row: {
           created_at: string
@@ -84,6 +105,36 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_tags: {
+        Row: {
+          product_id: string
+          tag_id: string
+        }
+        Insert: {
+          product_id: string
+          tag_id: string
+        }
+        Update: {
+          product_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_tags_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
             referencedColumns: ["id"]
           },
         ]
@@ -280,6 +331,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tags: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {

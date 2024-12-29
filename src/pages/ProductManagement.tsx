@@ -1,6 +1,7 @@
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { ProductManagement as ProductManagementComponent } from "@/components/admin/gallery/products/ProductManagement";
 import { useParams } from "react-router-dom";
+import { GalleryHeader } from "@/components/gallery/GalleryHeader";
 
 const ProductManagement = () => {
   const { storefrontId } = useParams();
@@ -17,7 +18,8 @@ const ProductManagement = () => {
 
   return (
     <AdminLayout>
-      <div className="container mx-auto">
+      <div className="container mx-auto space-y-6">
+        <GalleryHeader name="Product Management" />
         <ProductManagementComponent storefrontId={storefrontId} />
       </div>
     </AdminLayout>
