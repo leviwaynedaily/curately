@@ -27,32 +27,71 @@ self.addEventListener('fetch', (event) => {
 
   const pathname = url.pathname;
 
-  // Check if this is a storefront request
-  if (pathname.startsWith('/storefront/')) {
-    // Extract storefront ID from the URL
-    const storefrontId = pathname.split('/')[2];
+  // Check if this is a direct storefront access (short URL) or regular storefront path
+  const isStorefrontAccess = pathname.split('/').length === 2 || pathname.startsWith('/storefront/');
+  
+  if (isStorefrontAccess) {
+    console.log('Handling storefront request:', pathname);
+    
+    // Extract storefront ID from either format
+    const storefrontId = pathname.split('/')[1] || pathname.split('/')[2];
     
     event.respondWith(
-      caches.match(event.request).then((response) => {
-        return response || fetch(event.request).then((fetchResponse) => {
-          // Clone the response as it can only be used once
-          const responseToCache = fetchResponse.clone();
+      caches.match(event.request)
+        .then((response) => {
+          if (response) {
+            console.log('Found cached response for:', pathname);
+            return response;
+          }
 
-          // Cache the fetched response for this specific storefront
-          caches.open(`${CACHE_NAME}-${storefrontId}`).then((cache) => {
-            cache.put(event.request, responseToCache);
+          console.log('Fetching new response for:', pathname);
+          return fetch(event.request).then((fetchResponse) => {
+            // Don't cache non-successful responses
+            if (!fetchResponse || fetchResponse.status !== 200) {
+              console.log('Received non-200 response for:', pathname);
+              return fetchResponse;
+            }
+
+            // Clone the response as it can only be used once
+            const responseToCache = fetchResponse.clone();
+
+            // Cache the fetched response for this specific storefront
+            caches.open(`${CACHE_NAME}-${storefrontId}`).then((cache) => {
+              console.log('Caching new response for:', pathname);
+              cache.put(event.request, responseToCache);
+            });
+
+            return fetchResponse;
+          }).catch(error => {
+            console.error('Fetch failed:', error);
+            // Return a fallback response or throw the error
+            throw error;
           });
-
-          return fetchResponse;
-        });
-      })
+        })
     );
   } else {
     // For non-storefront requests, use default caching strategy
     event.respondWith(
-      caches.match(event.request).then((response) => {
-        return response || fetch(event.request);
-      })
+      caches.match(event.request)
+        .then((response) => {
+          return response || fetch(event.request);
+        })
     );
   }
+});
+
+// Handle cache cleanup on activation
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName.startsWith(CACHE_NAME) && cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
 });
