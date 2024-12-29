@@ -5,7 +5,8 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll([
         '/',
-        '/index.html'
+        '/index.html',
+        '/manifest.json'
       ]);
     })
   );
@@ -17,16 +18,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Get the pathname from the request URL
   const url = new URL(event.request.url);
   
   // Don't cache cross-origin requests (like Supabase API calls)
   if (url.origin !== location.origin) {
-    return;
+    return fetch(event.request);
   }
 
   const pathname = url.pathname;
-
+  
   // Check if this is a direct storefront access (short URL) or regular storefront path
   const isStorefrontAccess = pathname.split('/').length === 2 || pathname.startsWith('/storefront/');
   
@@ -45,42 +45,41 @@ self.addEventListener('fetch', (event) => {
           }
 
           console.log('Fetching new response for:', pathname);
-          return fetch(event.request).then((fetchResponse) => {
-            // Don't cache non-successful responses
-            if (!fetchResponse || fetchResponse.status !== 200) {
-              console.log('Received non-200 response for:', pathname);
+          return fetch(event.request)
+            .then((fetchResponse) => {
+              if (!fetchResponse || fetchResponse.status !== 200) {
+                console.log('Received non-200 response for:', pathname);
+                return fetchResponse;
+              }
+
+              // Clone the response as it can only be used once
+              const responseToCache = fetchResponse.clone();
+
+              // Cache the fetched response for this specific storefront
+              caches.open(`${CACHE_NAME}-${storefrontId}`).then((cache) => {
+                console.log('Caching new response for:', pathname);
+                cache.put(event.request, responseToCache);
+              });
+
               return fetchResponse;
-            }
-
-            // Clone the response as it can only be used once
-            const responseToCache = fetchResponse.clone();
-
-            // Cache the fetched response for this specific storefront
-            caches.open(`${CACHE_NAME}-${storefrontId}`).then((cache) => {
-              console.log('Caching new response for:', pathname);
-              cache.put(event.request, responseToCache);
+            })
+            .catch(error => {
+              console.error('Fetch failed:', error);
+              // Return a custom offline page or throw the error
+              throw error;
             });
-
-            return fetchResponse;
-          }).catch(error => {
-            console.error('Fetch failed:', error);
-            // Return a fallback response or throw the error
-            throw error;
-          });
         })
     );
   } else {
-    // For non-storefront requests, use default caching strategy
+    // For non-storefront requests, use network-first strategy
     event.respondWith(
-      caches.match(event.request)
-        .then((response) => {
-          return response || fetch(event.request);
-        })
+      fetch(event.request)
+        .catch(() => caches.match(event.request))
     );
   }
 });
 
-// Handle cache cleanup on activation
+// Clean up old caches on activation
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {

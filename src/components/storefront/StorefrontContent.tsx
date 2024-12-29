@@ -45,12 +45,12 @@ export const StorefrontContent = ({
       setIsScrolled(scrollPosition > 100);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative bg-gray-50">
       {/* iOS-style sticky header for mobile */}
       {isMobile && (
         <div
