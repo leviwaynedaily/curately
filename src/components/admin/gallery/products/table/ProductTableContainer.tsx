@@ -143,29 +143,60 @@ export const ProductTableContainer = ({
     });
 
   return (
-    <ProductTable
-      products={filteredAndSortedProducts}
-      editingId={editingId}
-      editedProduct={editedProduct}
-      selectedProduct={selectedProduct}
-      setSelectedProduct={setSelectedProduct}
-      sortField={sortField}
-      sortDirection={sortDirection}
-      searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
-      showHiddenFields={showHiddenFields}
-      setShowHiddenFields={setShowHiddenFields}
-      selectedProducts={selectedProducts}
-      onSelectAll={handleSelectAll}
-      onToggleProduct={handleToggleProduct}
-      onBulkDelete={handleBulkDelete}
-      onEdit={handleEdit}
-      onSave={handleSave}
-      onCancel={handleCancel}
-      onProductChange={handleProductChange}
-      onSort={handleSort}
-      onDuplicate={onDuplicate}
-      onProductUpdate={onProductUpdate}
-    />
+    <div className="space-y-4">
+      <div className="flex items-center gap-4 px-1">
+        <ProductBulkActions
+          selectedProducts={selectedProducts}
+          onDuplicate={onDuplicate}
+          onDelete={handleBulkDelete}
+          products={products}
+          onSelectAll={handleSelectAll}
+        />
+        <Input
+          placeholder="Search products..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="max-w-sm ml-0"
+        />
+      </div>
+
+      <div className="rounded-md border overflow-x-auto">
+        <Table>
+          <ProductTableHeader
+            onSort={handleSort}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            showHiddenFields={showHiddenFields}
+            onToggleHiddenFields={() => setShowHiddenFields(!showHiddenFields)}
+            allSelected={selectedProducts.size === products.length}
+            onSelectAll={handleSelectAll}
+          />
+          <ProductTableBody
+            products={filteredAndSortedProducts}
+            editingId={editingId}
+            editedProduct={editedProduct}
+            onEdit={handleEdit}
+            onSave={handleSave}
+            onCancel={handleCancel}
+            onDelete={(id) => handleBulkDelete([id])}
+            onProductChange={handleProductChange}
+            onMediaClick={setSelectedProduct}
+            showHiddenFields={showHiddenFields}
+            selectedProducts={selectedProducts}
+            onToggleProduct={handleToggleProduct}
+            onDuplicate={onDuplicate}
+          />
+        </Table>
+      </div>
+
+      {selectedProduct && (
+        <ProductMediaDialog
+          isOpen={!!selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          product={selectedProduct}
+          onMediaUpdate={onProductUpdate}
+        />
+      )}
+    </div>
   );
 };

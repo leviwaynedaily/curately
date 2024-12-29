@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ProductTableContainer } from "./table/ProductTableContainer";
 import { useProducts } from "@/hooks/useProducts";
 import { ProductTableToolbar } from "./table/ProductTableToolbar";
-import { ProductTableActions } from "./ProductTableActions";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -133,7 +132,6 @@ export const ProductManagement = ({ storefrontId }: ProductManagementProps) => {
 
   return (
     <div className="space-y-4">
-      <ProductTableActions galleryId={storefrontId} />
       <ProductTableToolbar
         onExport={handleExport}
         onImport={handleImport}
