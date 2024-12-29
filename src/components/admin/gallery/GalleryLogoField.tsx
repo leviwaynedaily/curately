@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { getStorefrontFilePath } from "@/utils/storefrontFileUtils";
 
 type GalleryLogoFieldProps = {
   form: UseFormReturn<GalleryFormValues>;
@@ -25,12 +26,17 @@ export const GalleryLogoField = ({ form }: GalleryLogoFieldProps) => {
 
     try {
       const fileExt = file.name.split(".").pop();
-      const filePath = `${crypto.randomUUID()}.${fileExt}`;
+      const storefrontId = form.getValues("id");
+      if (!storefrontId) {
+        throw new Error("Storefront ID is required");
+      }
 
-      console.log("Uploading logo to storage...");
+      const filePath = getStorefrontFilePath(storefrontId, 'logo', fileExt || 'png');
+      console.log("Uploading logo to path:", filePath);
+
       const { error: uploadError } = await supabase.storage
         .from("gallery_images")
-        .upload(filePath, file);
+        .upload(filePath, file, { upsert: true });
 
       if (uploadError) {
         console.error("Error uploading logo:", uploadError);
@@ -38,7 +44,12 @@ export const GalleryLogoField = ({ form }: GalleryLogoFieldProps) => {
       }
 
       console.log("Logo uploaded successfully, file path:", filePath);
-      form.setValue("logo", filePath);
+      form.setValue("logo", filePath, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true
+      });
+      
       toast({ description: "Logo uploaded successfully" });
     } catch (error) {
       console.error("Logo upload failed:", error);
@@ -52,7 +63,11 @@ export const GalleryLogoField = ({ form }: GalleryLogoFieldProps) => {
   };
 
   const clearLogo = () => {
-    form.setValue("logo", "");
+    form.setValue("logo", "", {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true
+    });
   };
 
   return (
@@ -63,7 +78,7 @@ export const GalleryLogoField = ({ form }: GalleryLogoFieldProps) => {
         <FormItem>
           <FormLabel>Logo</FormLabel>
           <div className="space-y-4">
-            {field.value ? (
+            {field.value && typeof field.value === 'string' && field.value !== "" ? (
               <div className="relative w-40 h-40">
                 <img
                   src={supabase.storage.from("gallery_images").getPublicUrl(field.value).data.publicUrl}

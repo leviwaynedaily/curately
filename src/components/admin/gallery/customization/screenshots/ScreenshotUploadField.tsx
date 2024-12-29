@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
+import { getStorefrontFilePath } from "@/utils/storefrontFileUtils";
 
 type ScreenshotType = "desktop" | "mobile";
 
@@ -32,12 +33,17 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
 
     try {
       const fileExt = file.name.split(".").pop();
-      const filePath = `screenshots/${crypto.randomUUID()}.${fileExt}`;
+      const storefrontId = form.getValues("id");
+      if (!storefrontId) {
+        throw new Error("Storefront ID is required");
+      }
 
-      console.log(`Uploading ${type} screenshot to storage...`);
+      const filePath = getStorefrontFilePath(storefrontId, `screenshot_${type}`, fileExt || 'png');
+      console.log(`Uploading ${type} screenshot to path:`, filePath);
+
       const { error: uploadError } = await supabase.storage
         .from("gallery_images")
-        .upload(filePath, file);
+        .upload(filePath, file, { upsert: true });
 
       if (uploadError) {
         console.error(`Error uploading ${type} screenshot:`, uploadError);
@@ -45,8 +51,7 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
       }
 
       console.log(`${type} screenshot uploaded successfully, file path:`, filePath);
-      
-      form.setValue(fieldName, filePath, { 
+      form.setValue(fieldName, filePath, {
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true
@@ -64,35 +69,12 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
     }
   };
 
-  const clearScreenshot = async () => {
-    const currentPath = form.getValues(fieldName);
-    
-    if (currentPath && typeof currentPath === 'string') {
-      try {
-        const { error: deleteError } = await supabase.storage
-          .from("gallery_images")
-          .remove([currentPath]);
-
-        if (deleteError) {
-          console.error(`Error deleting ${type} screenshot:`, deleteError);
-          throw deleteError;
-        }
-
-        form.setValue(fieldName, "", { 
-          shouldDirty: true,
-          shouldTouch: true,
-          shouldValidate: true
-        });
-
-        toast({ description: `${type} screenshot removed` });
-      } catch (error) {
-        console.error(`Error clearing ${type} screenshot:`, error);
-        toast({
-          variant: "destructive",
-          description: `Failed to remove ${type} screenshot`
-        });
-      }
-    }
+  const clearScreenshot = () => {
+    form.setValue(fieldName, "", {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true
+    });
   };
 
   const getImageUrl = (filePath: string) => {
