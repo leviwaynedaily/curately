@@ -22,6 +22,11 @@ export const ProductManagement = ({ storefrontId }: ProductManagementProps) => {
     // Import logic here
   };
 
+  const handleAddProduct = () => {
+    console.log("Opening add product form");
+    setIsFormOpen(true);
+  };
+
   const handleDuplicateProducts = async (productIds: string[]) => {
     try {
       console.log("Duplicating products:", productIds);
@@ -135,7 +140,7 @@ export const ProductManagement = ({ storefrontId }: ProductManagementProps) => {
       <ProductTableToolbar
         onExport={handleExport}
         onImport={handleImport}
-        onAddProduct={() => setIsFormOpen(true)}
+        onAddProduct={handleAddProduct}
       />
       <ProductTableContainer
         storefrontId={storefrontId}

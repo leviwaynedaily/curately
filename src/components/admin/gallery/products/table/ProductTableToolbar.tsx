@@ -12,6 +12,8 @@ export const ProductTableToolbar = ({
   onImport,
   onAddProduct,
 }: ProductTableToolbarProps) => {
+  console.log("ProductTableToolbar: Rendering with onAddProduct handler", onAddProduct);
+  
   return (
     <div className="flex items-center justify-between mb-4">
       <h2 className="text-2xl font-bold">Products</h2>
@@ -33,7 +35,10 @@ export const ProductTableToolbar = ({
           </Button>
         </div>
         <Button 
-          onClick={onAddProduct} 
+          onClick={() => {
+            console.log("Add product button clicked");
+            onAddProduct();
+          }} 
           className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
