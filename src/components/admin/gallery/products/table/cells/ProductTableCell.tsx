@@ -8,7 +8,7 @@ type ProductTableCellProps = {
   value: any;
   isEditing: boolean;
   onEdit: () => void;
-  onChange: (value: any) => void;
+  onChange: (field: keyof Product, value: any) => void;
   onSave?: () => void;
   className?: string;
 };
@@ -25,7 +25,7 @@ export const ProductTableCell = ({
   const [isEditMode, setIsEditMode] = useState(false);
 
   const handleSave = (newValue: string | number) => {
-    onChange(newValue);
+    onChange(field, newValue);
     setIsEditMode(false);
     onSave?.();
   };
