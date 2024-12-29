@@ -45,18 +45,74 @@ export const ProductManagement = ({ storefrontId }: ProductManagementProps) => {
           stock_quantity: product.stock_quantity
         };
 
-        const { data: newProduct, error } = await supabase
+        // Insert the new product
+        const { data: newProduct, error: productError } = await supabase
           .from("products")
           .insert(productCopy)
           .select()
           .single();
 
-        if (error) {
-          console.error("Error duplicating product:", error);
-          throw error;
+        if (productError) {
+          console.error("Error duplicating product:", productError);
+          throw productError;
         }
 
         console.log("Product duplicated successfully:", newProduct);
+
+        // Fetch original product's media
+        const { data: mediaData, error: mediaFetchError } = await supabase
+          .from("product_media")
+          .select("*")
+          .eq("product_id", productId);
+
+        if (mediaFetchError) {
+          console.error("Error fetching product media:", mediaFetchError);
+          continue;
+        }
+
+        // Duplicate each media item
+        for (const media of mediaData || []) {
+          // First, copy the file in storage
+          const fileExt = media.file_path.split('.').pop();
+          const newFilePath = `${newProduct.id}/${crypto.randomUUID()}.${fileExt}`;
+          
+          const { data: file, error: downloadError } = await supabase.storage
+            .from("gallery_images")
+            .download(media.file_path);
+
+          if (downloadError) {
+            console.error("Error downloading original file:", downloadError);
+            continue;
+          }
+
+          const { error: uploadError } = await supabase.storage
+            .from("gallery_images")
+            .upload(newFilePath, file);
+
+          if (uploadError) {
+            console.error("Error uploading duplicated file:", uploadError);
+            continue;
+          }
+
+          // Create new media record
+          const { error: mediaError } = await supabase
+            .from("product_media")
+            .insert({
+              product_id: newProduct.id,
+              file_path: newFilePath,
+              media_type: media.media_type,
+              is_primary: media.is_primary,
+              title: media.title,
+              description: media.description
+            });
+
+          if (mediaError) {
+            console.error("Error creating media record:", mediaError);
+            continue;
+          }
+
+          console.log("Media duplicated successfully:", newFilePath);
+        }
       }
 
       toast({ description: "Products duplicated successfully" });
