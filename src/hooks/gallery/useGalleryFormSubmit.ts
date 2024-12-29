@@ -14,7 +14,7 @@ export const useGalleryFormSubmit = (
     // Extract all fields except currentTab
     const { currentTab, ...sanitizedValues } = values;
     
-    // Create submission data object with explicit PWA icon fields
+    // Create submission data object
     const dataToSubmit = {
       ...sanitizedValues,
       name: values.name,
@@ -32,6 +32,7 @@ export const useGalleryFormSubmit = (
     try {
       if (gallery?.id) {
         console.log("Updating existing storefront:", gallery.id);
+        console.log("Full update payload:", dataToSubmit);
         
         const { data, error } = await supabase
           .from("storefronts")
@@ -44,10 +45,11 @@ export const useGalleryFormSubmit = (
           throw error;
         }
         
-        console.log("Storefront updated successfully. Response:", data);
+        console.log("Storefront updated successfully. Full response:", data);
         toast({ description: "Storefront updated successfully" });
       } else {
         console.log("Creating new storefront");
+        console.log("Full insert payload:", dataToSubmit);
         
         const { data, error } = await supabase
           .from("storefronts")
@@ -59,7 +61,7 @@ export const useGalleryFormSubmit = (
           throw error;
         }
         
-        console.log("Storefront created successfully. Response:", data);
+        console.log("Storefront created successfully. Full response:", data);
         toast({ description: "Storefront created successfully" });
       }
 
