@@ -13,4 +13,12 @@ export type Product = {
   deletion_date?: string;
   primary_media?: string;
   tags?: { id: string; name: string; }[];
+  product_media?: {
+    id: string;
+    file_path: string;
+    media_type?: string;
+    is_primary?: boolean;
+    title?: string;
+    description?: string;
+  }[];
 };

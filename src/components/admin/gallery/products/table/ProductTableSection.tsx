@@ -15,6 +15,8 @@ type ProductTableSectionProps = {
   setSearchTerm: (term: string) => void;
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
+  selectedTag: string;
+  setSelectedTag: (tag: string) => void;
   onSort: (field: keyof Product) => void;
   onToggleHiddenFields: () => void;
   onSelectAll: (checked: boolean) => void;
@@ -40,6 +42,8 @@ export const ProductTableSection = ({
   setSearchTerm,
   selectedCategory,
   setSelectedCategory,
+  selectedTag,
+  setSelectedTag,
   onSort,
   onToggleHiddenFields,
   onSelectAll,
@@ -68,6 +72,8 @@ export const ProductTableSection = ({
           products={products}
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
+          selectedTag={selectedTag}
+          setSelectedTag={setSelectedTag}
         />
         <ProductTableBody
           products={products}
