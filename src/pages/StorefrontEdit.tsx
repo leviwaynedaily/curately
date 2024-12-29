@@ -12,9 +12,12 @@ import { GalleryFormValues } from "@/lib/validations/gallery";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { Form } from "@/components/ui/form";
 import { ChevronRight } from "lucide-react";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
+  const isMobile = useIsMobile();
   console.log("Editing storefront:", storefrontId);
 
   const { data: storefront, isLoading } = useQuery({
@@ -48,48 +51,76 @@ const StorefrontEdit = () => {
     return <AdminLayout>Storefront not found</AdminLayout>;
   }
 
+  const MainContent = () => (
+    <div className="space-y-6">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <a href="/admin" className="hover:text-foreground transition-colors">
+          Storefronts
+        </a>
+        <ChevronRight className="h-4 w-4" />
+        <span className="text-foreground">{storefront.name}</span>
+      </div>
+
+      <StorefrontHeader storefront={storefront} />
+      
+      <Form {...form}>
+        <form>
+          <Tabs defaultValue="basic" className="space-y-4">
+            <TabsList className="w-full justify-start">
+              <TabsTrigger value="basic">Basic Information</TabsTrigger>
+              <TabsTrigger value="customization">Customization</TabsTrigger>
+              <TabsTrigger value="verification">Age Verification</TabsTrigger>
+              <TabsTrigger value="instructions">Instructions</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="basic" className="space-y-4">
+              <StorefrontBasicInfo storefront={storefront} />
+            </TabsContent>
+
+            <TabsContent value="customization" className="space-y-4">
+              <GalleryCustomizationFields form={form} />
+            </TabsContent>
+
+            <TabsContent value="verification" className="space-y-4">
+              <GalleryVerificationFields form={form} />
+            </TabsContent>
+
+            <TabsContent value="instructions" className="space-y-4">
+              <GalleryInstructionsFields form={form} />
+            </TabsContent>
+          </Tabs>
+        </form>
+      </Form>
+    </div>
+  );
+
+  const PreviewPanel = () => (
+    <div className="w-full h-full bg-neutral-50 rounded-lg p-4">
+      <iframe
+        src={`/storefront/${storefrontId}`}
+        className="w-full h-full rounded border-0"
+        title="Storefront Preview"
+      />
+    </div>
+  );
+
   return (
     <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <a href="/admin" className="hover:text-foreground transition-colors">
-            Storefronts
-          </a>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground">{storefront.name}</span>
-        </div>
-
-        <StorefrontHeader storefront={storefront} />
-        
-        <Form {...form}>
-          <form>
-            <Tabs defaultValue="basic" className="space-y-4">
-              <TabsList className="w-full justify-start">
-                <TabsTrigger value="basic">Basic Information</TabsTrigger>
-                <TabsTrigger value="customization">Customization</TabsTrigger>
-                <TabsTrigger value="verification">Age Verification</TabsTrigger>
-                <TabsTrigger value="instructions">Instructions</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="basic" className="space-y-4">
-                <StorefrontBasicInfo storefront={storefront} />
-              </TabsContent>
-
-              <TabsContent value="customization" className="space-y-4">
-                <GalleryCustomizationFields form={form} />
-              </TabsContent>
-
-              <TabsContent value="verification" className="space-y-4">
-                <GalleryVerificationFields form={form} />
-              </TabsContent>
-
-              <TabsContent value="instructions" className="space-y-4">
-                <GalleryInstructionsFields form={form} />
-              </TabsContent>
-            </Tabs>
-          </form>
-        </Form>
-      </div>
+      {isMobile ? (
+        <MainContent />
+      ) : (
+        <ResizablePanelGroup direction="horizontal" className="min-h-[calc(100vh-4rem)]">
+          <ResizablePanel defaultSize={50}>
+            <div className="p-4 h-full overflow-y-auto">
+              <MainContent />
+            </div>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={50}>
+            <PreviewPanel />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      )}
     </AdminLayout>
   );
 };
