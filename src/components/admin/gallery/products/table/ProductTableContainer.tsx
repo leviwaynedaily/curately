@@ -7,14 +7,14 @@ import { ProductTableSection } from "./ProductTableSection";
 import { ProductMediaDialog } from "../ProductMediaDialog";
 
 type ProductTableContainerProps = {
-  storefrontId: string;  // Added this prop
+  storefrontId: string;
   products: Product[];
   onProductUpdate: () => void;
   onDuplicate: (productIds: string[]) => void;
 };
 
 export const ProductTableContainer = ({
-  storefrontId,  // Added this prop
+  storefrontId,
   products,
   onProductUpdate,
   onDuplicate,
