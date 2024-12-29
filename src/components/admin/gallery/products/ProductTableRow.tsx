@@ -49,8 +49,8 @@ export const ProductTableRow = ({
   };
 
   return (
-    <TableRow className={cn(className, selected && "bg-accent/50")}>
-      <TableCell className="w-4">
+    <TableRow className={cn("h-[72px]", className, selected && "bg-accent/50")}>
+      <TableCell className="w-[40px] pl-4">
         <Checkbox
           checked={selected}
           onCheckedChange={onToggleSelect}
@@ -66,23 +66,25 @@ export const ProductTableRow = ({
             onEdit={handleCellEdit}
             onChange={handleCellChange("name")}
             onSave={onSave}
-            className="flex-1"
+            className="flex-1 font-medium"
           />
         </div>
       </TableCell>
 
-      <TableCell>
-        <ProductTableCell
-          field="description"
-          value={isEditing ? editedProduct?.description : product.description}
-          isEditing={isEditing}
-          onEdit={handleCellEdit}
-          onChange={handleCellChange("description")}
-          onSave={onSave}
-        />
+      <TableCell className="max-w-[300px]">
+        <div className="truncate">
+          <ProductTableCell
+            field="description"
+            value={isEditing ? editedProduct?.description : product.description}
+            isEditing={isEditing}
+            onEdit={handleCellEdit}
+            onChange={handleCellChange("description")}
+            onSave={onSave}
+          />
+        </div>
       </TableCell>
 
-      <TableCell>
+      <TableCell className="text-right">
         <ProductTableCell
           field="price"
           value={isEditing ? editedProduct?.price : product.price}
@@ -105,7 +107,7 @@ export const ProductTableRow = ({
               onSave={onSave}
             />
           </TableCell>
-          <TableCell>
+          <TableCell className="text-right">
             <ProductTableCell
               field="stock_quantity"
               value={isEditing ? editedProduct?.stock_quantity : product.stock_quantity}

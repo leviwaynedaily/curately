@@ -46,7 +46,7 @@ export const ProductTableCell = ({
   if (isEditing) {
     if (field === "description") {
       return (
-        <TableCell className={cn("min-w-[300px]", className)}>
+        <div className={cn("min-w-[300px]", className)}>
           <Textarea
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
@@ -54,13 +54,13 @@ export const ProductTableCell = ({
             onBlur={handleBlur}
             className="w-full min-h-[60px]"
           />
-        </TableCell>
+        </div>
       );
     }
 
     if (field === "price" || field === "stock_quantity") {
       return (
-        <TableCell className={className}>
+        <div className={className}>
           <Input
             type="number"
             value={value || ""}
@@ -69,18 +69,17 @@ export const ProductTableCell = ({
             onBlur={handleBlur}
             className="w-full"
           />
-        </TableCell>
+        </div>
       );
     }
 
     if (field === "status") {
       return (
-        <TableCell className={className}>
+        <div className={className}>
           <Select 
             value={value || ""} 
             onValueChange={(newValue) => {
               onChange(newValue);
-              // Automatically save when status is changed
               setTimeout(() => onSave?.(), 0);
             }}
           >
@@ -93,12 +92,12 @@ export const ProductTableCell = ({
               <SelectItem value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
-        </TableCell>
+        </div>
       );
     }
 
     return (
-      <TableCell className={className}>
+      <div className={className}>
         <Input
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
@@ -106,14 +105,14 @@ export const ProductTableCell = ({
           onBlur={handleBlur}
           className="w-full"
         />
-      </TableCell>
+      </div>
     );
   }
 
   return (
-    <TableCell 
+    <div 
       onDoubleClick={handleDoubleClick} 
-      className={cn("cursor-pointer", className)}
+      className={cn("cursor-pointer truncate", className)}
     >
       {field === "status" ? (
         <span className={`capitalize ${value === 'active' ? 'text-green-600' : 'text-gray-500'}`}>
@@ -122,6 +121,6 @@ export const ProductTableCell = ({
       ) : (
         value
       )}
-    </TableCell>
+    </div>
   );
 };

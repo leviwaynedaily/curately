@@ -3,6 +3,7 @@ import { ArrowUpDown, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "./types";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type ProductTableHeaderProps = {
   onSort: (field: keyof Product) => void;
@@ -10,6 +11,8 @@ type ProductTableHeaderProps = {
   sortDirection: "asc" | "desc" | null;
   showHiddenFields: boolean;
   onToggleHiddenFields: () => void;
+  onSelectAll?: (checked: boolean) => void;
+  allSelected?: boolean;
 };
 
 export const ProductTableHeader = ({
@@ -18,9 +21,11 @@ export const ProductTableHeader = ({
   sortDirection,
   showHiddenFields,
   onToggleHiddenFields,
+  onSelectAll,
+  allSelected,
 }: ProductTableHeaderProps) => {
-  const SortableHeader = ({ field, children }: { field: keyof Product; children: React.ReactNode }) => (
-    <TableHead>
+  const SortableHeader = ({ field, children, className }: { field: keyof Product; children: React.ReactNode; className?: string }) => (
+    <TableHead className={className}>
       <Button
         variant="ghost"
         onClick={() => onSort(field)}
@@ -38,19 +43,24 @@ export const ProductTableHeader = ({
   return (
     <TableHeader>
       <TableRow>
+        <TableHead className="w-[40px] pl-4">
+          <Checkbox 
+            checked={allSelected}
+            onCheckedChange={onSelectAll}
+          />
+        </TableHead>
         <SortableHeader field="name">
           <div className="flex-1">Name</div>
         </SortableHeader>
-        <TableHead>Description</TableHead>
-        <SortableHeader field="price">Price</SortableHeader>
+        <TableHead className="max-w-[300px]">Description</TableHead>
+        <SortableHeader field="price" className="text-right">Price</SortableHeader>
         {showHiddenFields && (
           <>
             <SortableHeader field="sku">SKU</SortableHeader>
-            <SortableHeader field="stock_quantity">Stock</SortableHeader>
+            <SortableHeader field="stock_quantity" className="text-right">Stock</SortableHeader>
           </>
         )}
         <SortableHeader field="category">Category</SortableHeader>
-        <SortableHeader field="status">Status</SortableHeader>
         <TableHead className="w-[100px]">
           <TooltipProvider>
             <Tooltip>
