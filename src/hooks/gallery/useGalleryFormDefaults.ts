@@ -27,6 +27,7 @@ export const getDefaultValues = (
     instructions_enabled?: boolean;
     instructions_content?: string;
     instructions_button_text?: string;
+    show_description?: boolean;
   },
   businessId?: string
 ): GalleryFormValues => ({
@@ -55,4 +56,5 @@ export const getDefaultValues = (
   instructions_enabled: gallery?.instructions_enabled || false,
   instructions_content: gallery?.instructions_content || "",
   instructions_button_text: gallery?.instructions_button_text || "Enter Site",
+  show_description: gallery?.show_description ?? true,
 });
