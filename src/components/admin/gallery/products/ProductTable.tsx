@@ -30,6 +30,7 @@ export const ProductTable = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [showHiddenFields, setShowHiddenFields] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+  const [selectedCategory, setSelectedCategory] = useState("");
   const { toast } = useToast();
 
   const handleSelectAll = (checked: boolean) => {
@@ -92,12 +93,15 @@ export const ProductTable = ({
   };
 
   const filteredAndSortedProducts = products.filter(product => {
-    return (
+    const matchesSearch = 
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+      product.category?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesCategory = !selectedCategory || product.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
   }).sort((a, b) => {
     if (sortField) {
       const aValue = a[sortField];
@@ -126,12 +130,6 @@ export const ProductTable = ({
           products={products}
           onSelectAll={handleSelectAll}
         />
-        <Input
-          placeholder="Search products..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
-        />
       </div>
 
       <div className="rounded-md border overflow-x-auto">
@@ -142,6 +140,11 @@ export const ProductTable = ({
             sortDirection={sortDirection}
             showHiddenFields={showHiddenFields}
             onToggleHiddenFields={() => setShowHiddenFields(!showHiddenFields)}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            products={products}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
           />
           <ProductTableBody
             products={filteredAndSortedProducts}

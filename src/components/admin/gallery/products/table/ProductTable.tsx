@@ -1,5 +1,4 @@
 import { Table } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { ProductTableHeader } from "../ProductTableHeader";
 import { ProductTableBody } from "./ProductTableBody";
 import { Product } from "../types";
@@ -29,6 +28,8 @@ type ProductTableProps = {
   onSort: (field: keyof Product) => void;
   onDuplicate: (productIds: string[]) => void;
   onProductUpdate: () => void;
+  selectedCategory: string;
+  setSelectedCategory: (category: string) => void;
 };
 
 export const ProductTable = ({
@@ -54,6 +55,8 @@ export const ProductTable = ({
   onSort,
   onDuplicate,
   onProductUpdate,
+  selectedCategory,
+  setSelectedCategory,
 }: ProductTableProps) => {
   // Create a wrapper function to convert single ID to array for deletion
   const handleSingleDelete = (id: string) => {
@@ -70,12 +73,6 @@ export const ProductTable = ({
           products={products}
           onSelectAll={onSelectAll}
         />
-        <Input
-          placeholder="Search products..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
-        />
       </div>
 
       <div className="rounded-md border overflow-x-auto">
@@ -88,6 +85,11 @@ export const ProductTable = ({
             onToggleHiddenFields={() => setShowHiddenFields(!showHiddenFields)}
             allSelected={selectedProducts.size === products.length}
             onSelectAll={onSelectAll}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            products={products}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
           />
           <ProductTableBody
             products={products}
