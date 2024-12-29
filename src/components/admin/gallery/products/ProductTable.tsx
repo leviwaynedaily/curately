@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Table } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,15 +6,8 @@ import { ProductTableBody } from "./table/ProductTableBody";
 import { Product } from "./types";
 import { ProductBulkActions } from "./table/ProductBulkActions";
 import { ProductMediaDialog } from "./ProductMediaDialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ProductTablePagination } from "./table/pagination/ProductTablePagination";
+import { useProductTableState } from "./table/hooks/useProductTableState";
 
 type ProductTableProps = {
   storefrontId: string;
@@ -30,36 +22,33 @@ export const ProductTable = ({
   onProductUpdate,
   onDuplicate,
 }: ProductTableProps) => {
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editedProduct, setEditedProduct] = useState<Product | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [sortField, setSortField] = useState<keyof Product | null>(null);
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc" | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showHiddenFields, setShowHiddenFields] = useState(false);
-  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const {
+    editingId,
+    setEditingId,
+    editedProduct,
+    setEditedProduct,
+    selectedProduct,
+    setSelectedProduct,
+    sortField,
+    setSortField,
+    sortDirection,
+    setSortDirection,
+    searchTerm,
+    setSearchTerm,
+    showHiddenFields,
+    setShowHiddenFields,
+    selectedProducts,
+    selectedCategory,
+    setSelectedCategory,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    handleSelectAll,
+    handleToggleProduct,
+  } = useProductTableState(products);
+  
   const { toast } = useToast();
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedProducts(new Set(products.map(p => p.id)));
-    } else {
-      setSelectedProducts(new Set());
-    }
-  };
-
-  const handleToggleProduct = (productId: string) => {
-    const newSelection = new Set(selectedProducts);
-    if (newSelection.has(productId)) {
-      newSelection.delete(productId);
-    } else {
-      newSelection.add(productId);
-    }
-    setSelectedProducts(newSelection);
-  };
 
   const handleBulkDelete = async (productIds: string[]) => {
     try {
@@ -71,7 +60,6 @@ export const ProductTable = ({
       if (error) throw error;
 
       toast({ description: "Products deleted successfully" });
-      setSelectedProducts(new Set());
       onProductUpdate();
     } catch (error) {
       console.error("Error deleting products:", error);
@@ -82,53 +70,35 @@ export const ProductTable = ({
     }
   };
 
-  const handleEdit = (product: Product) => {
-    setEditingId(product.id);
-    setEditedProduct(product);
-  };
+  const filteredAndSortedProducts = products
+    .filter(product => {
+      const matchesSearch = 
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category?.toLowerCase().includes(searchTerm.toLowerCase());
 
-  const handleProductChange = (field: keyof Product, value: any) => {
-    setEditedProduct((prev) =>
-      prev ? { ...prev, [field]: value } : null
-    );
-  };
+      const matchesCategory = !selectedCategory || product.category === selectedCategory;
 
-  const handleSort = (field: keyof Product) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortDirection("asc");
-    }
-  };
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      if (sortField) {
+        const aValue = a[sortField];
+        const bValue = b[sortField];
 
-  const filteredAndSortedProducts = products.filter(product => {
-    const matchesSearch = 
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category?.toLowerCase().includes(searchTerm.toLowerCase());
+        if (aValue === null || aValue === undefined) return 1;
+        if (bValue === null || bValue === undefined) return -1;
 
-    const matchesCategory = !selectedCategory || product.category === selectedCategory;
+        const comparison = 
+          typeof aValue === 'string' 
+            ? aValue.localeCompare(bValue as string)
+            : (aValue as number) - (bValue as number);
 
-    return matchesSearch && matchesCategory;
-  }).sort((a, b) => {
-    if (sortField) {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
-
-      if (aValue === null || aValue === undefined) return 1;
-      if (bValue === null || bValue === undefined) return -1;
-
-      const comparison = 
-        typeof aValue === 'string' 
-          ? aValue.localeCompare(bValue as string)
-          : (aValue as number) - (bValue as number);
-
-      return sortDirection === "asc" ? comparison : -comparison;
-    }
-    return 0;
-  });
+        return sortDirection === "asc" ? comparison : -comparison;
+      }
+      return 0;
+    });
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredAndSortedProducts.length / pageSize);
@@ -150,7 +120,7 @@ export const ProductTable = ({
       <div className="rounded-md border overflow-x-auto">
         <Table>
           <ProductTableHeader
-            onSort={handleSort}
+            onSort={setSortField}
             sortField={sortField}
             sortDirection={sortDirection}
             showHiddenFields={showHiddenFields}
@@ -165,11 +135,23 @@ export const ProductTable = ({
             products={paginatedProducts}
             editingId={editingId}
             editedProduct={editedProduct}
-            onEdit={handleEdit}
-            onSave={() => {}}
-            onCancel={() => {}}
-            onDelete={() => {}}
-            onProductChange={handleProductChange}
+            onEdit={(product) => {
+              setEditingId(product.id);
+              setEditedProduct(product);
+            }}
+            onSave={() => {
+              setEditingId(null);
+              setEditedProduct(null);
+              onProductUpdate();
+            }}
+            onCancel={() => {
+              setEditingId(null);
+              setEditedProduct(null);
+            }}
+            onDelete={handleBulkDelete}
+            onProductChange={(field, value) => {
+              setEditedProduct(prev => prev ? { ...prev, [field]: value } : null);
+            }}
             onMediaClick={setSelectedProduct}
             showHiddenFields={showHiddenFields}
             selectedProducts={selectedProducts}
@@ -179,54 +161,13 @@ export const ProductTable = ({
         </Table>
       </div>
 
-      {/* Pagination Controls */}
-      <div className="flex items-center justify-between border-t pt-4">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">Rows per page:</span>
-          <Select
-            value={pageSize.toString()}
-            onValueChange={(value) => {
-              setPageSize(Number(value));
-              setPage(1); // Reset to first page when changing page size
-            }}
-          >
-            <SelectTrigger className="w-[70px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {[5, 10, 20, 50].map((size) => (
-                <SelectItem key={size} value={size.toString()}>
-                  {size}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">
-            Page {page} of {totalPages}
-          </span>
-          <div className="flex items-center gap-1">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setPage(page - 1)}
-              disabled={page === 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setPage(page + 1)}
-              disabled={page === totalPages}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
+      <ProductTablePagination
+        page={page}
+        setPage={setPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        totalPages={totalPages}
+      />
 
       {selectedProduct && (
         <ProductMediaDialog
