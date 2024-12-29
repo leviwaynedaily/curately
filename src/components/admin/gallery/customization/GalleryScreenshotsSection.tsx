@@ -112,7 +112,8 @@ export const GalleryScreenshotsSection = ({ form }: GalleryScreenshotsSectionPro
   const renderScreenshotField = (type: "desktop" | "mobile") => {
     const isUploading = type === "desktop" ? isUploadingDesktop : isUploadingMobile;
     const fieldName = type === "desktop" ? "screenshot_desktop" : "screenshot_mobile";
-    const label = type === "desktop" ? "Desktop Screenshot (1920x1080)" : "Mobile Screenshot (390x844)";
+    const label = type === "desktop" ? "Desktop Screenshot" : "Mobile Screenshot";
+    const dimensions = type === "desktop" ? "(1920×1080)" : "(390×844)";
     const uploadId = `${type}-screenshot-upload`;
     const value = form.watch(fieldName);
 
@@ -128,7 +129,12 @@ export const GalleryScreenshotsSection = ({ form }: GalleryScreenshotsSectionPro
         name={fieldName}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{label}</FormLabel>
+            <FormLabel className="flex items-center gap-2">
+              {label}
+              <span className="text-sm text-muted-foreground font-normal">
+                {dimensions}
+              </span>
+            </FormLabel>
             <div className="space-y-4">
               {field.value ? (
                 <div className="relative w-full max-w-md">
@@ -158,7 +164,7 @@ export const GalleryScreenshotsSection = ({ form }: GalleryScreenshotsSectionPro
                       className="w-full"
                     >
                       <Upload className="h-4 w-4 mr-2" />
-                      {isUploading ? "Uploading..." : `Upload ${label}`}
+                      {isUploading ? "Uploading..." : `Upload Screenshot`}
                     </Button>
                     <Input
                       id={uploadId}
@@ -180,13 +186,19 @@ export const GalleryScreenshotsSection = ({ form }: GalleryScreenshotsSectionPro
   };
 
   return (
-    <div className="space-y-4">
-      <h3 className="font-medium">Screenshots</h3>
-      <p className="text-sm text-muted-foreground mb-4">
-        Upload screenshots of your storefront for the PWA manifest. Desktop screenshot should be 1920x1080, and mobile screenshot should be 390x844.
-      </p>
-      {renderScreenshotField("desktop")}
-      {renderScreenshotField("mobile")}
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h3 className="font-medium">Screenshots</h3>
+        <div className="text-sm text-muted-foreground space-y-1">
+          <p>Upload screenshots of your storefront for the PWA manifest.</p>
+          <p>Desktop screenshot should be 1920×1080 pixels, and mobile screenshot should be 390×844 pixels.</p>
+          <p>These screenshots will be displayed when users install your storefront as a PWA.</p>
+        </div>
+      </div>
+      <div className="space-y-8">
+        {renderScreenshotField("desktop")}
+        {renderScreenshotField("mobile")}
+      </div>
     </div>
   );
 };
