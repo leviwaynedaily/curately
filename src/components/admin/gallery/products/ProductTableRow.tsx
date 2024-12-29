@@ -1,12 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { Edit, Save, X, Trash, Image as ImageIcon, Copy, Loader2 } from "lucide-react";
-import { Product } from "./types";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { ProductTableCell } from "./table/ProductTableCell";
+import { Product } from "./types";
+import { ProductTableCell } from "./table/cells/ProductTableCell";
 import { ProductTableMedia } from "./table/ProductTableMedia";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
+import { ProductActions } from "./table/actions/ProductActions";
 
 type ProductTableRowProps = {
   product: Product;
@@ -41,39 +39,8 @@ export const ProductTableRow = ({
   onToggleSelect,
   onDuplicate,
 }: ProductTableRowProps) => {
-  const [isDuplicating, setIsDuplicating] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
   const handleCellChange = (field: keyof Product) => (value: any) => {
     onProductChange(field, value);
-  };
-
-  const handleCellEdit = () => {
-    if (!isEditing) {
-      onEdit(product);
-    }
-  };
-
-  const handleDuplicate = async () => {
-    console.log("Duplicating single product:", product.id);
-    if (onDuplicate) {
-      setIsDuplicating(true);
-      try {
-        await onDuplicate([product.id]);
-      } finally {
-        setIsDuplicating(false);
-      }
-    }
-  };
-
-  const handleDelete = async () => {
-    console.log("Deleting product:", product.id);
-    setIsDeleting(true);
-    try {
-      await onDelete(product.id);
-    } finally {
-      setIsDeleting(false);
-    }
   };
 
   return (
@@ -91,7 +58,7 @@ export const ProductTableRow = ({
             field="name"
             value={isEditing ? editedProduct?.name : product.name}
             isEditing={isEditing}
-            onEdit={handleCellEdit}
+            onEdit={() => onEdit(product)}
             onChange={handleCellChange("name")}
             onSave={onSave}
             className="flex-1 font-medium"
@@ -100,16 +67,14 @@ export const ProductTableRow = ({
       </TableCell>
 
       <TableCell className="max-w-[300px]">
-        <div className="truncate">
-          <ProductTableCell
-            field="description"
-            value={isEditing ? editedProduct?.description : product.description}
-            isEditing={isEditing}
-            onEdit={handleCellEdit}
-            onChange={handleCellChange("description")}
-            onSave={onSave}
-          />
-        </div>
+        <ProductTableCell
+          field="description"
+          value={isEditing ? editedProduct?.description : product.description}
+          isEditing={isEditing}
+          onEdit={() => onEdit(product)}
+          onChange={handleCellChange("description")}
+          onSave={onSave}
+        />
       </TableCell>
 
       <TableCell className="text-right">
@@ -117,7 +82,7 @@ export const ProductTableRow = ({
           field="price"
           value={isEditing ? editedProduct?.price : product.price}
           isEditing={isEditing}
-          onEdit={handleCellEdit}
+          onEdit={() => onEdit(product)}
           onChange={handleCellChange("price")}
           onSave={onSave}
         />
@@ -130,7 +95,7 @@ export const ProductTableRow = ({
               field="sku"
               value={isEditing ? editedProduct?.sku : product.sku}
               isEditing={isEditing}
-              onEdit={handleCellEdit}
+              onEdit={() => onEdit(product)}
               onChange={handleCellChange("sku")}
               onSave={onSave}
             />
@@ -140,7 +105,7 @@ export const ProductTableRow = ({
               field="stock_quantity"
               value={isEditing ? editedProduct?.stock_quantity : product.stock_quantity}
               isEditing={isEditing}
-              onEdit={handleCellEdit}
+              onEdit={() => onEdit(product)}
               onChange={handleCellChange("stock_quantity")}
               onSave={onSave}
             />
@@ -153,7 +118,7 @@ export const ProductTableRow = ({
           field="category"
           value={isEditing ? editedProduct?.category : product.category}
           isEditing={isEditing}
-          onEdit={handleCellEdit}
+          onEdit={() => onEdit(product)}
           onChange={handleCellChange("category")}
           onSave={onSave}
         />
@@ -161,49 +126,16 @@ export const ProductTableRow = ({
 
       <TableCell>
         <div className="flex items-center gap-2">
-          {isEditing ? (
-            <>
-              <Button variant="ghost" size="icon" onClick={onSave}>
-                <Save className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" onClick={onCancel}>
-                <X className="h-4 w-4" />
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant="ghost" size="icon" onClick={() => onEdit(product)}>
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={handleDelete}
-                disabled={isDeleting}
-              >
-                {isDeleting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Trash className="h-4 w-4" />
-                )}
-              </Button>
-              <Button variant="ghost" size="icon" onClick={() => onMediaClick(product)}>
-                <ImageIcon className="h-4 w-4" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={handleDuplicate}
-                disabled={isDuplicating}
-              >
-                {isDuplicating ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
-            </>
-          )}
+          <ProductActions
+            product={product}
+            isEditing={isEditing}
+            onEdit={() => onEdit(product)}
+            onSave={onSave}
+            onCancel={onCancel}
+            onDelete={() => onDelete(product.id)}
+            onMediaClick={() => onMediaClick(product)}
+            onDuplicate={onDuplicate ? () => onDuplicate([product.id]) : undefined}
+          />
         </div>
       </TableCell>
     </TableRow>
