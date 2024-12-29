@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Product } from "../types";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef } from "react";
 
 type ProductTableCellProps = {
   field: keyof Product;
@@ -24,6 +25,14 @@ export const ProductTableCell = ({
   onSave,
   className,
 }: ProductTableCellProps) => {
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
+
   const handleDoubleClick = () => {
     if (!isEditing) {
       onEdit();
@@ -32,6 +41,9 @@ export const ProductTableCell = ({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      onSave?.();
+    } else if (e.key === 'Escape') {
       e.preventDefault();
       onSave?.();
     }
@@ -48,6 +60,7 @@ export const ProductTableCell = ({
       return (
         <div className={cn("min-w-[300px]", className)}>
           <Textarea
+            ref={inputRef as React.RefObject<HTMLTextAreaElement>}
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -62,6 +75,7 @@ export const ProductTableCell = ({
       return (
         <div className={className}>
           <Input
+            ref={inputRef as React.RefObject<HTMLInputElement>}
             type="number"
             value={value || ""}
             onChange={(e) => onChange(field === "price" ? parseFloat(e.target.value) : parseInt(e.target.value))}
@@ -99,6 +113,7 @@ export const ProductTableCell = ({
     return (
       <div className={className}>
         <Input
+          ref={inputRef as React.RefObject<HTMLInputElement>}
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -112,7 +127,11 @@ export const ProductTableCell = ({
   return (
     <div 
       onDoubleClick={handleDoubleClick} 
-      className={cn("cursor-pointer truncate", className)}
+      className={cn(
+        "cursor-pointer truncate", 
+        field === "description" && "max-w-[300px]",
+        className
+      )}
     >
       {field === "status" ? (
         <span className={`capitalize ${value === 'active' ? 'text-green-600' : 'text-gray-500'}`}>

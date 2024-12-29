@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProductTable } from "./ProductTable";
+import { ProductTableContainer } from "./table/ProductTableContainer";
 import { useProducts } from "@/hooks/useProducts";
 import { ProductTableToolbar } from "./table/ProductTableToolbar";
 import { useToast } from "@/components/ui/use-toast";
@@ -66,7 +66,7 @@ export const ProductManagement = ({ storefrontId }: ProductManagementProps) => {
         onImport={handleImport}
         onAddProduct={() => setIsFormOpen(true)}
       />
-      <ProductTable
+      <ProductTableContainer
         storefrontId={storefrontId}
         products={products}
         onProductUpdate={refetch}
