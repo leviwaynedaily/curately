@@ -156,6 +156,7 @@ export const ProductTable = ({
             showHiddenFields={showHiddenFields}
             selectedProducts={selectedProducts}
             onToggleProduct={handleToggleProduct}
+            onDuplicate={onDuplicate}
           />
         </Table>
       </div>

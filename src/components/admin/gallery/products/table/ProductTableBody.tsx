@@ -16,6 +16,7 @@ type ProductTableBodyProps = {
   showHiddenFields: boolean;
   selectedProducts: Set<string>;
   onToggleProduct: (productId: string) => void;
+  onDuplicate: (productIds: string[]) => void;
 };
 
 export const ProductTableBody = ({
@@ -31,6 +32,7 @@ export const ProductTableBody = ({
   showHiddenFields,
   selectedProducts,
   onToggleProduct,
+  onDuplicate,
 }: ProductTableBodyProps) => {
   return (
     <TableBody>
@@ -50,6 +52,7 @@ export const ProductTableBody = ({
           className={index % 2 === 1 ? tableStyles.alternateRow : ""}
           selected={selectedProducts.has(product.id)}
           onToggleSelect={() => onToggleProduct(product.id)}
+          onDuplicate={onDuplicate}
         />
       ))}
     </TableBody>

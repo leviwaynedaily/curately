@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Edit, Save, X, Trash, Image as ImageIcon } from "lucide-react";
+import { Edit, Save, X, Trash, Image as ImageIcon, Copy } from "lucide-react";
 import { Product } from "./types";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { ProductTableCell } from "./table/ProductTableCell";
@@ -21,6 +21,7 @@ type ProductTableRowProps = {
   className?: string;
   selected?: boolean;
   onToggleSelect?: () => void;
+  onDuplicate?: (productIds: string[]) => void;
 };
 
 export const ProductTableRow = ({
@@ -37,6 +38,7 @@ export const ProductTableRow = ({
   className,
   selected,
   onToggleSelect,
+  onDuplicate,
 }: ProductTableRowProps) => {
   const handleCellChange = (field: keyof Product) => (value: any) => {
     onProductChange(field, value);
@@ -45,6 +47,13 @@ export const ProductTableRow = ({
   const handleCellEdit = () => {
     if (!isEditing) {
       onEdit(product);
+    }
+  };
+
+  const handleDuplicate = () => {
+    console.log("Duplicating single product:", product.id);
+    if (onDuplicate) {
+      onDuplicate([product.id]);
     }
   };
 
@@ -152,6 +161,9 @@ export const ProductTableRow = ({
               </Button>
               <Button variant="ghost" size="icon" onClick={() => onMediaClick(product)}>
                 <ImageIcon className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={handleDuplicate}>
+                <Copy className="h-4 w-4" />
               </Button>
             </>
           )}
