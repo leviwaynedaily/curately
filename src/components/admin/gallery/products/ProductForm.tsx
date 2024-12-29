@@ -5,6 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type ProductFormProps = {
   isOpen: boolean;
@@ -20,6 +22,7 @@ export const ProductForm = ({
   onProductCreated,
 }: ProductFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadingMedia, setUploadingMedia] = useState(false);
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
@@ -29,10 +32,71 @@ export const ProductForm = ({
     category: "",
     stock_quantity: "0",
   });
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    console.log("Selected media files:", files);
+    
+    setMediaFiles(prev => [...prev, ...files]);
+    
+    // Create preview URLs
+    const newPreviewUrls = files.map(file => URL.createObjectURL(file));
+    setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
+  };
+
+  const removeMedia = (index: number) => {
+    setMediaFiles(prev => prev.filter((_, i) => i !== index));
+    URL.revokeObjectURL(previewUrls[index]);
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadMedia = async (productId: string) => {
+    console.log("Starting media upload for product:", productId);
+    setUploadingMedia(true);
+
+    try {
+      for (let i = 0; i < mediaFiles.length; i++) {
+        const file = mediaFiles[i];
+        const fileExt = file.name.split(".").pop();
+        const filePath = `${productId}/${crypto.randomUUID()}.${fileExt}`;
+        
+        console.log(`Uploading file ${i + 1}/${mediaFiles.length}:`, file.name);
+
+        const { error: uploadError } = await supabase.storage
+          .from("gallery_images")
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { error: dbError } = await supabase
+          .from("product_media")
+          .insert({
+            product_id: productId,
+            file_path: filePath,
+            media_type: file.type.startsWith("video/") ? "video" : "image",
+            is_primary: i === 0, // First media file is set as primary
+            title: file.name,
+          });
+
+        if (dbError) throw dbError;
+        
+        console.log(`Successfully uploaded file ${i + 1}/${mediaFiles.length}`);
+      }
+
+      console.log("All media files uploaded successfully");
+    } catch (error) {
+      console.error("Error uploading media:", error);
+      throw error;
+    } finally {
+      setUploadingMedia(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,6 +123,11 @@ export const ProductForm = ({
       if (error) throw error;
 
       console.log("Product created successfully:", product);
+
+      if (mediaFiles.length > 0) {
+        await uploadMedia(product.id);
+      }
+
       toast({ description: "Product created successfully" });
       onProductCreated();
       onClose();
@@ -156,12 +225,64 @@ export const ProductForm = ({
             />
           </div>
 
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">
+              Media
+            </label>
+            <div className="grid grid-cols-4 gap-4">
+              {previewUrls.map((url, index) => (
+                <div key={index} className="relative aspect-square">
+                  <img
+                    src={url}
+                    alt={`Preview ${index + 1}`}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute -top-2 -right-2 h-6 w-6"
+                    onClick={() => removeMedia(index)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                className={cn(
+                  "aspect-square flex flex-col items-center justify-center gap-2",
+                  "border-2 border-dashed",
+                  uploadingMedia && "opacity-50 cursor-not-allowed"
+                )}
+                onClick={() => document.getElementById("media-upload")?.click()}
+                disabled={uploadingMedia}
+              >
+                <ImageIcon className="h-6 w-6" />
+                <span className="text-xs">Add Media</span>
+              </Button>
+            </div>
+            <Input
+              id="media-upload"
+              type="file"
+              accept="image/*,video/*"
+              multiple
+              className="hidden"
+              onChange={handleMediaSelect}
+              disabled={uploadingMedia}
+            />
+          </div>
+
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Creating..." : "Create Product"}
+            <Button 
+              type="submit" 
+              disabled={isLoading || uploadingMedia}
+            >
+              {isLoading || uploadingMedia ? "Creating..." : "Create Product"}
             </Button>
           </div>
         </form>
