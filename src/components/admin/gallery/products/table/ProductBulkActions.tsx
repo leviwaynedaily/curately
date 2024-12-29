@@ -24,6 +24,16 @@ export const ProductBulkActions = ({
 }: ProductBulkActionsProps) => {
   if (products.length === 0) return null;
 
+  const handleDuplicate = () => {
+    console.log("Duplicating selected products:", Array.from(selectedProducts));
+    onDuplicate(Array.from(selectedProducts));
+  };
+
+  const handleDelete = () => {
+    console.log("Deleting selected products:", Array.from(selectedProducts));
+    onDelete(Array.from(selectedProducts));
+  };
+
   return (
     <div className="flex items-center gap-2">
       {selectedProducts.size > 0 && (
@@ -35,13 +45,13 @@ export const ProductBulkActions = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => onDuplicate(Array.from(selectedProducts))}>
+            <DropdownMenuItem onClick={handleDuplicate}>
               <Copy className="h-4 w-4 mr-2" />
               Duplicate
             </DropdownMenuItem>
             <DropdownMenuItem
               className="text-destructive"
-              onClick={() => onDelete(Array.from(selectedProducts))}
+              onClick={handleDelete}
             >
               <Trash className="h-4 w-4 mr-2" />
               Delete

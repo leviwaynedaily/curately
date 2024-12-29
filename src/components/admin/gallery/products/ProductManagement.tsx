@@ -24,24 +24,39 @@ export const ProductManagement = ({ storefrontId }: ProductManagementProps) => {
 
   const handleDuplicateProducts = async (productIds: string[]) => {
     try {
+      console.log("Duplicating products:", productIds);
+      
       for (const productId of productIds) {
         const product = products.find(p => p.id === productId);
-        if (!product) continue;
+        if (!product) {
+          console.error("Product not found:", productId);
+          continue;
+        }
+
+        // Create a copy of the product without id and timestamps
+        const productCopy = {
+          storefront_id: product.storefront_id,
+          name: `${product.name} (Copy)`,
+          description: product.description,
+          price: product.price,
+          sku: product.sku,
+          category: product.category,
+          status: product.status,
+          stock_quantity: product.stock_quantity
+        };
 
         const { data: newProduct, error } = await supabase
           .from("products")
-          .insert({
-            ...product,
-            id: undefined,
-            name: `${product.name} (Copy)`,
-            created_at: undefined,
-            updated_at: undefined,
-          })
+          .insert(productCopy)
           .select()
           .single();
 
-        if (error) throw error;
-        console.log("Product duplicated:", newProduct);
+        if (error) {
+          console.error("Error duplicating product:", error);
+          throw error;
+        }
+
+        console.log("Product duplicated successfully:", newProduct);
       }
 
       toast({ description: "Products duplicated successfully" });
