@@ -9,7 +9,10 @@ type GalleryDescriptionFieldProps = {
 };
 
 export const GalleryDescriptionField = ({ form }: GalleryDescriptionFieldProps) => {
-  console.log("Current show_description value:", form.getValues("show_description")); // Debug log
+  console.log("GalleryDescriptionField render:", {
+    formValues: form.getValues(),
+    showDescription: form.getValues("show_description"),
+  });
 
   return (
     <div className="space-y-4">
@@ -39,10 +42,10 @@ export const GalleryDescriptionField = ({ form }: GalleryDescriptionFieldProps) 
           <FormItem className="flex flex-row items-start space-x-3 space-y-0">
             <FormControl>
               <Checkbox
-                checked={field.value === true}
+                checked={field.value}
                 onCheckedChange={(checked) => {
                   field.onChange(checked);
-                  console.log("Checkbox changed to:", checked); // Debug log
+                  console.log("Checkbox changed to:", checked);
                 }}
               />
             </FormControl>
