@@ -1,24 +1,17 @@
 import { useParams } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useForm } from "react-hook-form";
-import { GalleryCustomizationFields } from "@/components/admin/gallery/GalleryCustomizationFields";
-import { GalleryInstructionsFields } from "@/components/admin/gallery/GalleryInstructionsFields";
-import { GalleryVerificationFields } from "@/components/admin/gallery/GalleryVerificationFields";
-import { StorefrontBasicInfo } from "@/components/admin/gallery/edit/StorefrontBasicInfo";
-import { StorefrontHeader } from "@/components/admin/gallery/edit/StorefrontHeader";
 import { GalleryFormValues } from "@/lib/validations/gallery";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { Form } from "@/components/ui/form";
-import { ChevronRight, Loader2 } from "lucide-react";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { StorefrontTabs } from "@/components/admin/gallery/edit/StorefrontTabs";
+import { StorefrontHeader } from "@/components/admin/gallery/edit/StorefrontHeader";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
@@ -88,76 +81,16 @@ const StorefrontEdit = () => {
 
   const MainContent = () => (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <a href="/admin" className="hover:text-foreground transition-colors">
-            Storefronts
-          </a>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground">{storefront.name}</span>
-        </div>
-        <div className="flex items-center gap-4">
-          {!isMobile && (
-            <div className="flex items-center gap-2">
-              <Label htmlFor="show-preview" className="text-sm">
-                Live Preview
-              </Label>
-              <Switch
-                id="show-preview"
-                checked={showPreview}
-                onCheckedChange={setShowPreview}
-              />
-            </div>
-          )}
-          <Button 
-            onClick={handleSave} 
-            disabled={isSaving || !form.formState.isDirty}
-            variant="outline"
-            className={cn(
-              "transition-colors",
-              form.formState.isDirty && "bg-primary hover:bg-primary/90 text-primary-foreground"
-            )}
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              'Save Changes'
-            )}
-          </Button>
-        </div>
-      </div>
-
-      <StorefrontHeader storefront={storefront} />
+      <StorefrontHeader 
+        storefront={storefront} 
+        form={form}
+        isSaving={isSaving}
+        onSave={handleSave}
+      />
       
       <Form {...form}>
         <form>
-          <Tabs defaultValue="basic" className="space-y-4">
-            <TabsList className="w-full justify-start">
-              <TabsTrigger value="basic">Basic Information</TabsTrigger>
-              <TabsTrigger value="customization">Customization</TabsTrigger>
-              <TabsTrigger value="verification">Age Verification</TabsTrigger>
-              <TabsTrigger value="instructions">Instructions</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="basic" className="space-y-4">
-              <StorefrontBasicInfo storefront={storefront} />
-            </TabsContent>
-
-            <TabsContent value="customization" className="space-y-4">
-              <GalleryCustomizationFields form={form} />
-            </TabsContent>
-
-            <TabsContent value="verification" className="space-y-4">
-              <GalleryVerificationFields form={form} />
-            </TabsContent>
-
-            <TabsContent value="instructions" className="space-y-4">
-              <GalleryInstructionsFields form={form} />
-            </TabsContent>
-          </Tabs>
+          <StorefrontTabs form={form} />
         </form>
       </Form>
     </div>

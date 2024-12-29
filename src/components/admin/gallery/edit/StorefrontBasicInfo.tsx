@@ -1,62 +1,22 @@
-import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useForm } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
+import { GalleryFormValues } from "@/lib/validations/gallery";
 import { GalleryNameField } from "../GalleryNameField";
 import { GalleryDescriptionField } from "../GalleryDescriptionField";
-import { Form } from "@/components/ui/form";
-import { GalleryFormValues } from "@/lib/validations/gallery";
 
 type StorefrontBasicInfoProps = {
-  storefront: any;
+  form: UseFormReturn<GalleryFormValues>;
 };
 
-export const StorefrontBasicInfo = ({ storefront }: StorefrontBasicInfoProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  const form = useForm<GalleryFormValues>({
-    defaultValues: {
-      name: storefront.name || "",
-      description: storefront.description || "",
-      business_id: storefront.business_id || "",
-      status: storefront.status || "active",
-    },
+export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
+  console.log("StorefrontBasicInfo render:", {
+    isDirty: form.formState.isDirty,
+    dirtyFields: form.formState.dirtyFields
   });
 
-  const handleSubmit = async (values: GalleryFormValues) => {
-    setIsLoading(true);
-    console.log("Updating storefront basic info:", values);
-
-    try {
-      const { error } = await supabase
-        .from("storefronts")
-        .update(values)
-        .eq("id", storefront.id);
-
-      if (error) throw error;
-
-      toast({ description: "Storefront updated successfully" });
-      queryClient.invalidateQueries({ queryKey: ["storefront", storefront.id] });
-    } catch (error) {
-      console.error("Error updating storefront:", error);
-      toast({
-        variant: "destructive",
-        description: "Failed to update storefront",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        <GalleryNameField form={form} />
-        <GalleryDescriptionField form={form} />
-      </form>
-    </Form>
+    <div className="space-y-4">
+      <GalleryNameField form={form} />
+      <GalleryDescriptionField form={form} />
+    </div>
   );
 };
