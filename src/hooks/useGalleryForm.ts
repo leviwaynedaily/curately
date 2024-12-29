@@ -38,6 +38,7 @@ type UseGalleryFormProps = {
     instructions_button_text?: string;
     pwa_icon_192?: string;
     pwa_icon_512?: string;
+    show_description?: boolean;
   };
 };
 
@@ -49,10 +50,7 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
   console.log("Initializing gallery form with data:", {
     businessId,
     galleryId: gallery?.id,
-    pwaIcons: {
-      icon192: gallery?.pwa_icon_192,
-      icon512: gallery?.pwa_icon_512
-    }
+    showDescription: gallery?.show_description,
   });
 
   const form = useForm<GalleryFormValues>({
@@ -64,18 +62,12 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
     if (gallery) {
       console.log("Resetting form with gallery data:", {
         id: gallery.id,
-        pwaIcons: {
-          icon192: gallery.pwa_icon_192,
-          icon512: gallery.pwa_icon_512
-        }
+        showDescription: gallery.show_description,
       });
       
       const defaultValues = getDefaultValues(gallery, businessId);
       console.log("Default values for form:", {
-        pwaIcons: {
-          icon192: defaultValues.pwa_icon_192,
-          icon512: defaultValues.pwa_icon_512
-        }
+        showDescription: defaultValues.show_description,
       });
       
       form.reset(defaultValues);
@@ -83,9 +75,11 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
   }, [gallery, form, businessId]);
 
   const handleSubmit = async (values: GalleryFormValues) => {
+    console.log("Submitting form with values:", values);
     setIsLoading(true);
     try {
       await useGalleryFormSubmit(toast, queryClient, onClose, gallery)(values);
+      console.log("Form submitted successfully");
     } finally {
       setIsLoading(false);
     }

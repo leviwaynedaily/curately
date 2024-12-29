@@ -19,7 +19,7 @@ const StorefrontEdit = () => {
     showPreview
   });
 
-  const { data: storefront, isLoading } = useQuery({
+  const { data: storefront, isLoading, refetch } = useQuery({
     queryKey: ["storefront", storefrontId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -49,11 +49,15 @@ const StorefrontEdit = () => {
   });
 
   const handleSave = async () => {
+    console.log("Starting save with form values:", form.getValues());
     setIsSaving(true);
     try {
       await handleSubmit(form.getValues());
       // Reset form state after successful save
       form.reset(form.getValues());
+      // Refetch the data to update the preview
+      await refetch();
+      console.log("Save completed and data refetched");
     } finally {
       setIsSaving(false);
     }
