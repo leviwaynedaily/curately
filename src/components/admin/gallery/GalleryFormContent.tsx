@@ -1,7 +1,4 @@
 import { Form } from "@/components/ui/form";
-import { GalleryNameField } from "./GalleryNameField";
-import { GalleryBusinessField } from "./GalleryBusinessField";
-import { GalleryDescriptionField } from "./GalleryDescriptionField";
 import { GalleryVerificationFields } from "./GalleryVerificationFields";
 import { GalleryCustomizationFields } from "./GalleryCustomizationFields";
 import { GalleryInstructionsFields } from "./GalleryInstructionsFields";
@@ -10,6 +7,7 @@ import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
+import { GalleryBasicFields } from "./GalleryBasicFields";
 
 type GalleryFormContentProps = {
   form: UseFormReturn<GalleryFormValues>;
@@ -36,7 +34,6 @@ export const GalleryFormContent = ({
   const handleSubmit = async (values: GalleryFormValues) => {
     try {
       await onSubmit(values);
-      // Stay on the current tab after saving
       handleTabChange(currentTab);
     } catch (error) {
       console.error("Error saving form:", error);
@@ -56,9 +53,7 @@ export const GalleryFormContent = ({
           
           <div className="h-[600px] overflow-y-auto mt-4">
             <TabsContent value="basic" className="space-y-4 mt-0">
-              <GalleryNameField form={form} />
-              <GalleryBusinessField form={form} />
-              <GalleryDescriptionField form={form} />
+              <GalleryBasicFields form={form} />
             </TabsContent>
             
             <TabsContent value="verification" className="space-y-4 mt-0">

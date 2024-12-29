@@ -2,9 +2,9 @@ import { FormField, FormItem, FormLabel, FormControl, FormDescription } from "@/
 import { Switch } from "@/components/ui/switch";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
-import { GalleryLogoField } from "./GalleryLogoField";
 import { GalleryPasswordSettings } from "./verification/GalleryPasswordSettings";
 import { GalleryVerificationText } from "./verification/GalleryVerificationText";
+import { VerificationLogoField } from "./verification/VerificationLogoField";
 
 type GalleryVerificationFieldsProps = {
   form: UseFormReturn<GalleryFormValues>;
@@ -38,7 +38,7 @@ export const GalleryVerificationFields = ({ form }: GalleryVerificationFieldsPro
 
       {isAgeVerificationEnabled && (
         <div className="space-y-4 rounded-lg border p-4 animate-in slide-in-from-top duration-300">
-          <GalleryLogoField form={form} />
+          <VerificationLogoField form={form} />
           <GalleryPasswordSettings form={form} />
           <GalleryVerificationText form={form} />
         </div>
