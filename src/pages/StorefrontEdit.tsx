@@ -55,9 +55,15 @@ const StorefrontEdit = () => {
       await handleSubmit(form.getValues());
       // Reset form state after successful save
       form.reset(form.getValues());
-      // Refetch the data to update the preview
+      // Force refetch the data to update the preview
       await refetch();
-      console.log("Save completed and data refetched");
+      // Force reload the preview iframe
+      const previewIframe = document.querySelector('iframe') as HTMLIFrameElement;
+      if (previewIframe) {
+        console.log("Reloading preview iframe");
+        previewIframe.src = previewIframe.src;
+      }
+      console.log("Save completed and preview reloaded");
     } finally {
       setIsSaving(false);
     }
