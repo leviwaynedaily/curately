@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Product } from "../types";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type ProductTableCellProps = {
   field: keyof Product;
@@ -26,10 +26,16 @@ export const ProductTableCell = ({
   className,
 }: ProductTableCellProps) => {
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const [shouldPreventBlur, setShouldPreventBlur] = useState(false);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
-      inputRef.current.focus();
+      // Add a small delay before focusing to prevent immediate blur
+      const timeoutId = setTimeout(() => {
+        inputRef.current?.focus();
+        setShouldPreventBlur(false);
+      }, 100);
+      return () => clearTimeout(timeoutId);
     }
   }, [isEditing]);
 
@@ -37,6 +43,7 @@ export const ProductTableCell = ({
     console.log("Double click detected on field:", field);
     e.preventDefault();
     if (!isEditing) {
+      setShouldPreventBlur(true);
       onEdit();
     }
   };
@@ -52,7 +59,8 @@ export const ProductTableCell = ({
   };
 
   const handleBlur = () => {
-    if (isEditing) {
+    console.log("Blur event triggered for field:", field, "shouldPreventBlur:", shouldPreventBlur);
+    if (isEditing && !shouldPreventBlur) {
       onSave?.();
     }
   };
