@@ -31,3 +31,13 @@ export type Storefront = {
   pwa_icon_512?: string;
   show_description?: boolean;
 };
+
+export type StorefrontImage = {
+  id: string;
+  file_path: string;
+  title?: string | null;
+  description?: string | null;
+  media_type?: string | null;
+  price?: number | null;
+  is_featured?: boolean | null;
+};
