@@ -52,6 +52,8 @@ const StorefrontEdit = () => {
     setIsSaving(true);
     try {
       await handleSubmit(form.getValues());
+      // Reset form state after successful save
+      form.reset(form.getValues());
     } finally {
       setIsSaving(false);
     }
