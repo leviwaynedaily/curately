@@ -25,37 +25,52 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
     const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
     
     setIsUploading(true);
-    console.log(`Starting PWA icon ${size}x${size} upload...`);
+    console.log(`Starting PWA icon ${size}x${size} upload...`, { file });
 
     try {
+      // Validate file type
+      if (!file.type.includes('png')) {
+        throw new Error('Please upload a PNG file');
+      }
+
       const fileExt = file.name.split(".").pop();
       const filePath = `pwa-icons/${crypto.randomUUID()}.${fileExt}`;
 
-      const { error: uploadError } = await supabase.storage
+      console.log(`Uploading ${size}x${size} icon to path:`, filePath);
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from("gallery_images")
         .upload(filePath, file);
 
       if (uploadError) {
-        console.error("Error uploading PWA icon:", uploadError);
+        console.error(`Error uploading ${size}x${size} PWA icon:`, uploadError);
         throw uploadError;
       }
 
-      console.log(`PWA icon ${size}x${size} uploaded successfully to path:`, filePath);
+      console.log(`${size}x${size} icon uploaded successfully:`, uploadData);
 
+      // Set the form value and validate
       form.setValue(fieldName, filePath, { 
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true
       });
 
-      console.log("Form values after setting PWA icon:", form.getValues());
+      // Log form state after update
+      const formValues = form.getValues();
+      console.log(`Form values after setting ${size}x${size} PWA icon:`, {
+        formValues,
+        specificField: formValues[fieldName],
+        isDirty: form.formState.isDirty,
+        touchedFields: form.formState.touchedFields
+      });
       
       toast({ description: `${size}x${size} PWA icon uploaded successfully` });
     } catch (error) {
-      console.error("PWA icon upload failed:", error);
+      console.error(`PWA icon ${size}x${size} upload failed:`, error);
       toast({
         variant: "destructive",
-        description: "Failed to upload PWA icon. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to upload PWA icon. Please try again.",
       });
     } finally {
       setIsUploading(false);
@@ -64,10 +79,19 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
 
   const clearIcon = (size: "192" | "512") => {
     const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
+    console.log(`Clearing ${size}x${size} PWA icon`);
+    
     form.setValue(fieldName, "", { 
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true
+    });
+
+    // Log form state after clearing
+    console.log(`Form state after clearing ${size}x${size} PWA icon:`, {
+      values: form.getValues(),
+      isDirty: form.formState.isDirty,
+      touchedFields: form.formState.touchedFields
     });
   };
 
@@ -75,6 +99,12 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
     const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
     const isUploading = size === "192" ? isUploading192 : isUploading512;
     const value = form.watch(fieldName);
+
+    console.log(`Rendering ${size}x${size} PWA icon upload field:`, {
+      value,
+      isUploading,
+      fieldName
+    });
 
     return (
       <FormField
@@ -112,7 +142,7 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
                       className="w-full"
                     >
                       <Upload className="h-4 w-4 mr-2" />
-                      {isUploading ? "Uploading..." : `Upload ${size}x${size} Icon`}
+                      {isUploading ? "Uploading..." : `Upload ${size}x${size} Icon (PNG)`}
                     </Button>
                     <Input
                       id={`pwa-icon-${size}-upload`}
@@ -132,6 +162,13 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
       />
     );
   };
+
+  // Log initial form values
+  console.log("PWAIconsSection initial form values:", {
+    pwa_icon_192: form.watch("pwa_icon_192"),
+    pwa_icon_512: form.watch("pwa_icon_512"),
+    isDirty: form.formState.isDirty
+  });
 
   return (
     <div>
