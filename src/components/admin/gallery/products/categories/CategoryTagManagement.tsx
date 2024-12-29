@@ -4,22 +4,16 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pencil, Trash2, Plus, X, Check } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { CategoryList } from "./CategoryList";
+import { TagList } from "./TagList";
 
-type Category = {
-  name: string;
-  productCount?: number;
+type CategoryTagManagementProps = {
+  storefrontId: string;
 };
 
-type Tag = {
-  id: string;
-  name: string;
-  productCount?: number;
-};
-
-export const CategoryTagManagement = ({ storefrontId }: { storefrontId: string }) => {
+export const CategoryTagManagement = ({ storefrontId }: CategoryTagManagementProps) => {
   const [newCategory, setNewCategory] = useState("");
   const [newTag, setNewTag] = useState("");
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
@@ -28,7 +22,6 @@ export const CategoryTagManagement = ({ storefrontId }: { storefrontId: string }
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch categories (unique from products table)
   const { data: categories = [] } = useQuery({
     queryKey: ["categories", storefrontId],
     queryFn: async () => {
@@ -52,7 +45,6 @@ export const CategoryTagManagement = ({ storefrontId }: { storefrontId: string }
     },
   });
 
-  // Fetch tags
   const { data: tags = [] } = useQuery({
     queryKey: ["tags"],
     queryFn: async () => {
@@ -81,7 +73,7 @@ export const CategoryTagManagement = ({ storefrontId }: { storefrontId: string }
       const { error } = await supabase
         .from("products")
         .update({ category: newCategory.trim() })
-        .eq("id", "placeholder"); // This creates the category in the system
+        .eq("id", "placeholder");
 
       if (error) throw error;
 
@@ -222,68 +214,19 @@ export const CategoryTagManagement = ({ storefrontId }: { storefrontId: string }
             </Button>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Products</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categories.map((category) => (
-                <TableRow key={category.name}>
-                  <TableCell>
-                    {editingCategory === category.name ? (
-                      <div className="flex gap-2">
-                        <Input
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                        />
-                        <Button
-                          size="icon"
-                          onClick={() => handleUpdateCategory(category.name, editValue)}
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          onClick={() => setEditingCategory(null)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      category.name
-                    )}
-                  </TableCell>
-                  <TableCell>{category.productCount}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={() => {
-                          setEditingCategory(category.name);
-                          setEditValue(category.name);
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={() => handleDeleteCategory(category.name)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <CategoryList
+            categories={categories}
+            editingCategory={editingCategory}
+            editValue={editValue}
+            onEditStart={(name) => {
+              setEditingCategory(name);
+              setEditValue(name);
+            }}
+            onEditCancel={() => setEditingCategory(null)}
+            onEditSave={handleUpdateCategory}
+            onDelete={handleDeleteCategory}
+            onEditValueChange={setEditValue}
+          />
         </TabsContent>
 
         <TabsContent value="tags" className="space-y-4">
@@ -299,68 +242,19 @@ export const CategoryTagManagement = ({ storefrontId }: { storefrontId: string }
             </Button>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Products</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {tags.map((tag) => (
-                <TableRow key={tag.id}>
-                  <TableCell>
-                    {editingTag === tag.id ? (
-                      <div className="flex gap-2">
-                        <Input
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                        />
-                        <Button
-                          size="icon"
-                          onClick={() => handleUpdateTag(tag.id, editValue)}
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          onClick={() => setEditingTag(null)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      tag.name
-                    )}
-                  </TableCell>
-                  <TableCell>{tag.productCount}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={() => {
-                          setEditingTag(tag.id);
-                          setEditValue(tag.name);
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={() => handleDeleteTag(tag.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <TagList
+            tags={tags}
+            editingTag={editingTag}
+            editValue={editValue}
+            onEditStart={(id, name) => {
+              setEditingTag(id);
+              setEditValue(name);
+            }}
+            onEditCancel={() => setEditingTag(null)}
+            onEditSave={handleUpdateTag}
+            onDelete={handleDeleteTag}
+            onEditValueChange={setEditValue}
+          />
         </TabsContent>
       </Tabs>
     </div>

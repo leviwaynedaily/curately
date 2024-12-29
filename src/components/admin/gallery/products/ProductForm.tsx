@@ -1,20 +1,18 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Product } from "./types";
+import { ProductFormFields } from "./form/ProductFormFields";
+import { ProductMediaUpload } from "./form/ProductMediaUpload";
+import { ProductFormActions } from "./form/ProductFormActions";
 
 type ProductFormProps = {
   isOpen: boolean;
   onClose: () => void;
   storefrontId: string;
   onProductCreated: () => void;
-  product?: Product; // Add this prop for editing mode
+  product?: Product;
 };
 
 export const ProductForm = ({
@@ -38,7 +36,6 @@ export const ProductForm = ({
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
-  // Initialize form data when editing
   useEffect(() => {
     if (product) {
       setFormData({
@@ -50,7 +47,6 @@ export const ProductForm = ({
         stock_quantity: product.stock_quantity?.toString() || "0",
       });
 
-      // Set preview URLs for existing media
       if (product.product_media) {
         const urls = product.product_media.map(media => 
           `${supabase.storage.from('gallery_images').getPublicUrl(media.file_path).data.publicUrl}`
@@ -71,7 +67,6 @@ export const ProductForm = ({
     
     setMediaFiles(prev => [...prev, ...files]);
     
-    // Create preview URLs
     const newPreviewUrls = files.map(file => URL.createObjectURL(file));
     setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
   };
@@ -106,7 +101,7 @@ export const ProductForm = ({
             product_id: productId,
             file_path: filePath,
             media_type: file.type.startsWith("video/") ? "video" : "image",
-            is_primary: i === 0, // First media file is set as primary
+            is_primary: i === 0,
             title: file.name,
           });
 
@@ -131,7 +126,6 @@ export const ProductForm = ({
 
     try {
       if (product) {
-        // Update existing product
         const { error } = await supabase
           .from("products")
           .update({
@@ -149,7 +143,6 @@ export const ProductForm = ({
         console.log("Product updated successfully");
         toast({ description: "Product updated successfully" });
       } else {
-        // Create new product
         const { data: newProduct, error } = await supabase
           .from("products")
           .insert({
@@ -196,142 +189,24 @@ export const ProductForm = ({
           <DialogTitle>{product ? "Edit Product" : "Add New Product"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1">
-              Name *
-            </label>
-            <Input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <ProductFormFields
+            formData={formData}
+            handleChange={handleChange}
+          />
           
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium mb-1">
-              Description
-            </label>
-            <Textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="price" className="block text-sm font-medium mb-1">
-              Price
-            </label>
-            <Input
-              id="price"
-              name="price"
-              type="number"
-              step="0.01"
-              value={formData.price}
-              onChange={handleChange}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="sku" className="block text-sm font-medium mb-1">
-              SKU
-            </label>
-            <Input
-              id="sku"
-              name="sku"
-              value={formData.sku}
-              onChange={handleChange}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="category" className="block text-sm font-medium mb-1">
-              Category
-            </label>
-            <Input
-              id="category"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="stock_quantity" className="block text-sm font-medium mb-1">
-              Stock Quantity
-            </label>
-            <Input
-              id="stock_quantity"
-              name="stock_quantity"
-              type="number"
-              value={formData.stock_quantity}
-              onChange={handleChange}
-            />
-          </div>
+          <ProductMediaUpload
+            previewUrls={previewUrls}
+            uploadingMedia={uploadingMedia}
+            onMediaSelect={handleMediaSelect}
+            onRemoveMedia={removeMedia}
+          />
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">
-              Media
-            </label>
-            <div className="grid grid-cols-4 gap-4">
-              {previewUrls.map((url, index) => (
-                <div key={index} className="relative aspect-square">
-                  <img
-                    src={url}
-                    alt={`Preview ${index + 1}`}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="icon"
-                    className="absolute -top-2 -right-2 h-6 w-6"
-                    onClick={() => removeMedia(index)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                className={cn(
-                  "aspect-square flex flex-col items-center justify-center gap-2",
-                  "border-2 border-dashed",
-                  uploadingMedia && "opacity-50 cursor-not-allowed"
-                )}
-                onClick={() => document.getElementById("media-upload")?.click()}
-                disabled={uploadingMedia}
-              >
-                <ImageIcon className="h-6 w-6" />
-                <span className="text-xs">Add Media</span>
-              </Button>
-            </div>
-            <Input
-              id="media-upload"
-              type="file"
-              accept="image/*,video/*"
-              multiple
-              className="hidden"
-              onChange={handleMediaSelect}
-              disabled={uploadingMedia}
-            />
-          </div>
-
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button 
-              type="submit" 
-              disabled={isLoading || uploadingMedia}
-            >
-              {isLoading || uploadingMedia ? (product ? "Saving..." : "Creating...") : (product ? "Save Changes" : "Create Product")}
-            </Button>
-          </div>
+          <ProductFormActions
+            isLoading={isLoading}
+            uploadingMedia={uploadingMedia}
+            onClose={onClose}
+            isEditMode={!!product}
+          />
         </form>
       </DialogContent>
     </Dialog>
