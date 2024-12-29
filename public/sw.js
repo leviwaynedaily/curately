@@ -1,6 +1,7 @@
 const CACHE_NAME = 'curately-cache-v1';
 
 self.addEventListener('install', (event) => {
+  console.log('Service Worker installing...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll([
@@ -65,8 +66,8 @@ self.addEventListener('fetch', (event) => {
             })
             .catch(error => {
               console.error('Fetch failed:', error);
-              // Return a custom offline page or throw the error
-              throw error;
+              // Return the offline page if available
+              return caches.match('/offline.html');
             });
         })
     );
@@ -81,6 +82,7 @@ self.addEventListener('fetch', (event) => {
 
 // Clean up old caches on activation
 self.addEventListener('activate', (event) => {
+  console.log('Service Worker activating...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(

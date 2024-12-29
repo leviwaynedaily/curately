@@ -53,7 +53,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         icons: icons
       });
 
-      // Create dynamic manifest
+      // Create dynamic manifest with proper scope and start_url
       const manifest = {
         name: storefront.name,
         short_name: storefront.name,
