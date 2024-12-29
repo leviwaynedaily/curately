@@ -112,7 +112,12 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
         name={fieldName}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{`PWA Icon (${size}x${size})`}</FormLabel>
+            <FormLabel className="flex items-center gap-2">
+              {`PWA Icon ${size}×${size}`}
+              <span className="text-sm text-muted-foreground font-normal">
+                (PNG only)
+              </span>
+            </FormLabel>
             <FormControl>
               <div className="space-y-4">
                 {field.value ? (
@@ -142,7 +147,7 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
                       className="w-full"
                     >
                       <Upload className="h-4 w-4 mr-2" />
-                      {isUploading ? "Uploading..." : `Upload ${size}x${size} Icon (PNG)`}
+                      {isUploading ? "Uploading..." : "Upload Icon"}
                     </Button>
                     <Input
                       id={`pwa-icon-${size}-upload`}
@@ -163,17 +168,23 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
     );
   };
 
-  // Log initial form values
-  console.log("PWAIconsSection initial form values:", {
-    pwa_icon_192: form.watch("pwa_icon_192"),
-    pwa_icon_512: form.watch("pwa_icon_512"),
-    isDirty: form.formState.isDirty
-  });
-
   return (
     <div>
-      <h4 className="font-medium mb-4">PWA Icons</h4>
-      <div className="space-y-4">
+      <div className="space-y-2 mb-6">
+        <h4 className="font-medium">PWA Icons</h4>
+        <div className="text-sm text-muted-foreground space-y-1">
+          <p>Upload icons for your Progressive Web App (PWA). These icons will be displayed when users install your storefront on their devices.</p>
+          <p>Requirements:</p>
+          <ul className="list-disc pl-4 space-y-1">
+            <li>PNG format only</li>
+            <li>192×192 icon: Used for app icons on most devices</li>
+            <li>512×512 icon: Used for larger displays and high-resolution devices</li>
+            <li>Transparent background recommended</li>
+            <li>Keep the file size under 1MB for better performance</li>
+          </ul>
+        </div>
+      </div>
+      <div className="space-y-6">
         {renderIconUpload("192")}
         {renderIconUpload("512")}
       </div>
