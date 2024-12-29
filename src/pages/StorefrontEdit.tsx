@@ -13,6 +13,7 @@ import { AdminLayout } from "@/layouts/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Form } from "@/components/ui/form";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
@@ -68,30 +69,34 @@ const StorefrontEdit = () => {
 
         <StorefrontHeader storefront={storefront} />
         
-        <Tabs defaultValue="basic" className="space-y-4">
-          <TabsList className="w-full justify-start">
-            <TabsTrigger value="basic">Basic Information</TabsTrigger>
-            <TabsTrigger value="customization">Customization</TabsTrigger>
-            <TabsTrigger value="verification">Age Verification</TabsTrigger>
-            <TabsTrigger value="instructions">Instructions</TabsTrigger>
-          </TabsList>
+        <Form {...form}>
+          <form>
+            <Tabs defaultValue="basic" className="space-y-4">
+              <TabsList className="w-full justify-start">
+                <TabsTrigger value="basic">Basic Information</TabsTrigger>
+                <TabsTrigger value="customization">Customization</TabsTrigger>
+                <TabsTrigger value="verification">Age Verification</TabsTrigger>
+                <TabsTrigger value="instructions">Instructions</TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="basic" className="space-y-4">
-            <StorefrontBasicInfo storefront={storefront} />
-          </TabsContent>
+              <TabsContent value="basic" className="space-y-4">
+                <StorefrontBasicInfo storefront={storefront} />
+              </TabsContent>
 
-          <TabsContent value="customization" className="space-y-4">
-            <GalleryCustomizationFields form={form} />
-          </TabsContent>
+              <TabsContent value="customization" className="space-y-4">
+                <GalleryCustomizationFields form={form} />
+              </TabsContent>
 
-          <TabsContent value="verification" className="space-y-4">
-            <GalleryVerificationFields form={form} />
-          </TabsContent>
+              <TabsContent value="verification" className="space-y-4">
+                <GalleryVerificationFields form={form} />
+              </TabsContent>
 
-          <TabsContent value="instructions" className="space-y-4">
-            <GalleryInstructionsFields form={form} />
-          </TabsContent>
-        </Tabs>
+              <TabsContent value="instructions" className="space-y-4">
+                <GalleryInstructionsFields form={form} />
+              </TabsContent>
+            </Tabs>
+          </form>
+        </Form>
       </div>
     </AdminLayout>
   );
