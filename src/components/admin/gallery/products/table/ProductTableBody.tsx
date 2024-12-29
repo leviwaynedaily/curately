@@ -14,6 +14,8 @@ type ProductTableBodyProps = {
   onProductChange: (field: keyof Product, value: any) => void;
   onMediaClick: (product: Product) => void;
   showHiddenFields: boolean;
+  selectedProducts: Set<string>;
+  onToggleProduct: (productId: string) => void;
 };
 
 export const ProductTableBody = ({
@@ -27,6 +29,8 @@ export const ProductTableBody = ({
   onProductChange,
   onMediaClick,
   showHiddenFields,
+  selectedProducts,
+  onToggleProduct,
 }: ProductTableBodyProps) => {
   return (
     <TableBody>
@@ -44,6 +48,8 @@ export const ProductTableBody = ({
           onMediaClick={onMediaClick}
           showHiddenFields={showHiddenFields}
           className={index % 2 === 1 ? tableStyles.alternateRow : ""}
+          selected={selectedProducts.has(product.id)}
+          onToggleSelect={() => onToggleProduct(product.id)}
         />
       ))}
     </TableBody>

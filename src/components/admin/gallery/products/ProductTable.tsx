@@ -7,6 +7,7 @@ import { ProductTableBody } from "./table/ProductTableBody";
 import { Product } from "./types";
 import { Input } from "@/components/ui/input";
 import { ProductBulkActions } from "./table/ProductBulkActions";
+import { ProductMediaDialog } from "./ProductMediaDialog";
 
 type ProductTableProps = {
   storefrontId: string;
