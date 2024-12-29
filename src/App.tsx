@@ -7,6 +7,7 @@ import Login from "@/pages/Login";
 import Admin from "@/pages/Admin";
 import StorefrontView from "@/pages/StorefrontView";
 import ProductManagement from "@/pages/ProductManagement";
+import StorefrontEdit from "@/pages/StorefrontEdit";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const queryClient = new QueryClient({
@@ -31,6 +32,10 @@ function App() {
             <Route 
               path="/admin/products/:storefrontId" 
               element={<ProtectedRoute><ProductManagement /></ProtectedRoute>} 
+            />
+            <Route 
+              path="/admin/storefront/:storefrontId" 
+              element={<ProtectedRoute><StorefrontEdit /></ProtectedRoute>} 
             />
             <Route path="/storefront/:storefrontId" element={<StorefrontView />} />
           </Routes>
