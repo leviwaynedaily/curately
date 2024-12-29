@@ -25,7 +25,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           src: icon192Url,
           sizes: "192x192",
           type: "image/png",
-          purpose: "any"
+          purpose: "any maskable"
         });
       } else {
         console.warn("No 192x192 PWA icon found in storefront configuration");
@@ -42,19 +42,25 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           src: icon512Url,
           sizes: "512x512",
           type: "image/png",
-          purpose: "any"
+          purpose: "any maskable"
         });
       } else {
         console.warn("No 512x512 PWA icon found in storefront configuration");
       }
+
+      // Get the base URL for the site
+      const baseUrl = window.location.origin;
+      const storefrontPath = `/storefront/${storefront.id}`;
+      const fullStorefrontUrl = `${baseUrl}${storefrontPath}`;
 
       // Create dynamic manifest with proper start_url and id
       const manifest = {
         name: storefront.name,
         short_name: storefront.name,
         description: storefront.description || `Welcome to ${storefront.name}`,
-        start_url: `/storefront/${storefront.id}`,
-        scope: `/storefront/${storefront.id}`,
+        id: storefrontPath,
+        start_url: fullStorefrontUrl,
+        scope: fullStorefrontUrl,
         display: "standalone",
         background_color: storefront.primary_color || "#FFFFFF",
         theme_color: storefront.accent_color || "#2A6041",
@@ -65,16 +71,21 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       console.log("Icons array length:", icons.length);
       console.log("Final icons configuration:", icons);
 
-      // Create and inject dynamic manifest
-      const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-      const manifestURL = URL.createObjectURL(manifestBlob);
-
       // Remove any existing manifest link
       const existingLink = document.querySelector('link[rel="manifest"]');
       if (existingLink) {
+        const oldBlobUrl = existingLink.href;
         existingLink.remove();
+        // Clean up old Blob URL
+        if (oldBlobUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(oldBlobUrl);
+        }
         console.log("Removed existing manifest link");
       }
+
+      // Create and inject dynamic manifest
+      const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+      const manifestURL = URL.createObjectURL(manifestBlob);
 
       // Add new manifest link
       const link = document.createElement('link');
@@ -130,5 +141,5 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         console.log("Cleaned up manifest URL");
       };
     }
-  }, [storefront]);
+  }, [storefront]); // Re-run when storefront changes
 };
