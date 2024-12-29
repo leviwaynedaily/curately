@@ -6,6 +6,10 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
   useEffect(() => {
     if (storefront) {
       console.log("Configuring PWA for storefront:", storefront.name);
+      console.log("PWA Icons configuration:", {
+        icon192: storefront.pwa_icon_192,
+        icon512: storefront.pwa_icon_512
+      });
 
       // Create dynamic manifest
       const manifest = {
@@ -32,6 +36,9 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           }
         ].filter(Boolean)
       };
+
+      console.log("Generated manifest:", manifest);
+      console.log("PWA icons in manifest:", manifest.icons);
 
       // Create and inject dynamic manifest
       const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
@@ -70,6 +77,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       // Update apple touch icons if available
       if (storefront.pwa_icon_192) {
         const iconUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl;
+        console.log("Setting Apple touch icon URL:", iconUrl);
         
         // Create array of sizes for apple touch icons
         const appleSizes = ['152', '167', '180', '192'];
