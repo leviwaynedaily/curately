@@ -28,11 +28,10 @@ export const useProducts = (storefrontId: string) => {
       }
 
       // Then fetch media for all products in a single query
-      const productIds = productsData.map(p => p.id);
       const { data: mediaData, error: mediaError } = await supabase
         .from("product_media")
         .select("*")
-        .in("product_id", productIds);
+        .in("product_id", productsData.map(p => p.id));
 
       if (mediaError) {
         console.error("Error fetching product media:", mediaError);
@@ -42,7 +41,10 @@ export const useProducts = (storefrontId: string) => {
       // Combine products with their media
       const productsWithMedia = productsData.map(product => ({
         ...product,
-        product_media: mediaData?.filter(media => media.product_id === product.id) || []
+        product_media: mediaData?.filter(media => media.product_id === product.id) || [],
+        primary_media: mediaData?.find(
+          media => media.product_id === product.id && media.is_primary
+        )?.file_path || null
       }));
 
       console.log("Products fetched successfully:", productsWithMedia);
