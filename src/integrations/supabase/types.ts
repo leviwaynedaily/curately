@@ -73,6 +73,9 @@ export type Database = {
           id: string
           is_primary: boolean | null
           media_type: string | null
+          optimization_status: string | null
+          optimized_size: number | null
+          original_size: number | null
           product_id: string | null
           title: string | null
           updated_at: string
@@ -84,6 +87,9 @@ export type Database = {
           id?: string
           is_primary?: boolean | null
           media_type?: string | null
+          optimization_status?: string | null
+          optimized_size?: number | null
+          original_size?: number | null
           product_id?: string | null
           title?: string | null
           updated_at?: string
@@ -95,6 +101,9 @@ export type Database = {
           id?: string
           is_primary?: boolean | null
           media_type?: string | null
+          optimization_status?: string | null
+          optimized_size?: number | null
+          original_size?: number | null
           product_id?: string | null
           title?: string | null
           updated_at?: string
