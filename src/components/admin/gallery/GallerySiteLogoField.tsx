@@ -26,7 +26,7 @@ export const GallerySiteLogoField = ({ form }: GallerySiteLogoFieldProps) => {
 
     try {
       const fileExt = file.name.split(".").pop();
-      const storefrontId = form.getValues().id;
+      const storefrontId = form.getValues("id");
       if (!storefrontId) {
         throw new Error("Storefront ID is required");
       }
