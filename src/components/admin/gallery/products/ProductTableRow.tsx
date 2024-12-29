@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Edit, Save, X, Trash, Image as ImageIcon, Copy } from "lucide-react";
+import { Edit, Save, X, Trash, Image as ImageIcon, Copy, Loader2 } from "lucide-react";
 import { Product } from "./types";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { ProductTableCell } from "./table/ProductTableCell";
 import { ProductTableMedia } from "./table/ProductTableMedia";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
 
 type ProductTableRowProps = {
   product: Product;
@@ -40,6 +41,8 @@ export const ProductTableRow = ({
   onToggleSelect,
   onDuplicate,
 }: ProductTableRowProps) => {
+  const [isDuplicating, setIsDuplicating] = useState(false);
+
   const handleCellChange = (field: keyof Product) => (value: any) => {
     onProductChange(field, value);
   };
@@ -50,10 +53,15 @@ export const ProductTableRow = ({
     }
   };
 
-  const handleDuplicate = () => {
+  const handleDuplicate = async () => {
     console.log("Duplicating single product:", product.id);
     if (onDuplicate) {
-      onDuplicate([product.id]);
+      setIsDuplicating(true);
+      try {
+        await onDuplicate([product.id]);
+      } finally {
+        setIsDuplicating(false);
+      }
     }
   };
 
@@ -162,8 +170,17 @@ export const ProductTableRow = ({
               <Button variant="ghost" size="icon" onClick={() => onMediaClick(product)}>
                 <ImageIcon className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={handleDuplicate}>
-                <Copy className="h-4 w-4" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={handleDuplicate}
+                disabled={isDuplicating}
+              >
+                {isDuplicating ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
               </Button>
             </>
           )}
