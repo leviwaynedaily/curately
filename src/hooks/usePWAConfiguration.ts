@@ -80,9 +80,9 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         // Add new apple touch icons
         appleSizes.forEach(size => {
           const appleLink = document.createElement('link');
-          appleLink.rel = 'apple-touch-icon';
-          appleLink.sizes = `${size}x${size}`;
-          appleLink.href = iconUrl;
+          appleLink.setAttribute('rel', 'apple-touch-icon');
+          appleLink.setAttribute('sizes', `${size}x${size}`);
+          appleLink.setAttribute('href', iconUrl);
           document.head.appendChild(appleLink);
         });
       }
