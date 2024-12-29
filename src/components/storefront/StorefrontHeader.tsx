@@ -19,7 +19,8 @@ export const StorefrontHeader = ({
   console.log("StorefrontHeader render:", { 
     showDescription, 
     hasDescription: Boolean(storefront.description),
-    description: storefront.description
+    description: storefront.description,
+    show_description: storefront.show_description
   });
 
   return (
@@ -41,7 +42,7 @@ export const StorefrontHeader = ({
           {storefront.name}
         </h1>
       )}
-      {showDescription && storefront.description && storefront.show_description && (
+      {storefront.description && storefront.show_description && (
         <p 
           className="text-base max-w-2xl mx-auto"
           style={{ color: storefront.secondary_font_color || '#4B5563' }}
