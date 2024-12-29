@@ -42,6 +42,7 @@ export const ProductTableRow = ({
   onDuplicate,
 }: ProductTableRowProps) => {
   const [isDuplicating, setIsDuplicating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleCellChange = (field: keyof Product) => (value: any) => {
     onProductChange(field, value);
@@ -62,6 +63,16 @@ export const ProductTableRow = ({
       } finally {
         setIsDuplicating(false);
       }
+    }
+  };
+
+  const handleDelete = async () => {
+    console.log("Deleting product:", product.id);
+    setIsDeleting(true);
+    try {
+      await onDelete(product.id);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -164,8 +175,17 @@ export const ProductTableRow = ({
               <Button variant="ghost" size="icon" onClick={() => onEdit(product)}>
                 <Edit className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => onDelete(product.id)}>
-                <Trash className="h-4 w-4" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash className="h-4 w-4" />
+                )}
               </Button>
               <Button variant="ghost" size="icon" onClick={() => onMediaClick(product)}>
                 <ImageIcon className="h-4 w-4" />
