@@ -36,6 +36,8 @@ type UseGalleryFormProps = {
     instructions_enabled?: boolean;
     instructions_content?: string;
     instructions_button_text?: string;
+    pwa_icon_192?: string;
+    pwa_icon_512?: string;
   };
 };
 
@@ -44,6 +46,15 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  console.log("Initializing gallery form with data:", {
+    businessId,
+    galleryId: gallery?.id,
+    pwaIcons: {
+      icon192: gallery?.pwa_icon_192,
+      icon512: gallery?.pwa_icon_512
+    }
+  });
+
   const form = useForm<GalleryFormValues>({
     resolver: zodResolver(gallerySchema),
     defaultValues: getDefaultValues(gallery, businessId),
@@ -51,8 +62,23 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
 
   useEffect(() => {
     if (gallery) {
-      console.log("Resetting form with gallery data:", gallery);
-      form.reset(getDefaultValues(gallery, businessId));
+      console.log("Resetting form with gallery data:", {
+        id: gallery.id,
+        pwaIcons: {
+          icon192: gallery.pwa_icon_192,
+          icon512: gallery.pwa_icon_512
+        }
+      });
+      
+      const defaultValues = getDefaultValues(gallery, businessId);
+      console.log("Default values for form:", {
+        pwaIcons: {
+          icon192: defaultValues.pwa_icon_192,
+          icon512: defaultValues.pwa_icon_512
+        }
+      });
+      
+      form.reset(defaultValues);
     }
   }, [gallery, form, businessId]);
 
