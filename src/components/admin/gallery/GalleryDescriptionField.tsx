@@ -42,11 +42,8 @@ export const GalleryDescriptionField = ({ form }: GalleryDescriptionFieldProps) 
           <FormItem className="flex flex-row items-start space-x-3 space-y-0">
             <FormControl>
               <Checkbox
-                checked={field.value}
-                onCheckedChange={(checked) => {
-                  field.onChange(checked);
-                  console.log("Checkbox changed to:", checked);
-                }}
+                checked={field.value ?? true}
+                onCheckedChange={field.onChange}
               />
             </FormControl>
             <div className="space-y-1 leading-none">

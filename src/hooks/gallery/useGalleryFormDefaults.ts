@@ -56,5 +56,5 @@ export const getDefaultValues = (
   instructions_enabled: gallery?.instructions_enabled || false,
   instructions_content: gallery?.instructions_content || "",
   instructions_button_text: gallery?.instructions_button_text || "Enter Site",
-  show_description: gallery?.show_description ?? true,
+  show_description: typeof gallery?.show_description === 'boolean' ? gallery.show_description : true,
 });
