@@ -48,7 +48,8 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
       
       form.setValue(fieldName, filePath, { 
         shouldDirty: true,
-        shouldTouch: true
+        shouldTouch: true,
+        shouldValidate: true
       });
 
       toast({ description: `${type} screenshot uploaded successfully` });
@@ -79,7 +80,8 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
 
         form.setValue(fieldName, "", { 
           shouldDirty: true,
-          shouldTouch: true
+          shouldTouch: true,
+          shouldValidate: true
         });
 
         toast({ description: `${type} screenshot removed` });
@@ -91,6 +93,12 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
         });
       }
     }
+  };
+
+  const getImageUrl = (filePath: string) => {
+    return supabase.storage
+      .from("gallery_images")
+      .getPublicUrl(filePath).data.publicUrl;
   };
 
   return (
@@ -106,10 +114,10 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
             </span>
           </FormLabel>
           <div className="space-y-4">
-            {field.value ? (
+            {field.value && typeof field.value === 'string' && field.value !== "" ? (
               <div className="relative w-full max-w-md">
                 <img
-                  src={supabase.storage.from("gallery_images").getPublicUrl(field.value as string).data.publicUrl}
+                  src={getImageUrl(field.value)}
                   alt={`${type} screenshot`}
                   className="w-full h-auto object-contain rounded-lg border"
                 />
