@@ -13,13 +13,17 @@ type PWAIconsSectionProps = {
 };
 
 export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploading192, setIsUploading192] = useState(false);
+  const [isUploading512, setIsUploading512] = useState(false);
   const { toast } = useToast();
 
   const handleIconUpload = async (event: React.ChangeEvent<HTMLInputElement>, size: "192" | "512") => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    const setIsUploading = size === "192" ? setIsUploading192 : setIsUploading512;
+    const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
+    
     setIsUploading(true);
     console.log(`Starting PWA icon ${size}x${size} upload...`);
 
@@ -38,7 +42,7 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
       }
 
       console.log("PWA icon uploaded successfully, setting form value:", filePath);
-      form.setValue(size === "192" ? "pwa_icon_192" : "pwa_icon_512", filePath);
+      form.setValue(fieldName, filePath);
       toast({ description: `${size}x${size} PWA icon uploaded successfully` });
     } catch (error) {
       console.error("PWA icon upload failed:", error);
@@ -52,11 +56,13 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
   };
 
   const clearIcon = (size: "192" | "512") => {
-    form.setValue(size === "192" ? "pwa_icon_192" : "pwa_icon_512", "");
+    const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
+    form.setValue(fieldName, "");
   };
 
   const renderIconUpload = (size: "192" | "512") => {
     const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
+    const isUploading = size === "192" ? isUploading192 : isUploading512;
     const value = form.watch(fieldName);
 
     return (

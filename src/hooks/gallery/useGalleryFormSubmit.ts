@@ -20,7 +20,8 @@ export const useGalleryFormSubmit = (
       instructions_content: values.instructions_content,
       instructions_button_text: values.instructions_button_text || "Enter Site",
       pwa_icon_192: values.pwa_icon_192,
-      pwa_icon_512: values.pwa_icon_512
+      pwa_icon_512: values.pwa_icon_512,
+      show_description: values.show_description
     };
     
     try {
