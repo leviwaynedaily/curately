@@ -188,6 +188,8 @@ export type Database = {
           primary_font_color: string | null
           pwa_icon_192: string | null
           pwa_icon_512: string | null
+          screenshot_desktop: string | null
+          screenshot_mobile: string | null
           secondary_color: string | null
           secondary_font_color: string | null
           show_description: boolean | null
@@ -221,6 +223,8 @@ export type Database = {
           primary_font_color?: string | null
           pwa_icon_192?: string | null
           pwa_icon_512?: string | null
+          screenshot_desktop?: string | null
+          screenshot_mobile?: string | null
           secondary_color?: string | null
           secondary_font_color?: string | null
           show_description?: boolean | null
@@ -254,6 +258,8 @@ export type Database = {
           primary_font_color?: string | null
           pwa_icon_192?: string | null
           pwa_icon_512?: string | null
+          screenshot_desktop?: string | null
+          screenshot_mobile?: string | null
           secondary_color?: string | null
           secondary_font_color?: string | null
           show_description?: boolean | null
