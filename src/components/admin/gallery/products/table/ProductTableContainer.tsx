@@ -9,19 +9,19 @@ import { Input } from "@/components/ui/input";
 import { ProductBulkActions } from "./ProductBulkActions";
 import { ProductMediaDialog } from "../ProductMediaDialog";
 
-type ProductTableProps = {
+type ProductTableContainerProps = {
   storefrontId: string;
   products: Product[];
   onProductUpdate: () => void;
   onDuplicate: (productIds: string[]) => void;
 };
 
-export const ProductTable = ({
+export const ProductTableContainer = ({
   storefrontId,
   products,
   onProductUpdate,
   onDuplicate,
-}: ProductTableProps) => {
+}: ProductTableContainerProps) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedProduct, setEditedProduct] = useState<Product | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -184,6 +184,8 @@ export const ProductTable = ({
             sortDirection={sortDirection}
             showHiddenFields={showHiddenFields}
             onToggleHiddenFields={() => setShowHiddenFields(!showHiddenFields)}
+            allSelected={selectedProducts.size === products.length}
+            onSelectAll={handleSelectAll}
           />
           <ProductTableBody
             products={filteredAndSortedProducts}
