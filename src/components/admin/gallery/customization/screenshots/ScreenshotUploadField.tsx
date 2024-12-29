@@ -8,16 +8,18 @@ import { useToast } from "@/components/ui/use-toast";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
 
+type ScreenshotType = "desktop" | "mobile";
+
 type ScreenshotUploadFieldProps = {
   form: UseFormReturn<GalleryFormValues>;
-  type: "desktop" | "mobile";
+  type: ScreenshotType;
   dimensions: string;
 };
 
 export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUploadFieldProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
-  const fieldName = `screenshot_${type}`;
+  const fieldName = `screenshot_${type}` as keyof GalleryFormValues;
   const label = `${type.charAt(0).toUpperCase() + type.slice(1)} Screenshot`;
   const uploadId = `${type}-screenshot-upload`;
 
@@ -44,7 +46,6 @@ export const ScreenshotUploadField = ({ form, type, dimensions }: ScreenshotUplo
 
       console.log(`${type} screenshot uploaded successfully, file path:`, filePath);
       
-      // Set the form value and mark as dirty/touched
       form.setValue(fieldName, filePath, {
         shouldDirty: true,
         shouldTouch: true,
