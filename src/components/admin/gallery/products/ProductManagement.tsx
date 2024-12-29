@@ -5,6 +5,8 @@ import { ProductTableToolbar } from "./table/ProductTableToolbar";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductForm } from "./ProductForm";
+import { CategoryTagManagement } from "./categories/CategoryTagManagement";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type ProductManagementProps = {
   storefrontId: string;
@@ -138,23 +140,38 @@ export const ProductManagement = ({ storefrontId }: ProductManagementProps) => {
 
   return (
     <div className="space-y-4">
-      <ProductTableToolbar
-        onExport={handleExport}
-        onImport={handleImport}
-        onAddProduct={handleAddProduct}
-      />
-      <ProductTableContainer
-        storefrontId={storefrontId}
-        products={products}
-        onProductUpdate={refetch}
-        onDuplicate={handleDuplicateProducts}
-      />
-      <ProductForm
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        storefrontId={storefrontId}
-        onProductCreated={refetch}
-      />
+      <Tabs defaultValue="products">
+        <TabsList>
+          <TabsTrigger value="products">Products</TabsTrigger>
+          <TabsTrigger value="categories">Categories & Tags</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="products">
+          <div className="space-y-4">
+            <ProductTableToolbar
+              onExport={handleExport}
+              onImport={handleImport}
+              onAddProduct={handleAddProduct}
+            />
+            <ProductTableContainer
+              storefrontId={storefrontId}
+              products={products}
+              onProductUpdate={refetch}
+              onDuplicate={handleDuplicateProducts}
+            />
+            <ProductForm
+              isOpen={isFormOpen}
+              onClose={() => setIsFormOpen(false)}
+              storefrontId={storefrontId}
+              onProductCreated={refetch}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="categories">
+          <CategoryTagManagement storefrontId={storefrontId} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
