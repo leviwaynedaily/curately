@@ -18,9 +18,16 @@ export const StorefrontHeader = ({
   onSave
 }: StorefrontHeaderProps) => {
   console.log("StorefrontHeader render:", {
-    isDirty: form.formState.isDirty,
-    dirtyFields: form.formState.dirtyFields
+    formExists: !!form,
+    isDirty: form?.formState?.isDirty,
+    dirtyFields: form?.formState?.dirtyFields,
+    storefrontName: storefront?.name
   });
+
+  if (!form) {
+    console.warn("Form is undefined in StorefrontHeader");
+    return null;
+  }
 
   return (
     <div className="flex items-center justify-between">
@@ -29,7 +36,7 @@ export const StorefrontHeader = ({
           Storefronts
         </a>
         <ChevronRight className="h-4 w-4" />
-        <span className="text-foreground">{storefront.name}</span>
+        <span className="text-foreground">{storefront?.name || 'Loading...'}</span>
       </div>
       <Button 
         onClick={onSave} 

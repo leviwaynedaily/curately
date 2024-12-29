@@ -7,8 +7,6 @@ import { AdminLayout } from "@/layouts/AdminLayout";
 import { Form } from "@/components/ui/form";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { StorefrontTabs } from "@/components/admin/gallery/edit/StorefrontTabs";
 import { StorefrontHeader } from "@/components/admin/gallery/edit/StorefrontHeader";
@@ -18,6 +16,7 @@ const StorefrontEdit = () => {
   const isMobile = useIsMobile();
   const [showPreview, setShowPreview] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  
   console.log("Editing storefront:", storefrontId);
 
   const { data: storefront, isLoading } = useQuery({
@@ -45,7 +44,13 @@ const StorefrontEdit = () => {
   });
 
   const form = useForm<GalleryFormValues>({
-    defaultValues: storefront,
+    defaultValues: storefront || {},
+  });
+
+  console.log("Form state:", {
+    isDirty: form.formState.isDirty,
+    dirtyFields: form.formState.dirtyFields,
+    isLoading
   });
 
   const handleSave = async () => {
