@@ -4,6 +4,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { ProductTableToolbar } from "./table/ProductTableToolbar";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { ProductForm } from "./ProductForm";
 
 type ProductManagementProps = {
   storefrontId: string;
@@ -147,6 +148,12 @@ export const ProductManagement = ({ storefrontId }: ProductManagementProps) => {
         products={products}
         onProductUpdate={refetch}
         onDuplicate={handleDuplicateProducts}
+      />
+      <ProductForm
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        storefrontId={storefrontId}
+        onProductCreated={refetch}
       />
     </div>
   );
