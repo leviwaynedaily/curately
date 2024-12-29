@@ -33,14 +33,19 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
         throw new Error('Please upload a PNG file');
       }
 
+      const storefrontId = form.getValues("id");
+      if (!storefrontId) {
+        throw new Error("Storefront ID is required");
+      }
+
       const fileExt = file.name.split(".").pop();
-      const filePath = `pwa-icons/${crypto.randomUUID()}.${fileExt}`;
+      const filePath = `${storefrontId}/settings/pwa/icon-${size}.${fileExt}`;
 
       console.log(`Uploading ${size}x${size} icon to path:`, filePath);
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("gallery_images")
-        .upload(filePath, file);
+        .upload(filePath, file, { upsert: true });
 
       if (uploadError) {
         console.error(`Error uploading ${size}x${size} PWA icon:`, uploadError);
@@ -49,14 +54,12 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
 
       console.log(`${size}x${size} icon uploaded successfully:`, uploadData);
 
-      // Set the form value and validate
       form.setValue(fieldName, filePath, { 
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true
       });
 
-      // Log form state after update
       const formValues = form.getValues();
       console.log(`Form values after setting ${size}x${size} PWA icon:`, {
         formValues,
@@ -87,7 +90,6 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
       shouldValidate: true
     });
 
-    // Log form state after clearing
     console.log(`Form state after clearing ${size}x${size} PWA icon:`, {
       values: form.getValues(),
       isDirty: form.formState.isDirty,
