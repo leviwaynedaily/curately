@@ -12,8 +12,19 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   // Get the pathname from the request URL
   const url = new URL(event.request.url);
+  
+  // Don't cache cross-origin requests (like Supabase API calls)
+  if (url.origin !== location.origin) {
+    return;
+  }
+
   const pathname = url.pathname;
 
   // Check if this is a storefront request
