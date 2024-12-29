@@ -14,10 +14,14 @@ import { Form } from "@/components/ui/form";
 import { ChevronRight } from "lucide-react";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
   const isMobile = useIsMobile();
+  const [showPreview, setShowPreview] = useState(true);
   console.log("Editing storefront:", storefrontId);
 
   const { data: storefront, isLoading } = useQuery({
@@ -53,12 +57,26 @@ const StorefrontEdit = () => {
 
   const MainContent = () => (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <a href="/admin" className="hover:text-foreground transition-colors">
-          Storefronts
-        </a>
-        <ChevronRight className="h-4 w-4" />
-        <span className="text-foreground">{storefront.name}</span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <a href="/admin" className="hover:text-foreground transition-colors">
+            Storefronts
+          </a>
+          <ChevronRight className="h-4 w-4" />
+          <span className="text-foreground">{storefront.name}</span>
+        </div>
+        {!isMobile && (
+          <div className="flex items-center gap-2">
+            <Label htmlFor="show-preview" className="text-sm">
+              Live Preview
+            </Label>
+            <Switch
+              id="show-preview"
+              checked={showPreview}
+              onCheckedChange={setShowPreview}
+            />
+          </div>
+        )}
       </div>
 
       <StorefrontHeader storefront={storefront} />
@@ -115,10 +133,14 @@ const StorefrontEdit = () => {
               <MainContent />
             </div>
           </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={50}>
-            <PreviewPanel />
-          </ResizablePanel>
+          {showPreview && (
+            <>
+              <ResizableHandle withHandle />
+              <ResizablePanel defaultSize={50}>
+                <PreviewPanel />
+              </ResizablePanel>
+            </>
+          )}
         </ResizablePanelGroup>
       )}
     </AdminLayout>
