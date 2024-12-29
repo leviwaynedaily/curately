@@ -16,13 +16,16 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       
       if (storefront.pwa_icon_192) {
         const icon192Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl;
-        console.log("Adding 192x192 icon with full URL:", icon192Url);
+        console.log("Adding 192x192 icon:", {
+          path: storefront.pwa_icon_192,
+          fullUrl: icon192Url
+        });
         
         icons.push({
           src: icon192Url,
           sizes: "192x192",
           type: "image/png",
-          purpose: "any"  // Changed from "any maskable" to just "any" as per manifest requirements
+          purpose: "any"
         });
       } else {
         console.warn("No 192x192 PWA icon found in storefront configuration");
@@ -30,32 +33,26 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       
       if (storefront.pwa_icon_512) {
         const icon512Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_512).data.publicUrl;
-        console.log("Adding 512x512 icon with full URL:", icon512Url);
+        console.log("Adding 512x512 icon:", {
+          path: storefront.pwa_icon_512,
+          fullUrl: icon512Url
+        });
         
         icons.push({
           src: icon512Url,
           sizes: "512x512",
           type: "image/png",
-          purpose: "any"  // Changed from "any maskable" to just "any" as per manifest requirements
+          purpose: "any"
         });
       } else {
         console.warn("No 512x512 PWA icon found in storefront configuration");
       }
-
-      console.log("Final PWA Icons configuration:", {
-        totalIcons: icons.length,
-        icons: icons.map(icon => ({
-          size: icon.sizes,
-          url: icon.src
-        }))
-      });
 
       // Create dynamic manifest with proper start_url and id
       const manifest = {
         name: storefront.name,
         short_name: storefront.name,
         description: storefront.description || `Welcome to ${storefront.name}`,
-        id: `/storefront/${storefront.id}`,  // Added id field
         start_url: `/storefront/${storefront.id}`,
         scope: `/storefront/${storefront.id}`,
         display: "standalone",
@@ -65,6 +62,8 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       };
 
       console.log("Generated manifest:", manifest);
+      console.log("Icons array length:", icons.length);
+      console.log("Final icons configuration:", icons);
 
       // Create and inject dynamic manifest
       const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
