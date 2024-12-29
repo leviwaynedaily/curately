@@ -31,7 +31,7 @@ export const GalleryImageItem = ({
 }: GalleryImageItemProps) => {
   const mediaUrl = `${
     import.meta.env.VITE_SUPABASE_URL
-  }/storage/v1/object/public/gallery_images/${image.file_path}`;
+  }/storage/v1/object/public/storefront_products/${image.file_path}`;
 
   return (
     <div

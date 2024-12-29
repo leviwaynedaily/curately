@@ -20,13 +20,13 @@ export const MediaGrid = ({ media, onDelete, onSetPrimary }: MediaGridProps) => 
         <div key={item.id} className="relative group">
           {item.media_type === "video" ? (
             <video
-              src={supabase.storage.from("gallery_images").getPublicUrl(item.file_path).data.publicUrl}
+              src={supabase.storage.from("storefront_products").getPublicUrl(item.file_path).data.publicUrl}
               className="w-full aspect-square object-cover rounded-lg"
               controls
             />
           ) : (
             <img
-              src={supabase.storage.from("gallery_images").getPublicUrl(item.file_path).data.publicUrl}
+              src={supabase.storage.from("storefront_products").getPublicUrl(item.file_path).data.publicUrl}
               alt=""
               className="w-full aspect-square object-cover rounded-lg"
             />

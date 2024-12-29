@@ -32,7 +32,7 @@ export const ProductMediaCarousel = ({
 
   const currentMedia = media[currentIndex];
   const mediaUrl = supabase.storage
-    .from("gallery_images")
+    .from("storefront_products")
     .getPublicUrl(currentMedia.file_path).data.publicUrl;
 
   return (
