@@ -11,7 +11,7 @@ import { StorefrontHeader } from "@/components/admin/gallery/edit/StorefrontHead
 import { GalleryFormValues } from "@/lib/validations/gallery";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { Form } from "@/components/ui/form";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
+import { ChevronRight } from "lucide-react";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
@@ -51,14 +51,13 @@ const StorefrontEdit = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <Breadcrumb>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/admin">Storefronts</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink>{storefront.name}</BreadcrumbLink>
-          </BreadcrumbItem>
-        </Breadcrumb>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <a href="/admin" className="hover:text-foreground transition-colors">
+            Storefronts
+          </a>
+          <ChevronRight className="h-4 w-4" />
+          <span className="text-foreground">{storefront.name}</span>
+        </div>
 
         <StorefrontHeader storefront={storefront} />
         
