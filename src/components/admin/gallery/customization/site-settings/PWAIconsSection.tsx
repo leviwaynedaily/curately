@@ -25,14 +25,14 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
     const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
     
     setIsUploading(true);
-    console.log(`Starting PWA icon ${size}x${size} upload...`);
+    console.log(`Starting PWA icon ${size}x${size} upload...`, { file });
 
     try {
       const fileExt = file.name.split(".").pop();
       const filePath = `pwa-icons/${crypto.randomUUID()}.${fileExt}`;
 
-      console.log("Uploading PWA icon to storage...");
-      const { error: uploadError, data } = await supabase.storage
+      console.log("Uploading PWA icon to storage...", { filePath });
+      const { error: uploadError } = await supabase.storage
         .from("gallery_images")
         .upload(filePath, file);
 
@@ -41,11 +41,30 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
         throw uploadError;
       }
 
-      console.log("PWA icon uploaded successfully, setting form value:", filePath);
+      // Get the public URL to verify upload
+      const { data: { publicUrl } } = supabase.storage
+        .from("gallery_images")
+        .getPublicUrl(filePath);
+
+      console.log("PWA icon uploaded successfully", { 
+        filePath,
+        publicUrl,
+        fieldName 
+      });
+
+      // Update form value and mark as changed
       form.setValue(fieldName, filePath, { 
         shouldDirty: true, 
         shouldTouch: true,
         shouldValidate: true 
+      });
+
+      // Verify the form value was set
+      const currentValue = form.getValues(fieldName);
+      console.log("Form value after setting:", { 
+        fieldName, 
+        value: currentValue,
+        formValues: form.getValues() 
       });
       
       toast({ description: `${size}x${size} PWA icon uploaded successfully` });
@@ -62,10 +81,20 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
 
   const clearIcon = (size: "192" | "512") => {
     const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
+    console.log("Clearing PWA icon", { size, fieldName });
+    
     form.setValue(fieldName, "", { 
       shouldDirty: true, 
       shouldTouch: true,
       shouldValidate: true 
+    });
+
+    // Verify the form value was cleared
+    const currentValue = form.getValues(fieldName);
+    console.log("Form value after clearing:", { 
+      fieldName, 
+      value: currentValue,
+      formValues: form.getValues() 
     });
   };
 
