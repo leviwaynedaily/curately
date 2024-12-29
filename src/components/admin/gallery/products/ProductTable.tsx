@@ -70,6 +70,11 @@ export const ProductTable = ({
     }
   };
 
+  // Create a wrapper function to convert single ID to array
+  const handleSingleDelete = (id: string) => {
+    return handleBulkDelete([id]);
+  };
+
   const filteredAndSortedProducts = products
     .filter(product => {
       const matchesSearch = 
@@ -148,7 +153,7 @@ export const ProductTable = ({
               setEditingId(null);
               setEditedProduct(null);
             }}
-            onDelete={handleBulkDelete}
+            onDelete={handleSingleDelete}
             onProductChange={(field, value) => {
               setEditedProduct(prev => prev ? { ...prev, [field]: value } : null);
             }}
