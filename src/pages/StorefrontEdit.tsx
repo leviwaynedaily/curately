@@ -18,6 +18,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
@@ -98,7 +99,15 @@ const StorefrontEdit = () => {
               />
             </div>
           )}
-          <Button onClick={handleSave} disabled={isSaving}>
+          <Button 
+            onClick={handleSave} 
+            disabled={isSaving || !form.formState.isDirty}
+            variant="outline"
+            className={cn(
+              "transition-colors",
+              form.formState.isDirty && "bg-primary hover:bg-primary/90 text-primary-foreground"
+            )}
+          >
             {isSaving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
