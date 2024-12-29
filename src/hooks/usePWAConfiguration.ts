@@ -22,7 +22,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         });
         
         icons.push({
-          src: icon192Url,
+          src: icon192Url, // Using full public URL
           sizes: "192x192",
           type: "image/png",
           purpose: "any maskable"
@@ -39,7 +39,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         });
         
         icons.push({
-          src: icon512Url,
+          src: icon512Url, // Using full public URL
           sizes: "512x512",
           type: "image/png",
           purpose: "any maskable"
@@ -61,7 +61,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         start_url: window.location.pathname,
         scope: window.location.pathname,
         display: "standalone",
-        background_color: storefront.primary_color || "#ffffff",
+        background_color: storefront.primary_color || "#FFFFFF",
         theme_color: storefront.accent_color || "#2A6041",
         icons: icons
       };
