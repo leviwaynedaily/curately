@@ -55,6 +55,11 @@ export const ProductTable = ({
   onDuplicate,
   onProductUpdate,
 }: ProductTableProps) => {
+  // Create a wrapper function to convert single ID to array for deletion
+  const handleSingleDelete = (id: string) => {
+    onBulkDelete([id]);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
@@ -91,7 +96,7 @@ export const ProductTable = ({
             onEdit={onEdit}
             onSave={onSave}
             onCancel={onCancel}
-            onDelete={onBulkDelete}
+            onDelete={handleSingleDelete}
             onProductChange={onProductChange}
             onMediaClick={setSelectedProduct}
             showHiddenFields={showHiddenFields}
