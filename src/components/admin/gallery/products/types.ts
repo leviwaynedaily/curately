@@ -2,18 +2,15 @@ export type Product = {
   id: string;
   storefront_id: string;
   name: string;
-  description: string | null;
-  price: number | null;
-  sku: string | null;
-  category: string | null;
-  stock_quantity: number | null;
-  status: string;
+  description?: string;
+  price?: number;
+  sku?: string;
+  category?: string;
+  status?: string;
+  stock_quantity?: number;
   created_at: string;
   updated_at: string;
-  primary_media?: string | null;
-  product_media?: Array<{
-    id: string;
-    file_path: string;
-    is_primary: boolean;
-  }>;
+  deletion_date?: string;
+  primary_media?: string;
+  tags?: { id: string; name: string; }[];
 };

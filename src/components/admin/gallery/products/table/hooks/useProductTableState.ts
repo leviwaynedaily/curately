@@ -11,6 +11,7 @@ export const useProductTableState = (products: Product[]) => {
   const [showHiddenFields, setShowHiddenFields] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedTag, setSelectedTag] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -50,6 +51,8 @@ export const useProductTableState = (products: Product[]) => {
     selectedProducts,
     selectedCategory,
     setSelectedCategory,
+    selectedTag,
+    setSelectedTag,
     page,
     setPage,
     pageSize,

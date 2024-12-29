@@ -13,6 +13,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 type ProductTableHeaderProps = {
   onSort: (field: keyof Product) => void;
@@ -27,6 +29,8 @@ type ProductTableHeaderProps = {
   products: Product[];
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
+  selectedTag: string;
+  setSelectedTag: (tag: string) => void;
 };
 
 export const ProductTableHeader = ({
@@ -42,7 +46,23 @@ export const ProductTableHeader = ({
   products,
   selectedCategory,
   setSelectedCategory,
+  selectedTag,
+  setSelectedTag,
 }: ProductTableHeaderProps) => {
+  // Fetch tags
+  const { data: tags = [] } = useQuery({
+    queryKey: ['tags'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tags')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const SortableHeader = ({ field, children, className }: { field: keyof Product; children: React.ReactNode; className?: string }) => (
     <TableHead className={className}>
       <Button
@@ -95,6 +115,33 @@ export const ProductTableHeader = ({
                     onCheckedChange={() => setSelectedCategory(category || "")}
                   >
                     {category}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  Tag <Filter className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Filter by tag</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuCheckboxItem
+                  checked={selectedTag === ""}
+                  onCheckedChange={() => setSelectedTag("")}
+                >
+                  All Tags
+                </DropdownMenuCheckboxItem>
+                {tags.map((tag) => (
+                  <DropdownMenuCheckboxItem
+                    key={tag.id}
+                    checked={selectedTag === tag.name}
+                    onCheckedChange={() => setSelectedTag(tag.name)}
+                  >
+                    {tag.name}
                   </DropdownMenuCheckboxItem>
                 ))}
               </DropdownMenuContent>

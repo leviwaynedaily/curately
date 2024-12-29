@@ -40,6 +40,8 @@ export const ProductTable = ({
     selectedProducts,
     selectedCategory,
     setSelectedCategory,
+    selectedTag,
+    setSelectedTag,
     page,
     setPage,
     pageSize,
@@ -84,8 +86,11 @@ export const ProductTable = ({
         product.category?.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesCategory = !selectedCategory || product.category === selectedCategory;
+      
+      // Add tag filtering
+      const matchesTag = !selectedTag || (product.tags && product.tags.some(tag => tag.name === selectedTag));
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesTag;
     })
     .sort((a, b) => {
       if (sortField) {
@@ -135,6 +140,8 @@ export const ProductTable = ({
             products={products}
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
+            selectedTag={selectedTag}
+            setSelectedTag={setSelectedTag}
           />
           <ProductTableBody
             products={paginatedProducts}
