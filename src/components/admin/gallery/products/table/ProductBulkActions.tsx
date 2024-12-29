@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,20 +21,11 @@ export const ProductBulkActions = ({
   onDuplicate,
   onDelete,
   products,
-  onSelectAll,
 }: ProductBulkActionsProps) => {
-  const handleSelectAll = (checked: boolean) => {
-    onSelectAll(checked);
-  };
-
   if (products.length === 0) return null;
 
   return (
     <div className="flex items-center gap-2">
-      <Checkbox
-        checked={selectedProducts.size === products.length}
-        onCheckedChange={handleSelectAll}
-      />
       {selectedProducts.size > 0 && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
