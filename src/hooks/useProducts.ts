@@ -27,7 +27,7 @@ export const useProducts = (storefrontId: string) => {
         return [];
       }
 
-      // Then fetch media for all products
+      // Then fetch media for all products in a separate query
       const productIds = productsData.map(p => p.id);
       const { data: mediaData, error: mediaError } = await supabase
         .from("product_media")
