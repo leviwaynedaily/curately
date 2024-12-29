@@ -5,10 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useForm } from "react-hook-form";
 import { GalleryNameField } from "../GalleryNameField";
 import { GalleryDescriptionField } from "../GalleryDescriptionField";
-import { GalleryLogoField } from "../GalleryLogoField";
-import { GallerySiteLogoField } from "../GallerySiteLogoField";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { Form } from "@/components/ui/form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
 
@@ -25,8 +21,6 @@ export const StorefrontBasicInfo = ({ storefront }: StorefrontBasicInfoProps) =>
     defaultValues: {
       name: storefront.name || "",
       description: storefront.description || "",
-      logo: storefront.logo || "",
-      site_logo: storefront.site_logo || "",
       business_id: storefront.business_id || "",
       status: storefront.status || "active",
     },
@@ -62,12 +56,6 @@ export const StorefrontBasicInfo = ({ storefront }: StorefrontBasicInfoProps) =>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         <GalleryNameField form={form} />
         <GalleryDescriptionField form={form} />
-        <GalleryLogoField form={form} />
-        <GallerySiteLogoField form={form} />
-        <Button type="submit" disabled={isLoading}>
-          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Save Changes
-        </Button>
       </form>
     </Form>
   );
