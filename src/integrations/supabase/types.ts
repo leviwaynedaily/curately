@@ -92,6 +92,7 @@ export type Database = {
         Row: {
           category: string | null
           created_at: string
+          deletion_date: string | null
           description: string | null
           id: string
           name: string
@@ -105,6 +106,7 @@ export type Database = {
         Insert: {
           category?: string | null
           created_at?: string
+          deletion_date?: string | null
           description?: string | null
           id?: string
           name: string
@@ -118,6 +120,7 @@ export type Database = {
         Update: {
           category?: string | null
           created_at?: string
+          deletion_date?: string | null
           description?: string | null
           id?: string
           name?: string

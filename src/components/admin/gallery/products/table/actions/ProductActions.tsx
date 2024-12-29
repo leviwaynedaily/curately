@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Edit, Save, X, Trash, Image as ImageIcon, Copy, Loader2 } from "lucide-react";
+import { Edit, Save, X, Trash, Image as ImageIcon, Copy, Loader2, Archive } from "lucide-react";
 import { useState } from "react";
 import { Product } from "../../types";
 
@@ -12,9 +12,11 @@ type ProductActionsProps = {
   onDelete: () => void;
   onMediaClick: () => void;
   onDuplicate?: () => void;
+  onArchive?: () => void;
 };
 
 export const ProductActions = ({
+  product,
   isEditing,
   onEdit,
   onSave,
@@ -22,9 +24,11 @@ export const ProductActions = ({
   onDelete,
   onMediaClick,
   onDuplicate,
+  onArchive,
 }: ProductActionsProps) => {
   const [isDuplicating, setIsDuplicating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isArchiving, setIsArchiving] = useState(false);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -42,6 +46,16 @@ export const ProductActions = ({
       await onDuplicate();
     } finally {
       setIsDuplicating(false);
+    }
+  };
+
+  const handleArchive = async () => {
+    if (!onArchive) return;
+    setIsArchiving(true);
+    try {
+      await onArchive();
+    } finally {
+      setIsArchiving(false);
     }
   };
 
@@ -89,6 +103,20 @@ export const ProductActions = ({
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <Copy className="h-4 w-4" />
+          )}
+        </Button>
+      )}
+      {onArchive && (
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={handleArchive}
+          disabled={isArchiving}
+        >
+          {isArchiving ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Archive className="h-4 w-4" />
           )}
         </Button>
       )}

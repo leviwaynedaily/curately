@@ -5,6 +5,8 @@ import { ProductTableMedia } from "./table/ProductTableMedia";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ProductActions } from "./table/actions/ProductActions";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 type ProductTableRowProps = {
   product: Product;
@@ -39,8 +41,34 @@ export const ProductTableRow = ({
   onToggleSelect,
   onDuplicate,
 }: ProductTableRowProps) => {
+  const { toast } = useToast();
+  
   const handleCellChange = (field: keyof Product) => (value: any) => {
     onProductChange(field, value);
+  };
+
+  const handleArchive = async () => {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({ status: 'archived' })
+        .eq('id', product.id);
+
+      if (error) throw error;
+
+      toast({
+        description: "Product archived successfully. It will be automatically deleted in 30 days.",
+      });
+
+      // Trigger a refresh of the product list
+      onSave();
+    } catch (error) {
+      console.error('Error archiving product:', error);
+      toast({
+        variant: "destructive",
+        description: "Failed to archive product",
+      });
+    }
   };
 
   return (
@@ -135,6 +163,7 @@ export const ProductTableRow = ({
             onDelete={() => onDelete(product.id)}
             onMediaClick={() => onMediaClick(product)}
             onDuplicate={onDuplicate ? () => onDuplicate([product.id]) : undefined}
+            onArchive={handleArchive}
           />
         </div>
       </TableCell>
