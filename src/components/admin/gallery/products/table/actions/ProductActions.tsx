@@ -1,8 +1,22 @@
 import { Button } from "@/components/ui/button";
-import { Edit, Save, X, Trash, Image as ImageIcon, Copy, Loader2, Archive } from "lucide-react";
+import { 
+  MoreHorizontal, 
+  Edit, 
+  Trash, 
+  Image as ImageIcon, 
+  Copy, 
+  Loader2, 
+  Archive 
+} from "lucide-react";
 import { useState } from "react";
 import { Product } from "../../types";
 import { ProductDeleteDialog } from "./ProductDeleteDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type ProductActionsProps = {
   product: Product;
@@ -32,7 +46,7 @@ export const ProductActions = ({
   const [isArchiving, setIsArchiving] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     setShowDeleteDialog(true);
   };
 
@@ -70,10 +84,10 @@ export const ProductActions = ({
     return (
       <>
         <Button variant="ghost" size="icon" onClick={onSave}>
-          <Save className="h-4 w-4" />
+          <Edit className="h-4 w-4" />
         </Button>
         <Button variant="ghost" size="icon" onClick={onCancel}>
-          <X className="h-4 w-4" />
+          <Loader2 className="h-4 w-4" />
         </Button>
       </>
     );
@@ -81,53 +95,65 @@ export const ProductActions = ({
 
   return (
     <>
-      <Button variant="ghost" size="icon" onClick={onEdit}>
-        <Edit className="h-4 w-4" />
-      </Button>
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        onClick={handleDelete}
-        disabled={isDeleting}
-      >
-        {isDeleting ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <Trash className="h-4 w-4" />
-        )}
-      </Button>
-      <Button variant="ghost" size="icon" onClick={onMediaClick}>
-        <ImageIcon className="h-4 w-4" />
-      </Button>
-      {onDuplicate && (
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={handleDuplicate}
-          disabled={isDuplicating}
-        >
-          {isDuplicating ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Copy className="h-4 w-4" />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={onEdit}>
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </DropdownMenuItem>
+          
+          <DropdownMenuItem onClick={onMediaClick}>
+            <ImageIcon className="h-4 w-4 mr-2" />
+            Media
+          </DropdownMenuItem>
+
+          {onDuplicate && (
+            <DropdownMenuItem 
+              onClick={handleDuplicate}
+              disabled={isDuplicating}
+            >
+              {isDuplicating ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Copy className="h-4 w-4 mr-2" />
+              )}
+              Duplicate
+            </DropdownMenuItem>
           )}
-        </Button>
-      )}
-      {onArchive && (
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={handleArchive}
-          disabled={isArchiving || product.status === 'archived'}
-          title={product.status === 'archived' ? 'Product is already archived' : 'Archive product'}
-        >
-          {isArchiving ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Archive className="h-4 w-4" />
+
+          {onArchive && (
+            <DropdownMenuItem
+              onClick={handleArchive}
+              disabled={isArchiving || product.status === 'archived'}
+            >
+              {isArchiving ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Archive className="h-4 w-4 mr-2" />
+              )}
+              {product.status === 'archived' ? 'Archived' : 'Archive'}
+            </DropdownMenuItem>
           )}
-        </Button>
-      )}
+
+          <DropdownMenuItem
+            className="text-destructive"
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Trash className="h-4 w-4 mr-2" />
+            )}
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <ProductDeleteDialog
         isOpen={showDeleteDialog}
