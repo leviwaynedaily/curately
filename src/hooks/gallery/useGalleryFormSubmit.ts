@@ -19,8 +19,8 @@ export const useGalleryFormSubmit = (
       instructions_enabled: values.instructions_enabled,
       instructions_content: values.instructions_content,
       instructions_button_text: values.instructions_button_text || "Enter Site",
-      pwa_icon_192: values.pwa_icon_192,
-      pwa_icon_512: values.pwa_icon_512,
+      pwa_icon_192: values.pwa_icon_192 || null,  // Ensure PWA icons are included
+      pwa_icon_512: values.pwa_icon_512 || null,  // Ensure PWA icons are included
       show_description: values.show_description
     };
 
@@ -28,7 +28,7 @@ export const useGalleryFormSubmit = (
     
     try {
       if (gallery?.id) {
-        console.log("Updating existing storefront:", gallery.id);
+        console.log("Updating existing storefront:", gallery.id, "with data:", dataToSubmit);
         
         const { data, error } = await supabase
           .from("storefronts")
@@ -44,7 +44,7 @@ export const useGalleryFormSubmit = (
         console.log("Storefront updated successfully. Response:", data);
         toast({ description: "Storefront updated successfully" });
       } else {
-        console.log("Creating new storefront");
+        console.log("Creating new storefront with data:", dataToSubmit);
         
         const { data, error } = await supabase
           .from("storefronts")
