@@ -37,16 +37,15 @@ const StorefrontView = () => {
   // Update PWA manifest dynamically
   useEffect(() => {
     if (storefront) {
-      console.log("Updating PWA manifest with icons:", {
-        pwa_icon_192: storefront.pwa_icon_192,
-        pwa_icon_512: storefront.pwa_icon_512
-      });
+      console.log("Updating PWA manifest for storefront:", storefront.name);
 
+      // Create dynamic manifest
       const manifest = {
         name: storefront.name,
         short_name: storefront.name,
         description: storefront.description || `Welcome to ${storefront.name}`,
         start_url: `/storefront/${storefrontId}`,
+        scope: `/storefront/${storefrontId}`,
         display: "standalone",
         background_color: storefront.primary_color || "#ffffff",
         theme_color: storefront.accent_color || "#2A6041",
@@ -66,40 +65,62 @@ const StorefrontView = () => {
         ].filter(Boolean)
       };
 
-      console.log("Generated PWA manifest:", manifest);
+      // Create and inject dynamic manifest
+      const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+      const manifestURL = URL.createObjectURL(manifestBlob);
 
-      const link = document.querySelector('link[rel="manifest"]');
-      if (link) {
-        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-        const manifestURL = URL.createObjectURL(blob);
-        link.setAttribute('href', manifestURL);
+      // Remove any existing manifest link
+      const existingLink = document.querySelector('link[rel="manifest"]');
+      if (existingLink) {
+        existingLink.remove();
       }
+
+      // Add new manifest link
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = manifestURL;
+      document.head.appendChild(link);
 
       // Update theme color
-      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-      if (themeColorMeta) {
-        themeColorMeta.setAttribute('content', storefront.accent_color || "#2A6041");
+      let themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      if (!themeColorMeta) {
+        themeColorMeta = document.createElement('meta');
+        themeColorMeta.setAttribute('name', 'theme-color');
+        document.head.appendChild(themeColorMeta);
       }
+      themeColorMeta.setAttribute('content', storefront.accent_color || "#2A6041");
 
       // Update apple-mobile-web-app-title
-      const appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
-      if (appleTitleMeta) {
-        appleTitleMeta.setAttribute('content', storefront.name);
+      let appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+      if (!appleTitleMeta) {
+        appleTitleMeta = document.createElement('meta');
+        appleTitleMeta.setAttribute('name', 'apple-mobile-web-app-title');
+        document.head.appendChild(appleTitleMeta);
+      }
+      appleTitleMeta.setAttribute('content', storefront.name);
+
+      // Update apple touch icons
+      if (storefront.pwa_icon_192) {
+        const iconUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl;
+        
+        // Remove existing apple touch icons
+        document.querySelectorAll('link[rel="apple-touch-icon"]').forEach(el => el.remove());
+        
+        // Add new apple touch icons
+        const sizes = ['152x152', '167x167', '180x180', '192x192'];
+        sizes.forEach(size => {
+          const link = document.createElement('link');
+          link.rel = 'apple-touch-icon';
+          link.sizes = size;
+          link.href = iconUrl;
+          document.head.appendChild(link);
+        });
       }
 
-      // Add apple touch icon meta tags
-      if (storefront.pwa_icon_192) {
-        let appleTouchIcon = document.querySelector('link[rel="apple-touch-icon"]');
-        if (!appleTouchIcon) {
-          appleTouchIcon = document.createElement('link');
-          appleTouchIcon.setAttribute('rel', 'apple-touch-icon');
-          document.head.appendChild(appleTouchIcon);
-        }
-        appleTouchIcon.setAttribute(
-          'href',
-          supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl
-        );
-      }
+      // Cleanup function
+      return () => {
+        URL.revokeObjectURL(manifestURL);
+      };
     }
   }, [storefront, storefrontId]);
 
