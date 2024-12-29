@@ -11,17 +11,19 @@ import { StorefrontHeader } from "@/components/admin/gallery/edit/StorefrontHead
 import { GalleryFormValues } from "@/lib/validations/gallery";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { Form } from "@/components/ui/form";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
   const isMobile = useIsMobile();
   const [showPreview, setShowPreview] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   console.log("Editing storefront:", storefrontId);
 
   const { data: storefront, isLoading } = useQuery({
@@ -47,6 +49,24 @@ const StorefrontEdit = () => {
     defaultValues: storefront,
   });
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await form.handleSubmit(async (values) => {
+        const { error } = await supabase
+          .from("storefronts")
+          .update(values)
+          .eq("id", storefrontId);
+        
+        if (error) throw error;
+      })();
+    } catch (error) {
+      console.error("Error saving storefront:", error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   if (isLoading) {
     return <AdminLayout>Loading...</AdminLayout>;
   }
@@ -65,18 +85,30 @@ const StorefrontEdit = () => {
           <ChevronRight className="h-4 w-4" />
           <span className="text-foreground">{storefront.name}</span>
         </div>
-        {!isMobile && (
-          <div className="flex items-center gap-2">
-            <Label htmlFor="show-preview" className="text-sm">
-              Live Preview
-            </Label>
-            <Switch
-              id="show-preview"
-              checked={showPreview}
-              onCheckedChange={setShowPreview}
-            />
-          </div>
-        )}
+        <div className="flex items-center gap-4">
+          {!isMobile && (
+            <div className="flex items-center gap-2">
+              <Label htmlFor="show-preview" className="text-sm">
+                Live Preview
+              </Label>
+              <Switch
+                id="show-preview"
+                checked={showPreview}
+                onCheckedChange={setShowPreview}
+              />
+            </div>
+          )}
+          <Button onClick={handleSave} disabled={isSaving}>
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              'Save Changes'
+            )}
+          </Button>
+        </div>
       </div>
 
       <StorefrontHeader storefront={storefront} />
