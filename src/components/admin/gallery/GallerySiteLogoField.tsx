@@ -1,6 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
-import { FileUploadField } from "./shared/FileUploadField";
+import { FileUploadField } from "./shared/file-upload/FileUploadField";
 
 type GallerySiteLogoFieldProps = {
   form: UseFormReturn<GalleryFormValues>;
