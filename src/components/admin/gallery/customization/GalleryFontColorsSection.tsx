@@ -11,12 +11,19 @@ export const GalleryFontColorsSection = ({ form }: GalleryFontColorsSectionProps
   return (
     <div className="space-y-4">
       <h3 className="font-medium">Font Colors</h3>
+      <div className="text-sm text-muted-foreground mb-4">
+        These colors control the text appearance throughout your storefront.
+      </div>
+
       <FormField
         control={form.control}
         name="primary_font_color"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Primary Font Color</FormLabel>
+            <div className="text-sm text-muted-foreground mb-2">
+              Main text color used for headings and body text
+            </div>
             <FormControl>
               <div className="flex gap-2">
                 <Input type="color" {...field} value={field.value || '#000000'} className="w-16 h-10" />
@@ -33,6 +40,9 @@ export const GalleryFontColorsSection = ({ form }: GalleryFontColorsSectionProps
         render={({ field }) => (
           <FormItem>
             <FormLabel>Secondary Font Color</FormLabel>
+            <div className="text-sm text-muted-foreground mb-2">
+              Used for subtitles, descriptions, and less prominent text
+            </div>
             <FormControl>
               <div className="flex gap-2">
                 <Input type="color" {...field} value={field.value || '#6E59A5'} className="w-16 h-10" />
@@ -48,7 +58,10 @@ export const GalleryFontColorsSection = ({ form }: GalleryFontColorsSectionProps
         name="accent_font_color"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Accent Font Color</FormLabel>
+            <FormLabel>Price & Highlight Font Color</FormLabel>
+            <div className="text-sm text-muted-foreground mb-2">
+              Used for prices, links, and important highlighted text
+            </div>
             <FormControl>
               <div className="flex gap-2">
                 <Input type="color" {...field} value={field.value || '#8B5CF6'} className="w-16 h-10" />

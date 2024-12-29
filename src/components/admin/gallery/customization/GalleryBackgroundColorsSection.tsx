@@ -11,12 +11,19 @@ export const GalleryBackgroundColorsSection = ({ form }: GalleryBackgroundColors
   return (
     <div className="space-y-4">
       <h3 className="font-medium">Background Colors</h3>
+      <div className="text-sm text-muted-foreground mb-4">
+        These colors define the overall look of your storefront.
+      </div>
+      
       <FormField
         control={form.control}
         name="primary_color"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Primary Background Color</FormLabel>
+            <div className="text-sm text-muted-foreground mb-2">
+              Main background color used throughout your storefront
+            </div>
             <FormControl>
               <div className="flex gap-2">
                 <Input type="color" {...field} value={field.value || '#141413'} className="w-16 h-10" />
@@ -33,6 +40,9 @@ export const GalleryBackgroundColorsSection = ({ form }: GalleryBackgroundColors
         render={({ field }) => (
           <FormItem>
             <FormLabel>Secondary Background Color</FormLabel>
+            <div className="text-sm text-muted-foreground mb-2">
+              Used for cards, panels, and other container elements
+            </div>
             <FormControl>
               <div className="flex gap-2">
                 <Input type="color" {...field} value={field.value || '#E6E4DD'} className="w-16 h-10" />
@@ -48,7 +58,10 @@ export const GalleryBackgroundColorsSection = ({ form }: GalleryBackgroundColors
         name="accent_color"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Accent Color</FormLabel>
+            <FormLabel>Accent Background Color</FormLabel>
+            <div className="text-sm text-muted-foreground mb-2">
+              Used for highlights, buttons, and interactive elements
+            </div>
             <FormControl>
               <div className="flex gap-2">
                 <Input type="color" {...field} value={field.value || '#9b87f5'} className="w-16 h-10" />
