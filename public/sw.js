@@ -1,4 +1,5 @@
 const CACHE_NAME = 'curately-cache-v1';
+const DOMAIN = 'https://www.curately.shop';
 
 self.addEventListener('install', (event) => {
   console.log('Service Worker installing...');
@@ -7,7 +8,8 @@ self.addEventListener('install', (event) => {
       return cache.addAll([
         '/',
         '/index.html',
-        '/manifest.json'
+        '/manifest.json',
+        '/offline.html'
       ]);
     })
   );
@@ -22,20 +24,20 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   
   // Don't cache cross-origin requests (like Supabase API calls)
-  if (url.origin !== location.origin) {
+  if (url.origin !== location.origin && url.origin !== DOMAIN) {
     return fetch(event.request);
   }
 
   const pathname = url.pathname;
   
   // Check if this is a direct storefront access (short URL) or regular storefront path
-  const isStorefrontAccess = pathname.split('/').length === 2 || pathname.startsWith('/storefront/');
+  const isStorefrontAccess = pathname.startsWith('/storefront/');
   
   if (isStorefrontAccess) {
     console.log('Handling storefront request:', pathname);
     
-    // Extract storefront ID from either format
-    const storefrontId = pathname.split('/')[1] || pathname.split('/')[2];
+    // Extract storefront ID from path
+    const storefrontId = pathname.split('/')[2];
     
     event.respondWith(
       caches.match(event.request)

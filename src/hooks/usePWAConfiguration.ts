@@ -53,13 +53,16 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         icons: icons
       });
 
-      // Create dynamic manifest with proper scope and start_url
+      // Create dynamic manifest with hardcoded domain
+      const baseUrl = 'https://www.curately.shop';
+      const storefrontPath = `/storefront/${storefront.id}`;
+      
       const manifest = {
         name: storefront.name,
         short_name: storefront.name,
         description: storefront.description || `Welcome to ${storefront.name}`,
-        start_url: `/storefront/${storefront.id}`,
-        scope: `/storefront/${storefront.id}`,
+        start_url: `${baseUrl}${storefrontPath}`,
+        scope: `${baseUrl}${storefrontPath}`,
         display: "standalone",
         background_color: storefront.primary_color || "#ffffff",
         theme_color: storefront.accent_color || "#2A6041",
