@@ -9,9 +9,14 @@ import { GalleryVerificationFields } from "@/components/admin/gallery/GalleryVer
 import { StorefrontBasicInfo } from "@/components/admin/gallery/edit/StorefrontBasicInfo";
 import { StorefrontHeader } from "@/components/admin/gallery/edit/StorefrontHeader";
 import { GalleryFormValues } from "@/lib/validations/gallery";
+import { AdminLayout } from "@/layouts/AdminLayout";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
+  const navigate = useNavigate();
   console.log("Editing storefront:", storefrontId);
 
   const { data: storefront, isLoading } = useQuery({
@@ -38,42 +43,57 @@ const StorefrontEdit = () => {
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <AdminLayout>Loading...</AdminLayout>;
   }
 
   if (!storefront) {
-    return <div>Storefront not found</div>;
+    return <AdminLayout>Storefront not found</AdminLayout>;
   }
 
   return (
-    <div className="container py-6 space-y-6">
-      <StorefrontHeader storefront={storefront} />
-      
-      <Tabs defaultValue="basic" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="basic">Basic Information</TabsTrigger>
-          <TabsTrigger value="customization">Customization</TabsTrigger>
-          <TabsTrigger value="verification">Age Verification</TabsTrigger>
-          <TabsTrigger value="instructions">Instructions</TabsTrigger>
-        </TabsList>
+    <AdminLayout>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/admin')}
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <h1 className="text-2xl font-semibold">Edit Storefront</h1>
+          </div>
+        </div>
 
-        <TabsContent value="basic" className="space-y-4">
-          <StorefrontBasicInfo storefront={storefront} />
-        </TabsContent>
+        <StorefrontHeader storefront={storefront} />
+        
+        <Tabs defaultValue="basic" className="space-y-4">
+          <TabsList className="w-full justify-start">
+            <TabsTrigger value="basic">Basic Information</TabsTrigger>
+            <TabsTrigger value="customization">Customization</TabsTrigger>
+            <TabsTrigger value="verification">Age Verification</TabsTrigger>
+            <TabsTrigger value="instructions">Instructions</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="customization" className="space-y-4">
-          <GalleryCustomizationFields form={form} />
-        </TabsContent>
+          <TabsContent value="basic" className="space-y-4">
+            <StorefrontBasicInfo storefront={storefront} />
+          </TabsContent>
 
-        <TabsContent value="verification" className="space-y-4">
-          <GalleryVerificationFields form={form} />
-        </TabsContent>
+          <TabsContent value="customization" className="space-y-4">
+            <GalleryCustomizationFields form={form} />
+          </TabsContent>
 
-        <TabsContent value="instructions" className="space-y-4">
-          <GalleryInstructionsFields form={form} />
-        </TabsContent>
-      </Tabs>
-    </div>
+          <TabsContent value="verification" className="space-y-4">
+            <GalleryVerificationFields form={form} />
+          </TabsContent>
+
+          <TabsContent value="instructions" className="space-y-4">
+            <GalleryInstructionsFields form={form} />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </AdminLayout>
   );
 };
 
