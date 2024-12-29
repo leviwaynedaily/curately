@@ -34,14 +34,19 @@ const StorefrontEdit = () => {
         .from("storefronts")
         .select(`
           *,
-          businesses (
+          business:business_id (
             name
           )
         `)
         .eq("id", storefrontId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching storefront:", error);
+        throw error;
+      }
+
+      console.log("Storefront data fetched:", data);
       return data;
     },
   });
@@ -54,12 +59,17 @@ const StorefrontEdit = () => {
     setIsSaving(true);
     try {
       await form.handleSubmit(async (values) => {
+        console.log("Saving storefront with values:", values);
         const { error } = await supabase
           .from("storefronts")
           .update(values)
           .eq("id", storefrontId);
         
-        if (error) throw error;
+        if (error) {
+          console.error("Error saving storefront:", error);
+          throw error;
+        }
+        console.log("Storefront saved successfully");
       })();
     } catch (error) {
       console.error("Error saving storefront:", error);
