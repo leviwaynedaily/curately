@@ -94,7 +94,11 @@ export const ProductActions = ({
   }
 
   return (
-    <>
+    <div className="flex items-center gap-2">
+      <Button variant="ghost" size="icon" onClick={onMediaClick}>
+        <ImageIcon className="h-4 w-4" />
+      </Button>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon">
@@ -105,11 +109,6 @@ export const ProductActions = ({
           <DropdownMenuItem onClick={onEdit}>
             <Edit className="h-4 w-4 mr-2" />
             Edit
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem onClick={onMediaClick}>
-            <ImageIcon className="h-4 w-4 mr-2" />
-            Media
           </DropdownMenuItem>
 
           {onDuplicate && (
@@ -160,6 +159,6 @@ export const ProductActions = ({
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={handleConfirmDelete}
       />
-    </>
+    </div>
   );
 };
