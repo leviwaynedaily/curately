@@ -9,6 +9,7 @@ import { GalleryFormActions } from "./GalleryFormActions";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 
 type GalleryFormContentProps = {
   form: UseFormReturn<GalleryFormValues>;
@@ -25,14 +26,27 @@ export const GalleryFormContent = ({
   onClose,
   galleryId,
 }: GalleryFormContentProps) => {
+  const [currentTab, setCurrentTab] = useState("basic");
+
   const handleTabChange = (value: string) => {
+    setCurrentTab(value);
     form.setValue("currentTab", value);
+  };
+
+  const handleSubmit = async (values: GalleryFormValues) => {
+    try {
+      await onSubmit(values);
+      // Stay on the current tab after saving
+      handleTabChange(currentTab);
+    } catch (error) {
+      console.error("Error saving form:", error);
+    }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <Tabs defaultValue="basic" className="w-full" onValueChange={handleTabChange}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <Tabs value={currentTab} className="w-full" onValueChange={handleTabChange}>
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="basic">Basic Information</TabsTrigger>
             <TabsTrigger value="verification">Verification</TabsTrigger>
