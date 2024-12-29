@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useForm } from "react-hook-form";
 import { GalleryCustomizationFields } from "@/components/admin/gallery/GalleryCustomizationFields";
 import { GalleryInstructionsFields } from "@/components/admin/gallery/GalleryInstructionsFields";
 import { GalleryVerificationFields } from "@/components/admin/gallery/GalleryVerificationFields";
@@ -31,6 +32,10 @@ const StorefrontEdit = () => {
     },
   });
 
+  const form = useForm({
+    defaultValues: storefront,
+  });
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -56,15 +61,15 @@ const StorefrontEdit = () => {
         </TabsContent>
 
         <TabsContent value="customization" className="space-y-4">
-          <GalleryCustomizationFields storefront={storefront} />
+          <GalleryCustomizationFields form={form} />
         </TabsContent>
 
         <TabsContent value="verification" className="space-y-4">
-          <GalleryVerificationFields storefront={storefront} />
+          <GalleryVerificationFields form={form} />
         </TabsContent>
 
         <TabsContent value="instructions" className="space-y-4">
-          <GalleryInstructionsFields storefront={storefront} />
+          <GalleryInstructionsFields form={form} />
         </TabsContent>
       </Tabs>
     </div>
