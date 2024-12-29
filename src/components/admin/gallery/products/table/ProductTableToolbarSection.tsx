@@ -22,19 +22,19 @@ export const ProductTableToolbarSection = ({
   setSearchTerm,
 }: ProductTableToolbarSectionProps) => {
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-col gap-4">
+      <Input
+        placeholder="Search products..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="max-w-sm"
+      />
       <ProductBulkActions
         selectedProducts={selectedProducts}
         onDuplicate={onDuplicate}
         onDelete={onDelete}
         products={products}
         onSelectAll={onSelectAll}
-      />
-      <Input
-        placeholder="Search products..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="max-w-sm"
       />
     </div>
   );
