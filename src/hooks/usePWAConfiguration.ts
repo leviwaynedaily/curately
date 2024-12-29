@@ -22,7 +22,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           src: icon192Url,
           sizes: "192x192",
           type: "image/png",
-          purpose: "any maskable"
+          purpose: "any"  // Changed from "any maskable" to just "any" as per manifest requirements
         });
       } else {
         console.warn("No 192x192 PWA icon found in storefront configuration");
@@ -36,7 +36,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           src: icon512Url,
           sizes: "512x512",
           type: "image/png",
-          purpose: "any maskable"
+          purpose: "any"  // Changed from "any maskable" to just "any" as per manifest requirements
         });
       } else {
         console.warn("No 512x512 PWA icon found in storefront configuration");
@@ -50,13 +50,14 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         }))
       });
 
-      // Create dynamic manifest
+      // Create dynamic manifest with proper start_url and id
       const manifest = {
         name: storefront.name,
         short_name: storefront.name,
         description: storefront.description || `Welcome to ${storefront.name}`,
-        start_url: window.location.pathname,
-        scope: window.location.pathname,
+        id: `/storefront/${storefront.id}`,  // Added id field
+        start_url: `/storefront/${storefront.id}`,
+        scope: `/storefront/${storefront.id}`,
         display: "standalone",
         background_color: storefront.primary_color || "#FFFFFF",
         theme_color: storefront.accent_color || "#2A6041",
