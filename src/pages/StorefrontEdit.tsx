@@ -1,8 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useForm } from "react-hook-form";
-import { GalleryFormValues } from "@/lib/validations/gallery";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { Form } from "@/components/ui/form";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
@@ -10,6 +8,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 import { StorefrontTabs } from "@/components/admin/gallery/edit/StorefrontTabs";
 import { StorefrontHeader } from "@/components/admin/gallery/edit/StorefrontHeader";
+import { StorefrontPreview } from "@/components/admin/gallery/edit/StorefrontPreview";
+import { useGalleryForm } from "@/hooks/useGalleryForm";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
@@ -43,8 +43,9 @@ const StorefrontEdit = () => {
     },
   });
 
-  const form = useForm<GalleryFormValues>({
-    defaultValues: storefront || {},
+  const { form, handleSubmit } = useGalleryForm({
+    onClose: () => {},
+    gallery: storefront,
   });
 
   console.log("Form state:", {
@@ -56,21 +57,7 @@ const StorefrontEdit = () => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await form.handleSubmit(async (values) => {
-        console.log("Saving storefront with values:", values);
-        const { error } = await supabase
-          .from("storefronts")
-          .update(values)
-          .eq("id", storefrontId);
-        
-        if (error) {
-          console.error("Error saving storefront:", error);
-          throw error;
-        }
-        console.log("Storefront saved successfully");
-      })();
-    } catch (error) {
-      console.error("Error saving storefront:", error);
+      await handleSubmit(form.getValues());
     } finally {
       setIsSaving(false);
     }
@@ -101,16 +88,6 @@ const StorefrontEdit = () => {
     </div>
   );
 
-  const PreviewPanel = () => (
-    <div className="w-full h-full bg-neutral-50 rounded-lg p-4">
-      <iframe
-        src={`/storefront/${storefrontId}`}
-        className="w-full h-full rounded border-0"
-        title="Storefront Preview"
-      />
-    </div>
-  );
-
   return (
     <AdminLayout>
       {isMobile ? (
@@ -126,7 +103,7 @@ const StorefrontEdit = () => {
             <>
               <ResizableHandle withHandle />
               <ResizablePanel defaultSize={50}>
-                <PreviewPanel />
+                <StorefrontPreview storefrontId={storefrontId!} />
               </ResizablePanel>
             </>
           )}
