@@ -5,9 +5,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProductTableHeader } from "./ProductTableHeader";
 import { ProductTableBody } from "./table/ProductTableBody";
 import { Product } from "./types";
-import { Input } from "@/components/ui/input";
 import { ProductBulkActions } from "./table/ProductBulkActions";
 import { ProductMediaDialog } from "./ProductMediaDialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type ProductTableProps = {
   storefrontId: string;
@@ -31,6 +39,8 @@ export const ProductTable = ({
   const [showHiddenFields, setShowHiddenFields] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const { toast } = useToast();
 
   const handleSelectAll = (checked: boolean) => {
@@ -120,6 +130,11 @@ export const ProductTable = ({
     return 0;
   });
 
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / pageSize);
+  const startIndex = (page - 1) * pageSize;
+  const paginatedProducts = filteredAndSortedProducts.slice(startIndex, startIndex + pageSize);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
@@ -147,7 +162,7 @@ export const ProductTable = ({
             setSelectedCategory={setSelectedCategory}
           />
           <ProductTableBody
-            products={filteredAndSortedProducts}
+            products={paginatedProducts}
             editingId={editingId}
             editedProduct={editedProduct}
             onEdit={handleEdit}
@@ -162,6 +177,55 @@ export const ProductTable = ({
             onDuplicate={onDuplicate}
           />
         </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-between border-t pt-4">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-500">Rows per page:</span>
+          <Select
+            value={pageSize.toString()}
+            onValueChange={(value) => {
+              setPageSize(Number(value));
+              setPage(1); // Reset to first page when changing page size
+            }}
+          >
+            <SelectTrigger className="w-[70px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[5, 10, 20, 50].map((size) => (
+                <SelectItem key={size} value={size.toString()}>
+                  {size}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-500">
+            Page {page} of {totalPages}
+          </span>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setPage(page + 1)}
+              disabled={page === totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
 
       {selectedProduct && (
