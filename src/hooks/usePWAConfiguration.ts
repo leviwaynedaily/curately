@@ -5,33 +5,52 @@ import { supabase } from '@/integrations/supabase/client';
 export const usePWAConfiguration = (storefront: Storefront | null) => {
   useEffect(() => {
     if (storefront) {
-      console.log("Configuring PWA for storefront:", storefront.name);
+      console.log("Configuring PWA for storefront:", {
+        name: storefront.name,
+        pwa_icon_192: storefront.pwa_icon_192,
+        pwa_icon_512: storefront.pwa_icon_512
+      });
       
       // Create array of icons, filtering out undefined ones
       const icons = [];
       
       if (storefront.pwa_icon_192) {
+        const icon192Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl;
+        console.log("Adding 192x192 icon:", {
+          path: storefront.pwa_icon_192,
+          url: icon192Url
+        });
+        
         icons.push({
-          src: supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl,
+          src: icon192Url,
           sizes: "192x192",
           type: "image/png",
           purpose: "any maskable"
         });
+      } else {
+        console.warn("192x192 PWA icon is not set");
       }
       
       if (storefront.pwa_icon_512) {
+        const icon512Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_512).data.publicUrl;
+        console.log("Adding 512x512 icon:", {
+          path: storefront.pwa_icon_512,
+          url: icon512Url
+        });
+        
         icons.push({
-          src: supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_512).data.publicUrl,
+          src: icon512Url,
           sizes: "512x512",
           type: "image/png",
           purpose: "any maskable"
         });
+      } else {
+        console.warn("512x512 PWA icon is not set");
       }
 
-      console.log("PWA Icons configuration:", {
-        icon192: storefront.pwa_icon_192 || 'not set',
-        icon512: storefront.pwa_icon_512 || 'not set',
-        iconsArray: icons
+      console.log("Final PWA Icons configuration:", {
+        totalIcons: icons.length,
+        icons: icons
       });
 
       // Create dynamic manifest
@@ -57,6 +76,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       const existingLink = document.querySelector('link[rel="manifest"]');
       if (existingLink) {
         existingLink.remove();
+        console.log("Removed existing manifest link");
       }
 
       // Add new manifest link
@@ -64,6 +84,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       link.rel = 'manifest';
       link.href = manifestURL;
       document.head.appendChild(link);
+      console.log("Added new manifest link:", manifestURL);
 
       // Update theme color
       let themeColorMeta = document.querySelector('meta[name="theme-color"]');
@@ -93,6 +114,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         
         // Remove existing apple touch icons
         document.querySelectorAll('link[rel="apple-touch-icon"]').forEach(el => el.remove());
+        console.log("Removed existing Apple touch icons");
         
         // Add new apple touch icons
         appleSizes.forEach(size => {
@@ -101,12 +123,14 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           appleLink.setAttribute('sizes', `${size}x${size}`);
           appleLink.setAttribute('href', iconUrl);
           document.head.appendChild(appleLink);
+          console.log(`Added Apple touch icon for size ${size}x${size}`);
         });
       }
 
       // Cleanup function
       return () => {
         URL.revokeObjectURL(manifestURL);
+        console.log("Cleaned up manifest URL");
       };
     }
   }, [storefront]);
