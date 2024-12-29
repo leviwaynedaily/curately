@@ -42,7 +42,7 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
       }
 
       console.log("PWA icon uploaded successfully, setting form value:", filePath);
-      form.setValue(fieldName, filePath);
+      form.setValue(fieldName, filePath, { shouldDirty: true, shouldTouch: true });
       toast({ description: `${size}x${size} PWA icon uploaded successfully` });
     } catch (error) {
       console.error("PWA icon upload failed:", error);
@@ -57,13 +57,15 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
 
   const clearIcon = (size: "192" | "512") => {
     const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
-    form.setValue(fieldName, "");
+    form.setValue(fieldName, "", { shouldDirty: true, shouldTouch: true });
   };
 
   const renderIconUpload = (size: "192" | "512") => {
     const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
     const isUploading = size === "192" ? isUploading192 : isUploading512;
     const value = form.watch(fieldName);
+
+    console.log(`Rendering PWA icon ${size}x${size}:`, { value, isUploading });
 
     return (
       <FormField
