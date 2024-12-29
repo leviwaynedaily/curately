@@ -10,14 +10,10 @@ import { StorefrontBasicInfo } from "@/components/admin/gallery/edit/StorefrontB
 import { StorefrontHeader } from "@/components/admin/gallery/edit/StorefrontHeader";
 import { GalleryFormValues } from "@/lib/validations/gallery";
 import { AdminLayout } from "@/layouts/AdminLayout";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { Form } from "@/components/ui/form";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
-  const navigate = useNavigate();
   console.log("Editing storefront:", storefrontId);
 
   const { data: storefront, isLoading } = useQuery({
@@ -54,17 +50,8 @@ const StorefrontEdit = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/admin')}
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h1 className="text-2xl font-semibold">Edit Storefront</h1>
-          </div>
+        <div>
+          <h1 className="text-2xl font-semibold">Edit Storefront</h1>
         </div>
 
         <StorefrontHeader storefront={storefront} />
