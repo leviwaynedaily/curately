@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Edit, Save, X, Trash, Image as ImageIcon, Copy, Loader2, Archive } from "lucide-react";
 import { useState } from "react";
 import { Product } from "../../types";
+import { ProductDeleteDialog } from "./ProductDeleteDialog";
 
 type ProductActionsProps = {
   product: Product;
@@ -29,13 +30,19 @@ export const ProductActions = ({
   const [isDuplicating, setIsDuplicating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleDelete = async () => {
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
     setIsDeleting(true);
     try {
       await onDelete();
     } finally {
       setIsDeleting(false);
+      setShowDeleteDialog(false);
     }
   };
 
@@ -111,7 +118,8 @@ export const ProductActions = ({
           variant="ghost" 
           size="icon" 
           onClick={handleArchive}
-          disabled={isArchiving}
+          disabled={isArchiving || product.status === 'archived'}
+          title={product.status === 'archived' ? 'Product is already archived' : 'Archive product'}
         >
           {isArchiving ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -120,6 +128,12 @@ export const ProductActions = ({
           )}
         </Button>
       )}
+
+      <ProductDeleteDialog
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={handleConfirmDelete}
+      />
     </>
   );
 };
