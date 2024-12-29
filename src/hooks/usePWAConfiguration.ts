@@ -8,7 +8,11 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       console.log("Starting PWA configuration for storefront:", {
         name: storefront.name,
         pwa_icon_192: storefront.pwa_icon_192,
-        pwa_icon_512: storefront.pwa_icon_512
+        pwa_icon_512: storefront.pwa_icon_512,
+        screenshots: {
+          desktop: storefront.screenshot_desktop,
+          mobile: storefront.screenshot_mobile
+        }
       });
       
       // Create array of icons, filtering out undefined ones
@@ -48,6 +52,41 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         console.warn("No 512x512 PWA icon found in storefront configuration");
       }
 
+      // Create array of screenshots
+      const screenshots = [];
+      
+      if (storefront.screenshot_desktop) {
+        const desktopUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.screenshot_desktop).data.publicUrl;
+        console.log("Adding desktop screenshot:", {
+          path: storefront.screenshot_desktop,
+          fullUrl: desktopUrl
+        });
+        
+        screenshots.push({
+          src: desktopUrl,
+          sizes: "1920x1080",
+          type: "image/png",
+          form_factor: "wide",
+          label: "Desktop view"
+        });
+      }
+      
+      if (storefront.screenshot_mobile) {
+        const mobileUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.screenshot_mobile).data.publicUrl;
+        console.log("Adding mobile screenshot:", {
+          path: storefront.screenshot_mobile,
+          fullUrl: mobileUrl
+        });
+        
+        screenshots.push({
+          src: mobileUrl,
+          sizes: "390x844",
+          type: "image/png",
+          form_factor: "narrow",
+          label: "Mobile view"
+        });
+      }
+
       // Get the base URL for the site
       const baseUrl = window.location.origin;
       const storefrontPath = `/storefront/${storefront.id}`;
@@ -64,12 +103,15 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         display: "standalone",
         background_color: storefront.primary_color || "#FFFFFF",
         theme_color: storefront.accent_color || "#2A6041",
-        icons: icons
+        icons: icons,
+        screenshots: screenshots
       };
 
       console.log("Generated manifest:", manifest);
       console.log("Icons array length:", icons.length);
+      console.log("Screenshots array length:", screenshots.length);
       console.log("Final icons configuration:", icons);
+      console.log("Final screenshots configuration:", screenshots);
 
       // Remove any existing manifest link and clean up old Blob URL
       const existingLink = document.querySelector('link[rel="manifest"]') as HTMLLinkElement;
