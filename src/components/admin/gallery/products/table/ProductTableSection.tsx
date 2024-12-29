@@ -11,6 +11,10 @@ type ProductTableSectionProps = {
   selectedProducts: Set<string>;
   sortField: keyof Product | null;
   sortDirection: "asc" | "desc" | null;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  selectedCategory: string;
+  setSelectedCategory: (category: string) => void;
   onSort: (field: keyof Product) => void;
   onToggleHiddenFields: () => void;
   onSelectAll: (checked: boolean) => void;
@@ -32,6 +36,10 @@ export const ProductTableSection = ({
   selectedProducts,
   sortField,
   sortDirection,
+  searchTerm,
+  setSearchTerm,
+  selectedCategory,
+  setSelectedCategory,
   onSort,
   onToggleHiddenFields,
   onSelectAll,
@@ -55,6 +63,11 @@ export const ProductTableSection = ({
           onToggleHiddenFields={onToggleHiddenFields}
           allSelected={selectedProducts.size === products.length}
           onSelectAll={onSelectAll}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          products={products}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
         />
         <ProductTableBody
           products={products}

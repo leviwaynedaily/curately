@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Product } from "../types";
-import { ProductTableToolbarSection } from "./ProductTableToolbarSection";
 import { ProductTableSection } from "./ProductTableSection";
 import { ProductMediaDialog } from "../ProductMediaDialog";
 
@@ -27,7 +26,7 @@ export const ProductTableContainer = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [showHiddenFields, setShowHiddenFields] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const { toast } = useToast();
 
   const handleSelectAll = (checked: boolean) => {
@@ -76,25 +75,13 @@ export const ProductTableContainer = ({
       product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === "all" || product.status === statusFilter;
+    const matchesCategory = !selectedCategory || product.category === selectedCategory;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesCategory;
   });
 
   return (
     <div className="space-y-4">
-      <ProductTableToolbarSection
-        selectedProducts={selectedProducts}
-        onDuplicate={onDuplicate}
-        onDelete={handleBulkDelete}
-        products={products}
-        onSelectAll={handleSelectAll}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-      />
-
       <ProductTableSection
         products={filteredProducts}
         editingId={editingId}
@@ -103,6 +90,10 @@ export const ProductTableContainer = ({
         selectedProducts={selectedProducts}
         sortField={sortField}
         sortDirection={sortDirection}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
         onSort={setSortField}
         onToggleHiddenFields={() => setShowHiddenFields(!showHiddenFields)}
         onSelectAll={handleSelectAll}

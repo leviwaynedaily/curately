@@ -1,9 +1,18 @@
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowUpDown, EyeOff } from "lucide-react";
+import { ArrowUpDown, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "./types";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+} from "@/components/ui/dropdown-menu";
 
 type ProductTableHeaderProps = {
   onSort: (field: keyof Product) => void;
@@ -13,6 +22,11 @@ type ProductTableHeaderProps = {
   onToggleHiddenFields: () => void;
   onSelectAll?: (checked: boolean) => void;
   allSelected?: boolean;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  products: Product[];
+  selectedCategory: string;
+  setSelectedCategory: (category: string) => void;
 };
 
 export const ProductTableHeader = ({
@@ -23,6 +37,11 @@ export const ProductTableHeader = ({
   onToggleHiddenFields,
   onSelectAll,
   allSelected,
+  searchTerm,
+  setSearchTerm,
+  products,
+  selectedCategory,
+  setSelectedCategory,
 }: ProductTableHeaderProps) => {
   const SortableHeader = ({ field, children, className }: { field: keyof Product; children: React.ReactNode; className?: string }) => (
     <TableHead className={className}>
@@ -40,8 +59,49 @@ export const ProductTableHeader = ({
   const hiddenFields = ["sku", "stock_quantity"];
   const visibleFields = showHiddenFields ? [] : hiddenFields;
 
+  // Get unique categories from products
+  const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean)));
+
   return (
     <TableHeader>
+      <TableRow className="border-b-0">
+        <TableHead colSpan={7}>
+          <div className="flex items-center gap-2 py-2">
+            <Input
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="max-w-xs"
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  Category <Filter className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Filter by category</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuCheckboxItem
+                  checked={selectedCategory === ""}
+                  onCheckedChange={() => setSelectedCategory("")}
+                >
+                  All Categories
+                </DropdownMenuCheckboxItem>
+                {categories.map((category) => (
+                  <DropdownMenuCheckboxItem
+                    key={category}
+                    checked={selectedCategory === category}
+                    onCheckedChange={() => setSelectedCategory(category || "")}
+                  >
+                    {category}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </TableHead>
+      </TableRow>
       <TableRow>
         <TableHead className="w-[40px] pl-4">
           <Checkbox 
@@ -71,7 +131,7 @@ export const ProductTableHeader = ({
                   onClick={onToggleHiddenFields}
                   className="hover:bg-transparent"
                 >
-                  <EyeOff className="h-4 w-4" />
+                  <Filter className="h-4 w-4" />
                   {visibleFields.length > 0 && (
                     <span className="ml-1 text-xs">{visibleFields.length}</span>
                   )}
