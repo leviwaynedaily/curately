@@ -7,6 +7,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ProductActions } from "./table/actions/ProductActions";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { ProductForm } from "./ProductForm";
 
 type ProductTableRowProps = {
   product: Product;
@@ -42,11 +44,8 @@ export const ProductTableRow = ({
   onDuplicate,
 }: ProductTableRowProps) => {
   const { toast } = useToast();
+  const [isFormOpen, setIsFormOpen] = useState(false);
   
-  const handleCellChange = (field: keyof Product) => (value: any) => {
-    onProductChange(field, value);
-  };
-
   const handleArchive = async () => {
     try {
       const { error } = await supabase
@@ -60,7 +59,6 @@ export const ProductTableRow = ({
         description: "Product archived successfully. It will be automatically deleted in 30 days.",
       });
 
-      // Trigger a refresh of the product list
       onSave();
     } catch (error) {
       console.error('Error archiving product:', error);
@@ -71,102 +69,126 @@ export const ProductTableRow = ({
     }
   };
 
+  const handleRowClick = (e: React.MouseEvent) => {
+    // Don't open form if clicking on a button or checkbox
+    if (
+      e.target instanceof HTMLElement && 
+      (e.target.closest('button') || e.target.closest('[role="checkbox"]'))
+    ) {
+      return;
+    }
+    setIsFormOpen(true);
+  };
+
   return (
-    <TableRow className={cn("h-[72px]", className, selected && "bg-accent/50")}>
-      <TableCell className="w-[40px] pl-4">
-        <Checkbox
-          checked={selected}
-          onCheckedChange={onToggleSelect}
-        />
-      </TableCell>
-      <TableCell>
-        <div className="flex items-center gap-2">
-          <ProductTableMedia productId={product.id} />
+    <>
+      <TableRow 
+        className={cn("h-[72px] cursor-pointer hover:bg-accent/50", className, selected && "bg-accent/50")}
+        onClick={handleRowClick}
+      >
+        <TableCell className="w-[40px] pl-4">
+          <Checkbox
+            checked={selected}
+            onCheckedChange={onToggleSelect}
+          />
+        </TableCell>
+        <TableCell>
+          <div className="flex items-center gap-2">
+            <ProductTableMedia productId={product.id} />
+            <ProductTableCell
+              field="name"
+              value={isEditing ? editedProduct?.name : product.name}
+              isEditing={isEditing}
+              onEdit={() => onEdit(product)}
+              onChange={onProductChange}
+              onSave={onSave}
+              className="flex-1 font-medium"
+            />
+          </div>
+        </TableCell>
+
+        <TableCell className="max-w-[300px]">
           <ProductTableCell
-            field="name"
-            value={isEditing ? editedProduct?.name : product.name}
+            field="description"
+            value={isEditing ? editedProduct?.description : product.description}
             isEditing={isEditing}
             onEdit={() => onEdit(product)}
-            onChange={handleCellChange("name")}
+            onChange={onProductChange}
             onSave={onSave}
-            className="flex-1 font-medium"
           />
-        </div>
-      </TableCell>
+        </TableCell>
 
-      <TableCell className="max-w-[300px]">
-        <ProductTableCell
-          field="description"
-          value={isEditing ? editedProduct?.description : product.description}
-          isEditing={isEditing}
-          onEdit={() => onEdit(product)}
-          onChange={handleCellChange("description")}
-          onSave={onSave}
-        />
-      </TableCell>
-
-      <TableCell className="text-right">
-        <ProductTableCell
-          field="price"
-          value={isEditing ? editedProduct?.price : product.price}
-          isEditing={isEditing}
-          onEdit={() => onEdit(product)}
-          onChange={handleCellChange("price")}
-          onSave={onSave}
-        />
-      </TableCell>
-
-      {showHiddenFields && (
-        <>
-          <TableCell>
-            <ProductTableCell
-              field="sku"
-              value={isEditing ? editedProduct?.sku : product.sku}
-              isEditing={isEditing}
-              onEdit={() => onEdit(product)}
-              onChange={handleCellChange("sku")}
-              onSave={onSave}
-            />
-          </TableCell>
-          <TableCell className="text-right">
-            <ProductTableCell
-              field="stock_quantity"
-              value={isEditing ? editedProduct?.stock_quantity : product.stock_quantity}
-              isEditing={isEditing}
-              onEdit={() => onEdit(product)}
-              onChange={handleCellChange("stock_quantity")}
-              onSave={onSave}
-            />
-          </TableCell>
-        </>
-      )}
-
-      <TableCell>
-        <ProductTableCell
-          field="category"
-          value={isEditing ? editedProduct?.category : product.category}
-          isEditing={isEditing}
-          onEdit={() => onEdit(product)}
-          onChange={handleCellChange("category")}
-          onSave={onSave}
-        />
-      </TableCell>
-
-      <TableCell>
-        <div className="flex items-center gap-2">
-          <ProductActions
-            product={product}
+        <TableCell className="text-right">
+          <ProductTableCell
+            field="price"
+            value={isEditing ? editedProduct?.price : product.price}
             isEditing={isEditing}
             onEdit={() => onEdit(product)}
+            onChange={onProductChange}
             onSave={onSave}
-            onCancel={onCancel}
-            onDelete={() => onDelete(product.id)}
-            onMediaClick={() => onMediaClick(product)}
-            onDuplicate={onDuplicate ? () => onDuplicate([product.id]) : undefined}
-            onArchive={handleArchive}
           />
-        </div>
-      </TableCell>
-    </TableRow>
+        </TableCell>
+
+        {showHiddenFields && (
+          <>
+            <TableCell>
+              <ProductTableCell
+                field="sku"
+                value={isEditing ? editedProduct?.sku : product.sku}
+                isEditing={isEditing}
+                onEdit={() => onEdit(product)}
+                onChange={onProductChange}
+                onSave={onSave}
+              />
+            </TableCell>
+            <TableCell className="text-right">
+              <ProductTableCell
+                field="stock_quantity"
+                value={isEditing ? editedProduct?.stock_quantity : product.stock_quantity}
+                isEditing={isEditing}
+                onEdit={() => onEdit(product)}
+                onChange={onProductChange}
+                onSave={onSave}
+              />
+            </TableCell>
+          </>
+        )}
+
+        <TableCell>
+          <ProductTableCell
+            field="category"
+            value={isEditing ? editedProduct?.category : product.category}
+            isEditing={isEditing}
+            onEdit={() => onEdit(product)}
+            onChange={onProductChange}
+            onSave={onSave}
+          />
+        </TableCell>
+
+        <TableCell>
+          <div className="flex items-center gap-2">
+            <ProductActions
+              product={product}
+              isEditing={isEditing}
+              onEdit={() => onEdit(product)}
+              onSave={onSave}
+              onCancel={onCancel}
+              onDelete={() => onDelete(product.id)}
+              onMediaClick={() => onMediaClick(product)}
+              onDuplicate={onDuplicate ? () => onDuplicate([product.id]) : undefined}
+              onArchive={handleArchive}
+            />
+          </div>
+        </TableCell>
+      </TableRow>
+
+      <ProductForm
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        storefrontId={product.storefront_id}
+        onProductCreated={onSave}
+        product={product}
+      />
+    </>
   );
 };

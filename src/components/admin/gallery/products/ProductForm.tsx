@@ -2,17 +2,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Product } from "./types";
 
 type ProductFormProps = {
   isOpen: boolean;
   onClose: () => void;
   storefrontId: string;
   onProductCreated: () => void;
+  product?: Product; // Add this prop for editing mode
 };
 
 export const ProductForm = ({
@@ -20,6 +22,7 @@ export const ProductForm = ({
   onClose,
   storefrontId,
   onProductCreated,
+  product,
 }: ProductFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadingMedia, setUploadingMedia] = useState(false);
@@ -34,6 +37,28 @@ export const ProductForm = ({
   });
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+  // Initialize form data when editing
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        name: product.name || "",
+        description: product.description || "",
+        price: product.price?.toString() || "",
+        sku: product.sku || "",
+        category: product.category || "",
+        stock_quantity: product.stock_quantity?.toString() || "0",
+      });
+
+      // Set preview URLs for existing media
+      if (product.product_media) {
+        const urls = product.product_media.map(media => 
+          `${supabase.storage.from('gallery_images').getPublicUrl(media.file_path).data.publicUrl}`
+        );
+        setPreviewUrls(urls);
+      }
+    }
+  }, [product]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -105,37 +130,59 @@ export const ProductForm = ({
     console.log("Submitting product form with data:", formData);
 
     try {
-      const { data: product, error } = await supabase
-        .from("products")
-        .insert({
-          storefront_id: storefrontId,
-          name: formData.name,
-          description: formData.description,
-          price: formData.price ? parseFloat(formData.price) : null,
-          sku: formData.sku,
-          category: formData.category,
-          stock_quantity: parseInt(formData.stock_quantity),
-          status: "active",
-        })
-        .select()
-        .single();
+      if (product) {
+        // Update existing product
+        const { error } = await supabase
+          .from("products")
+          .update({
+            name: formData.name,
+            description: formData.description,
+            price: formData.price ? parseFloat(formData.price) : null,
+            sku: formData.sku,
+            category: formData.category,
+            stock_quantity: parseInt(formData.stock_quantity),
+          })
+          .eq("id", product.id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      console.log("Product created successfully:", product);
+        console.log("Product updated successfully");
+        toast({ description: "Product updated successfully" });
+      } else {
+        // Create new product
+        const { data: newProduct, error } = await supabase
+          .from("products")
+          .insert({
+            storefront_id: storefrontId,
+            name: formData.name,
+            description: formData.description,
+            price: formData.price ? parseFloat(formData.price) : null,
+            sku: formData.sku,
+            category: formData.category,
+            stock_quantity: parseInt(formData.stock_quantity),
+            status: "active",
+          })
+          .select()
+          .single();
 
-      if (mediaFiles.length > 0) {
-        await uploadMedia(product.id);
+        if (error) throw error;
+
+        console.log("Product created successfully:", newProduct);
+
+        if (mediaFiles.length > 0) {
+          await uploadMedia(newProduct.id);
+        }
+
+        toast({ description: "Product created successfully" });
       }
 
-      toast({ description: "Product created successfully" });
       onProductCreated();
       onClose();
     } catch (error) {
-      console.error("Error creating product:", error);
+      console.error("Error saving product:", error);
       toast({
         variant: "destructive",
-        description: "Failed to create product. Please try again.",
+        description: "Failed to save product. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -146,7 +193,7 @@ export const ProductForm = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Product</DialogTitle>
+          <DialogTitle>{product ? "Edit Product" : "Add New Product"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -282,7 +329,7 @@ export const ProductForm = ({
               type="submit" 
               disabled={isLoading || uploadingMedia}
             >
-              {isLoading || uploadingMedia ? "Creating..." : "Create Product"}
+              {isLoading || uploadingMedia ? (product ? "Saving..." : "Creating...") : (product ? "Save Changes" : "Create Product")}
             </Button>
           </div>
         </form>
