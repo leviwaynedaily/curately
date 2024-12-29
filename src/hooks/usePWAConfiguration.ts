@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 export const usePWAConfiguration = (storefront: Storefront | null) => {
   useEffect(() => {
     if (storefront) {
-      console.log("Configuring PWA for storefront:", {
+      console.log("Starting PWA configuration for storefront:", {
         name: storefront.name,
         pwa_icon_192: storefront.pwa_icon_192,
         pwa_icon_512: storefront.pwa_icon_512
@@ -13,8 +13,6 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       
       // Create array of icons, filtering out undefined ones
       const icons = [];
-      const baseUrl = 'https://www.curately.shop';
-      const storefrontPath = `/storefront/${storefront.id}`;
       
       if (storefront.pwa_icon_192) {
         const icon192Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl;
@@ -29,6 +27,8 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           type: "image/png",
           purpose: "any maskable"
         });
+      } else {
+        console.warn("No 192x192 PWA icon found in storefront configuration");
       }
       
       if (storefront.pwa_icon_512) {
@@ -44,6 +44,8 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           type: "image/png",
           purpose: "any maskable"
         });
+      } else {
+        console.warn("No 512x512 PWA icon found in storefront configuration");
       }
 
       console.log("Final PWA Icons configuration:", {
@@ -56,8 +58,8 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         name: storefront.name,
         short_name: storefront.name,
         description: storefront.description || `Welcome to ${storefront.name}`,
-        start_url: `${baseUrl}${storefrontPath}`,
-        scope: `${baseUrl}${storefrontPath}`,
+        start_url: window.location.pathname,
+        scope: window.location.pathname,
         display: "standalone",
         background_color: storefront.primary_color || "#ffffff",
         theme_color: storefront.accent_color || "#2A6041",
