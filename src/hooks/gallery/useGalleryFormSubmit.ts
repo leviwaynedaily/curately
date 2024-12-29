@@ -23,6 +23,8 @@ export const useGalleryFormSubmit = (
       pwa_icon_512: values.pwa_icon_512,
       show_description: values.show_description
     };
+
+    console.log("Submitting storefront data:", dataToSubmit);
     
     try {
       if (gallery?.id) {

@@ -32,7 +32,7 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
       const filePath = `pwa-icons/${crypto.randomUUID()}.${fileExt}`;
 
       console.log("Uploading PWA icon to storage...");
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError, data } = await supabase.storage
         .from("gallery_images")
         .upload(filePath, file);
 
@@ -42,7 +42,12 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
       }
 
       console.log("PWA icon uploaded successfully, setting form value:", filePath);
-      form.setValue(fieldName, filePath, { shouldDirty: true, shouldTouch: true });
+      form.setValue(fieldName, filePath, { 
+        shouldDirty: true, 
+        shouldTouch: true,
+        shouldValidate: true 
+      });
+      
       toast({ description: `${size}x${size} PWA icon uploaded successfully` });
     } catch (error) {
       console.error("PWA icon upload failed:", error);
@@ -57,7 +62,11 @@ export const PWAIconsSection = ({ form }: PWAIconsSectionProps) => {
 
   const clearIcon = (size: "192" | "512") => {
     const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
-    form.setValue(fieldName, "", { shouldDirty: true, shouldTouch: true });
+    form.setValue(fieldName, "", { 
+      shouldDirty: true, 
+      shouldTouch: true,
+      shouldValidate: true 
+    });
   };
 
   const renderIconUpload = (size: "192" | "512") => {
