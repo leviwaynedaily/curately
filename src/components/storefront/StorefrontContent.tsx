@@ -38,16 +38,27 @@ export const StorefrontContent = ({
 }: StorefrontContentProps) => {
   const isMobile = useIsMobile();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setIsScrolled(scrollPosition > 100);
+      const currentScrollY = window.scrollY;
+      
+      // Determine if we should show/hide the header based on scroll direction
+      if (currentScrollY > lastScrollY) {
+        setIsHeaderVisible(false);
+      } else {
+        setIsHeaderVisible(true);
+      }
+      
+      setIsScrolled(currentScrollY > 100);
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   return (
     <div className="min-h-screen relative bg-gray-50">
@@ -55,6 +66,10 @@ export const StorefrontContent = ({
       {isMobile && (
         <div
           className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+            isHeaderVisible 
+              ? "transform translate-y-0" 
+              : "transform -translate-y-full"
+          } ${
             isScrolled
               ? "bg-white/80 backdrop-blur-lg shadow-sm"
               : "bg-transparent"
@@ -84,11 +99,13 @@ export const StorefrontContent = ({
       >
         {/* Show full header only when not scrolled on mobile */}
         {(!isMobile || !isScrolled) && (
-          <StorefrontHeader 
-            storefront={storefront} 
-            onLogoClick={onLogoClick}
-            showDescription={storefront.show_description}
-          />
+          <div className={`transition-opacity duration-300 ${isScrolled ? 'opacity-0' : 'opacity-100'}`}>
+            <StorefrontHeader 
+              storefront={storefront} 
+              onLogoClick={onLogoClick}
+              showDescription={storefront.show_description}
+            />
+          </div>
         )}
         
         <div className="space-y-4">
