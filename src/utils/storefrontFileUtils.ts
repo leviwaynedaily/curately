@@ -18,7 +18,7 @@ export const getStorefrontFilePath = (storefrontId: string, fileType: string, fi
     return `${storefrontId}/settings/favicon.${fileExt}`;
   }
 
-  // Product files
+  // Product files still use random UUIDs since they can have multiple files
   if (fileType === 'product_media') {
     const uniqueId = crypto.randomUUID();
     return `${storefrontId}/products/${uniqueId}.${fileExt}`;
