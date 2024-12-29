@@ -11,7 +11,10 @@ export const useGalleryFormSubmit = (
   const handleSubmit = async (values: GalleryFormValues) => {
     console.log("Starting gallery form submission with values:", values);
 
+    // Extract all fields except currentTab
     const { currentTab, ...sanitizedValues } = values;
+    
+    // Create submission data object with explicit PWA icon fields
     const dataToSubmit = {
       ...sanitizedValues,
       name: values.name,
@@ -19,8 +22,8 @@ export const useGalleryFormSubmit = (
       instructions_enabled: values.instructions_enabled,
       instructions_content: values.instructions_content,
       instructions_button_text: values.instructions_button_text || "Enter Site",
-      pwa_icon_192: values.pwa_icon_192 || null,  // Ensure PWA icons are included
-      pwa_icon_512: values.pwa_icon_512 || null,  // Ensure PWA icons are included
+      pwa_icon_192: values.pwa_icon_192 || null,  // Explicitly include PWA icons
+      pwa_icon_512: values.pwa_icon_512 || null,  // Explicitly include PWA icons
       show_description: values.show_description
     };
 
@@ -28,7 +31,11 @@ export const useGalleryFormSubmit = (
     
     try {
       if (gallery?.id) {
-        console.log("Updating existing storefront:", gallery.id, "with data:", dataToSubmit);
+        console.log("Updating existing storefront:", gallery.id, "with data:", {
+          ...dataToSubmit,
+          pwa_icon_192: dataToSubmit.pwa_icon_192,
+          pwa_icon_512: dataToSubmit.pwa_icon_512
+        });
         
         const { data, error } = await supabase
           .from("storefronts")
@@ -44,7 +51,11 @@ export const useGalleryFormSubmit = (
         console.log("Storefront updated successfully. Response:", data);
         toast({ description: "Storefront updated successfully" });
       } else {
-        console.log("Creating new storefront with data:", dataToSubmit);
+        console.log("Creating new storefront with data:", {
+          ...dataToSubmit,
+          pwa_icon_192: dataToSubmit.pwa_icon_192,
+          pwa_icon_512: dataToSubmit.pwa_icon_512
+        });
         
         const { data, error } = await supabase
           .from("storefronts")
