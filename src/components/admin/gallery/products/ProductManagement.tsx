@@ -133,11 +133,7 @@ export const ProductManagement = ({ storefrontId }: ProductManagementProps) => {
 
   return (
     <div className="space-y-4">
-      <ProductTableActions
-        onExport={handleExport}
-        onImport={handleImport}
-        galleryId={storefrontId}
-      />
+      <ProductTableActions galleryId={storefrontId} />
       <ProductTableToolbar
         onExport={handleExport}
         onImport={handleImport}
