@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 export const usePWAConfiguration = (storefront: Storefront | null) => {
   useEffect(() => {
     if (storefront) {
+      console.group('PWA Configuration');
       console.log("Starting PWA configuration for storefront:", {
         name: storefront.name,
         pwa_icon_192: storefront.pwa_icon_192,
@@ -107,8 +108,8 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         display: "standalone",
         background_color: storefront.primary_color || "#FFFFFF",
         theme_color: storefront.accent_color || "#2A6041",
-        icons: icons,
-        screenshots: screenshots
+        icons,
+        screenshots
       };
 
       console.log("Generated manifest:", manifest);
@@ -129,7 +130,7 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       }
 
       // Create and inject dynamic manifest
-      const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+      const manifestBlob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
       const manifestURL = URL.createObjectURL(manifestBlob);
       console.log("Created new manifest blob URL:", manifestURL);
       console.log("Manifest content:", JSON.stringify(manifest, null, 2));
@@ -181,6 +182,8 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
           console.log(`Added Apple touch icon for size ${size}x${size}`);
         });
       }
+
+      console.groupEnd();
 
       // Cleanup function
       return () => {
