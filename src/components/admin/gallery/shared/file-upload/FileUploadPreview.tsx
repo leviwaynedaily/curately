@@ -12,7 +12,7 @@ export const FileUploadPreview = ({ filePath, onClear, label }: FileUploadPrevie
   return (
     <div className="relative w-40 h-40">
       <img
-        src={supabase.storage.from("gallery_images").getPublicUrl(filePath).data.publicUrl}
+        src={supabase.storage.from("storefront_products").getPublicUrl(filePath).data.publicUrl}
         alt={label}
         className="w-full h-full object-contain rounded-lg border"
       />
