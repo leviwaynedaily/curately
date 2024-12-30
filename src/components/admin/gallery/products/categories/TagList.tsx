@@ -18,6 +18,7 @@ type TagListProps = {
   onEditSave: (id: string, newName: string) => void;
   onDelete: (id: string) => void;
   onEditValueChange: (value: string) => void;
+  storefrontId: string; // Added this prop
 };
 
 export const TagList = ({
