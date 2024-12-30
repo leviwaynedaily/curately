@@ -24,6 +24,17 @@ export const useStorefrontWizard = (businessId: string | undefined, onClose: () 
       business_id: businessId || "",
       status: "active",
       show_description: true,
+      primary_color: "#141413",
+      secondary_color: "#E6E4DD",
+      accent_color: "#9b87f5",
+      primary_font_color: "#000000",
+      secondary_font_color: "#6E59A5",
+      accent_font_color: "#8B5CF6",
+      heading_text: "Age Verification Required",
+      subheading_text: "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content.",
+      age_verification_text: "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy.",
+      button_text: "Enter Site",
+      instructions_button_text: "Enter Site"
     },
   });
 
@@ -50,11 +61,24 @@ export const useStorefrontWizard = (businessId: string | undefined, onClose: () 
     try {
       const { data, error } = await supabase
         .from("storefronts")
-        .insert({
-          ...values,
+        .insert([{
+          name: values.name,
+          description: values.description,
           business_id: businessId,
-          status: "active"
-        })
+          status: "active",
+          show_description: true,
+          primary_color: values.primary_color,
+          secondary_color: values.secondary_color,
+          accent_color: values.accent_color,
+          primary_font_color: values.primary_font_color,
+          secondary_font_color: values.secondary_font_color,
+          accent_font_color: values.accent_font_color,
+          heading_text: values.heading_text,
+          subheading_text: values.subheading_text,
+          age_verification_text: values.age_verification_text,
+          button_text: values.button_text,
+          instructions_button_text: values.instructions_button_text
+        }])
         .select()
         .single();
 
