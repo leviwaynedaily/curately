@@ -5,6 +5,7 @@ import { FileUploadButton } from "./FileUploadButton";
 import { FileUploadPreview } from "./FileUploadPreview";
 import { useStorefrontFileUpload } from "@/hooks/useStorefrontFileUpload";
 import { useToast } from "@/components/ui/use-toast";
+import { useParams } from "react-router-dom";
 
 type FileUploadFieldProps = {
   form: UseFormReturn<GalleryFormValues>;
@@ -24,8 +25,7 @@ export const FileUploadField = ({
   accept = "image/*"
 }: FileUploadFieldProps) => {
   const { toast } = useToast();
-  // Get storefrontId from form values, but don't require it
-  const storefrontId = form.getValues("id");
+  const { storefrontId } = useParams();
   const { isUploading, uploadFile, deleteFile } = useStorefrontFileUpload(storefrontId);
   const uploadId = `${fieldName}-upload`;
   const fieldValue = form.watch(fieldName);
@@ -46,22 +46,12 @@ export const FileUploadField = ({
       return;
     }
 
-    // For new storefronts, store the file temporarily
     if (!storefrontId) {
-      console.log("New storefront - storing file temporarily");
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64Data = reader.result as string;
-        form.setValue(fieldName, base64Data, {
-          shouldDirty: true,
-          shouldTouch: true,
-          shouldValidate: true
-        });
-        toast({
-          description: "File selected and will be uploaded when the storefront is created"
-        });
-      };
-      reader.readAsDataURL(file);
+      console.error("No storefront ID available");
+      toast({
+        variant: "destructive",
+        description: "Unable to upload file - missing storefront ID"
+      });
       return;
     }
 
@@ -83,6 +73,10 @@ export const FileUploadField = ({
       });
     } catch (error) {
       console.error("File upload failed:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to upload file. Please try again."
+      });
     } finally {
       // Reset the input value to allow uploading the same file again
       const input = document.getElementById(uploadId) as HTMLInputElement;
@@ -92,17 +86,6 @@ export const FileUploadField = ({
 
   const handleClearFile = async () => {
     if (typeof fieldValue === 'string' && fieldValue) {
-      // If it's a base64 string (temporary file), just clear it
-      if (fieldValue.startsWith('data:')) {
-        form.setValue(fieldName, "", {
-          shouldDirty: true,
-          shouldTouch: true,
-          shouldValidate: true
-        });
-        return;
-      }
-
-      // Otherwise delete from storage
       console.log("Deleting file:", { fieldName, filePath: fieldValue });
       await deleteFile(fieldValue);
       form.setValue(fieldName, "", {
