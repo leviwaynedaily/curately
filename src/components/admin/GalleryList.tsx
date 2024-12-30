@@ -60,6 +60,19 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
 
     try {
       console.log("Deleting storefront:", galleryToDelete.id);
+      
+      // First, delete all associated products
+      const { error: productsError } = await supabase
+        .from("products")
+        .delete()
+        .eq("storefront_id", galleryToDelete.id);
+
+      if (productsError) {
+        console.error("Error deleting associated products:", productsError);
+        throw productsError;
+      }
+
+      // Then delete the storefront
       const { error } = await supabase
         .from("storefronts")
         .delete()
