@@ -29,7 +29,7 @@ export const ProductForm = ({
     handleMediaSelect,
     removeMedia,
     handleSubmit,
-  } = useProductForm(storefrontId, product, onProductCreated, onClose);
+  } = useProductForm(storefrontId, onProductCreated, onClose, product);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

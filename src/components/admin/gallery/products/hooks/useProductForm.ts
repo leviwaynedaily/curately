@@ -6,9 +6,9 @@ import { getProductMediaPath } from "@/utils/storefrontFileUtils";
 
 export const useProductForm = (
   storefrontId: string,
-  product?: Product,
   onProductCreated: () => void,
-  onClose: () => void
+  onClose: () => void,
+  product?: Product,
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadingMedia, setUploadingMedia] = useState(false);
