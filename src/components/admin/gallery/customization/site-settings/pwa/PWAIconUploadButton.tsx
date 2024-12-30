@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload } from "lucide-react";
 
-type FileUploadButtonProps = {
+type PWAIconUploadButtonProps = {
   isUploading: boolean;
   uploadId: string;
   onFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -14,7 +14,7 @@ export const PWAIconUploadButton = ({
   uploadId,
   onFileSelect,
   accept,
-}: FileUploadButtonProps) => {
+}: PWAIconUploadButtonProps) => {
   return (
     <div>
       <Button

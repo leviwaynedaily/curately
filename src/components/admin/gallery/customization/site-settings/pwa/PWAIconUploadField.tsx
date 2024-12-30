@@ -17,6 +17,7 @@ type PWAIconUploadFieldProps = {
 export const PWAIconUploadField = ({ form, size }: PWAIconUploadFieldProps) => {
   const fieldName = `pwa_icon_${size}` as keyof GalleryFormValues;
   const uploadId = `pwa-icon-${size}-upload`;
+  const storefrontId = form.getValues("id");
   const { isUploading, handleIconUpload, clearIcon } = usePWAIconUpload(form, fieldName, size);
   const fieldValue = form.watch(fieldName);
 
