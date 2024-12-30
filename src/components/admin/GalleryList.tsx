@@ -7,14 +7,15 @@ import { GalleryForm } from "./GalleryForm";
 import { GalleryTable } from "./gallery/GalleryTable";
 import { GallerySearch } from "./gallery/GallerySearch";
 import { GalleryDeleteDialog } from "./gallery/GalleryDeleteDialog";
+import { useNavigate } from "react-router-dom";
 
 export const GalleryList = ({ businessId }: { businessId?: string }) => {
-  const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedGallery, setSelectedGallery] = useState<any>(null);
   const [galleryToDelete, setGalleryToDelete] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const { data: galleries, isLoading } = useQuery({
     queryKey: ["storefronts", businessId, searchQuery],
@@ -52,7 +53,7 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
 
   const handleEdit = (gallery: any) => {
     setSelectedGallery(gallery);
-    setIsFormOpen(true);
+    navigate(`/admin/storefront/${gallery.id}`);
   };
 
   const handleDelete = async () => {
@@ -102,7 +103,7 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Storefronts</h2>
-        <Button onClick={() => setIsFormOpen(true)}>Add Storefront</Button>
+        <Button onClick={() => navigate("/admin/storefront/new")}>Add Storefront</Button>
       </div>
 
       <GallerySearch value={searchQuery} onChange={setSearchQuery} />
@@ -111,16 +112,6 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
         galleries={galleries || []}
         onEdit={handleEdit}
         onDelete={setGalleryToDelete}
-      />
-
-      <GalleryForm
-        isOpen={isFormOpen}
-        onClose={() => {
-          setIsFormOpen(false);
-          setSelectedGallery(null);
-        }}
-        businessId={businessId}
-        gallery={selectedGallery}
       />
 
       <GalleryDeleteDialog
