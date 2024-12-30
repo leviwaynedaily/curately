@@ -29,9 +29,8 @@ export const StorefrontHeader = ({
     : null;
 
   const shouldShowDescription = !compact && 
-    showDescription && 
-    storefront.description && 
-    storefront.show_description;
+    storefront.show_description && 
+    storefront.description;
 
   return (
     <div className={`text-center space-y-2 ${compact ? 'mb-0' : 'mb-8'}`}>
