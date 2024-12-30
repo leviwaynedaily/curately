@@ -6,6 +6,8 @@ import { formatCurrency } from "@/lib/utils";
 import { ProductCardActions } from "./ProductCardActions";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type ProductDetailsDialogProps = {
   product: Product | null;
@@ -81,6 +83,14 @@ export const ProductDetailsDialog = ({
   return (
     <Dialog open={!!product} onOpenChange={() => onClose()}>
       <DialogContent className="max-w-3xl p-0 gap-0">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-4 top-4 z-10 bg-white/80 hover:bg-white"
+          onClick={onClose}
+        >
+          <X className="h-4 w-4" />
+        </Button>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="relative">
             <ProductMediaCarousel 
@@ -91,7 +101,7 @@ export const ProductDetailsDialog = ({
               <div className="absolute bottom-4 right-4">
                 <ProductCardActions 
                   product={product}
-                  onEdit={() => {}} // Add empty handlers since these actions aren't used in the dialog
+                  onEdit={() => {}}
                   onDelete={() => {}}
                 />
               </div>
@@ -124,7 +134,12 @@ export const ProductDetailsDialog = ({
                   <Badge 
                     key={tag.id}
                     variant="secondary"
-                    className="rounded-full px-3 py-1 text-xs bg-gray-100/80 text-gray-600 hover:bg-gray-100"
+                    className="rounded-full px-3 py-1 text-xs"
+                    style={{ 
+                      backgroundColor: `${secondaryColor}15`,
+                      color: secondaryColor,
+                      border: `1px solid ${secondaryColor}30`
+                    }}
                   >
                     {tag.name}
                   </Badge>
