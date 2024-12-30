@@ -50,6 +50,8 @@ export const useProducts = (storefrontId: string) => {
       console.log("Products fetched successfully:", productsWithMedia);
       return productsWithMedia as Product[];
     },
+    retry: 2, // Add retry logic
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   return {
