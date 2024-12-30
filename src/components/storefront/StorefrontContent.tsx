@@ -105,14 +105,15 @@ export const StorefrontContent = ({
             viewMode === "grid" ? (
               <StorefrontProductGrid 
                 products={products}
-                accentColor={storefront.accent_color}
-                secondaryColor={storefront.secondary_color}
+                accentColor={storefront.accent_font_color}
+                secondaryColor={storefront.secondary_font_color}
                 allowDownload={false}
               />
             ) : (
               <StorefrontProductList
                 products={products}
-                accentColor={storefront.accent_color}
+                accentColor={storefront.accent_font_color}
+                secondaryColor={storefront.secondary_font_color}
               />
             )
           ) : (

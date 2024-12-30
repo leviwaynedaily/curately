@@ -5,10 +5,20 @@ import { supabase } from "@/integrations/supabase/client";
 type StorefrontProductListProps = {
   products: Product[];
   accentColor?: string;
+  secondaryColor?: string;
 };
 
-export const StorefrontProductList = ({ products, accentColor }: StorefrontProductListProps) => {
-  console.log("Rendering product list with:", { productCount: products.length, products });
+export const StorefrontProductList = ({ 
+  products, 
+  accentColor,
+  secondaryColor 
+}: StorefrontProductListProps) => {
+  console.log("Rendering product list with:", { 
+    productCount: products.length, 
+    products,
+    accentColor,
+    secondaryColor
+  });
   
   const getImageUrl = (path: string | null) => {
     if (!path) return null;
@@ -40,7 +50,10 @@ export const StorefrontProductList = ({ products, accentColor }: StorefrontProdu
           <div className="flex-grow">
             <h3 className="font-medium text-lg mb-1">{product.name}</h3>
             {product.description && (
-              <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+              <p 
+                className="text-sm line-clamp-2 mb-2"
+                style={{ color: secondaryColor }}
+              >
                 {product.description}
               </p>
             )}
