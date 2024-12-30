@@ -31,7 +31,7 @@ export const useStorefrontFileUpload = (storefrontId: string) => {
         console.error("Error uploading file:", uploadError);
         toast({
           variant: "destructive",
-          description: `Failed to upload ${fileType}. Please try again.`
+          description: "Failed to upload file. Please try again."
         });
         throw uploadError;
       }
@@ -62,7 +62,7 @@ export const useStorefrontFileUpload = (storefrontId: string) => {
       console.error("File upload failed:", error);
       throw error;
     } finally {
-      setIsLoading(false);
+      setIsUploading(false);  // Fixed: Changed setIsLoading to setIsUploading
     }
   };
 
