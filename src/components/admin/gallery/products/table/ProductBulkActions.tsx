@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,35 +53,8 @@ export const ProductBulkActions = ({
     }
   };
 
-  const handleBulkUpdateCategory = async (category: string) => {
-    console.log("Updating category for products:", Array.from(selectedProducts));
-    if (!category.trim()) return;
-    
-    setIsUpdating(true);
-    try {
-      const { error } = await supabase
-        .from("products")
-        .update({ category })
-        .in("id", Array.from(selectedProducts));
-
-      if (error) throw error;
-
-      toast({ description: `Successfully updated category for ${selectedProducts.size} products` });
-      setShowCategoryDialog(false);
-      window.location.reload(); // Refresh to show updated data
-    } catch (error) {
-      console.error("Error updating products:", error);
-      toast({
-        variant: "destructive",
-        description: "Failed to update products",
-      });
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  // Only render if there are products and some are selected
-  if (products.length === 0 || selectedProducts.size === 0) return null;
+  // Only render if there are products selected
+  if (selectedProducts.size === 0) return null;
 
   return (
     <div className="flex items-center gap-2">
@@ -141,7 +113,32 @@ export const ProductBulkActions = ({
       <BulkCategoryUpdate
         categories={categories}
         isUpdating={isUpdating}
-        onUpdateCategory={handleBulkUpdateCategory}
+        onUpdateCategory={async (category) => {
+          console.log("Updating category for products:", Array.from(selectedProducts));
+          if (!category.trim()) return;
+          
+          setIsUpdating(true);
+          try {
+            const { error } = await supabase
+              .from("products")
+              .update({ category })
+              .in("id", Array.from(selectedProducts));
+
+            if (error) throw error;
+
+            toast({ description: `Successfully updated category for ${selectedProducts.size} products` });
+            setShowCategoryDialog(false);
+            window.location.reload(); // Refresh to show updated data
+          } catch (error) {
+            console.error("Error updating products:", error);
+            toast({
+              variant: "destructive",
+              description: "Failed to update products",
+            });
+          } finally {
+            setIsUpdating(false);
+          }
+        }}
         showDialog={showCategoryDialog}
         setShowDialog={setShowCategoryDialog}
       />

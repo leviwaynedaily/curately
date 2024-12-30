@@ -7,8 +7,8 @@ type BulkActionButtonProps = {
 
 export const BulkActionButton = ({ selectedCount }: BulkActionButtonProps) => {
   return (
-    <Button variant="outline" size="sm">
-      <MoreHorizontal className="h-4 w-4 mr-2" />
+    <Button variant="outline" size="sm" className="gap-2">
+      <MoreHorizontal className="h-4 w-4" />
       Actions ({selectedCount})
     </Button>
   );
