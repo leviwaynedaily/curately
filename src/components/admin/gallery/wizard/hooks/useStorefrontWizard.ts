@@ -61,7 +61,7 @@ export const useStorefrontWizard = (businessId: string | undefined, onClose: () 
     try {
       const { data, error } = await supabase
         .from("storefronts")
-        .insert([{
+        .insert({
           name: values.name,
           description: values.description,
           business_id: businessId,
@@ -78,7 +78,7 @@ export const useStorefrontWizard = (businessId: string | undefined, onClose: () 
           age_verification_text: values.age_verification_text,
           button_text: values.button_text,
           instructions_button_text: values.instructions_button_text
-        }])
+        })
         .select()
         .single();
 
