@@ -1,5 +1,5 @@
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowUpDown, Filter } from "lucide-react";
+import { ArrowUpDown, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "./types";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -100,7 +100,7 @@ export const ProductTableHeader = ({
                   onClick={onToggleHiddenFields}
                   className="hover:bg-transparent"
                 >
-                  <Filter className="h-4 w-4" />
+                  <EyeOff className="h-4 w-4" />
                   {visibleFields.length > 0 && (
                     <span className="ml-1 text-xs">{visibleFields.length}</span>
                   )}
