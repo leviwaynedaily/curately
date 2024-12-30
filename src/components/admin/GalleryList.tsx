@@ -97,6 +97,16 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
     }
   };
 
+  const handleOpenWizard = () => {
+    console.log("Opening wizard");
+    setShowWizard(true);
+  };
+
+  const handleCloseWizard = () => {
+    console.log("Closing wizard");
+    setShowWizard(false);
+  };
+
   if (isLoading) {
     return <div>Loading storefronts...</div>;
   }
@@ -105,7 +115,7 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Storefronts</h2>
-        <Button onClick={() => setShowWizard(true)}>Add Storefront</Button>
+        <Button onClick={handleOpenWizard}>Add Storefront</Button>
       </div>
 
       <GallerySearch value={searchQuery} onChange={setSearchQuery} />
@@ -124,7 +134,7 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
 
       <StorefrontWizard
         isOpen={showWizard}
-        onClose={() => setShowWizard(false)}
+        onClose={handleCloseWizard}
         businessId={businessId}
       />
     </div>

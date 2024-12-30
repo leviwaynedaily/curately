@@ -26,7 +26,7 @@ export const StorefrontWizard = ({
     handleSubmit,
   } = useStorefrontWizard(businessId, onClose);
 
-  console.log("StorefrontWizard render:", { step, isSubmitting });
+  console.log("StorefrontWizard render:", { step, isSubmitting, isOpen });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -36,7 +36,7 @@ export const StorefrontWizard = ({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             {step === 1 && <WizardNameStep form={form} />}
             {step === 2 && <WizardDescriptionStep form={form} />}
 
@@ -52,11 +52,19 @@ export const StorefrontWizard = ({
               )}
               
               {step < 2 ? (
-                <Button type="button" onClick={nextStep}>
+                <Button 
+                  type="button" 
+                  onClick={nextStep}
+                  className="ml-auto"
+                >
                   Next
                 </Button>
               ) : (
-                <Button type="submit" disabled={isSubmitting}>
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="ml-auto"
+                >
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
