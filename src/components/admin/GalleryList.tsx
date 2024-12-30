@@ -8,10 +8,17 @@ import { GalleryTable } from "./gallery/GalleryTable";
 import { GallerySearch } from "./gallery/GallerySearch";
 import { GalleryDeleteDialog } from "./gallery/GalleryDeleteDialog";
 import { useNavigate } from "react-router-dom";
+import { Database } from "@/integrations/supabase/types";
+
+type StorefrontWithBusiness = Database['public']['Tables']['storefronts']['Row'] & {
+  businesses: {
+    name: string;
+  } | null;
+};
 
 export const GalleryList = ({ businessId }: { businessId?: string }) => {
-  const [selectedGallery, setSelectedGallery] = useState<any>(null);
-  const [galleryToDelete, setGalleryToDelete] = useState<any>(null);
+  const [selectedGallery, setSelectedGallery] = useState<StorefrontWithBusiness | null>(null);
+  const [galleryToDelete, setGalleryToDelete] = useState<StorefrontWithBusiness | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -47,11 +54,11 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
       }
 
       console.log("Storefronts fetched:", data);
-      return data;
+      return data as StorefrontWithBusiness[];
     },
   });
 
-  const handleEdit = (gallery: any) => {
+  const handleEdit = (gallery: StorefrontWithBusiness) => {
     setSelectedGallery(gallery);
     navigate(`/admin/storefront/${gallery.id}`);
   };
