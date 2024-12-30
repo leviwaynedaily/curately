@@ -8,17 +8,25 @@ import { useGalleryForm } from "@/hooks/useGalleryForm";
 import { StorefrontLayout } from "@/components/admin/gallery/edit/StorefrontLayout";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { useBusinessSelection } from "@/hooks/useBusinessSelection";
+import { BusinessSelector } from "@/components/admin/gallery/edit/BusinessSelector";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
   const isMobile = useIsMobile();
   const [showPreview, setShowPreview] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
   const navigate = useNavigate();
   
+  const {
+    userProfile,
+    businesses,
+    isLoadingBusinesses,
+    selectedBusinessId,
+    setSelectedBusinessId,
+    isPlatformAdmin
+  } = useBusinessSelection();
+
   console.log("StorefrontEdit render:", {
     storefrontId,
     isMobile,
@@ -26,62 +34,8 @@ const StorefrontEdit = () => {
     selectedBusinessId
   });
 
-  // First, check if user is platform admin
-  const { data: userProfile } = useQuery({
-    queryKey: ["user-profile"],
-    queryFn: async () => {
-      console.log("Fetching user profile");
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        console.log("No authenticated user found");
-        return null;
-      }
-
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Error fetching profile:", error);
-        return null;
-      }
-
-      console.log("User profile:", profile);
-      return profile;
-    }
-  });
-
-  // Fetch all businesses if platform admin, otherwise just user's business
-  const { data: businesses, isLoading: isLoadingBusinesses } = useQuery({
-    queryKey: ["businesses", userProfile?.role],
-    queryFn: async () => {
-      if (!userProfile) return null;
-
-      console.log("Fetching businesses for role:", userProfile.role);
-      let query = supabase.from("businesses").select("*");
-      
-      if (userProfile.role !== "platform_admin") {
-        query = query.eq("owner_id", userProfile.id);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error("Error fetching businesses:", error);
-        return null;
-      }
-
-      console.log("Fetched businesses:", data);
-      return data;
-    },
-    enabled: !!userProfile
-  });
-
   const { data: storefront, isLoading, refetch } = useQuery({
-    queryKey: ["storefront", storefrontId],
+    queryKey: ["storefront", storefrontId, selectedBusinessId],
     queryFn: async () => {
       // If this is a new storefront, return a template object
       if (storefrontId === "new") {
@@ -95,7 +49,7 @@ const StorefrontEdit = () => {
         return {
           id: undefined,
           business_id: businessId,
-          name: "New Storefront",
+          name: "",
           status: "active",
           show_description: true,
           primary_color: "#141413",
@@ -176,39 +130,17 @@ const StorefrontEdit = () => {
   }
 
   // Show business selector for new storefronts if platform admin
-  if (storefrontId === "new" && userProfile?.role === "platform_admin") {
-    if (!selectedBusinessId) {
-      return (
-        <AdminLayout>
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Select a Business</h2>
-            <div className="max-w-md">
-              <Select
-                value={selectedBusinessId || ""}
-                onValueChange={(value) => setSelectedBusinessId(value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a business" />
-                </SelectTrigger>
-                <SelectContent>
-                  {businesses?.map((business) => (
-                    <SelectItem key={business.id} value={business.id}>
-                      {business.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <Button 
-              onClick={() => setSelectedBusinessId(businesses[0].id)}
-              disabled={!businesses?.length}
-            >
-              Continue
-            </Button>
-          </div>
-        </AdminLayout>
-      );
-    }
+  if (storefrontId === "new" && isPlatformAdmin && !selectedBusinessId) {
+    return (
+      <AdminLayout>
+        <BusinessSelector
+          businesses={businesses}
+          selectedBusinessId={selectedBusinessId}
+          onBusinessSelect={setSelectedBusinessId}
+          onContinue={() => setSelectedBusinessId(selectedBusinessId)}
+        />
+      </AdminLayout>
+    );
   }
 
   if (!storefront) {
