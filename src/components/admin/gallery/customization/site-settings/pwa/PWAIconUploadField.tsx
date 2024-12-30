@@ -1,59 +1,39 @@
-import { useState } from "react";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { getStorefrontFilePath } from "@/utils/storefrontFileUtils";
-import { PWAIconPreview } from "./PWAIconPreview";
 import { PWAIconUploadButton } from "./PWAIconUploadButton";
+import { PWAIconPreview } from "./PWAIconPreview";
 import { usePWAIconUpload } from "./hooks/usePWAIconUpload";
 
 type PWAIconUploadFieldProps = {
   form: UseFormReturn<GalleryFormValues>;
-  size: "192" | "512";
+  size: string;
 };
 
 export const PWAIconUploadField = ({ form, size }: PWAIconUploadFieldProps) => {
-  const fieldName = `pwa_icon_${size}` as keyof GalleryFormValues;
-  const uploadId = `pwa-icon-${size}-upload`;
-  const storefrontId = form.getValues("id");
-  const { isUploading, handleIconUpload, clearIcon } = usePWAIconUpload(form, fieldName, size);
-  const fieldValue = form.watch(fieldName);
+  const fieldName = size === "192" ? "pwa_icon_192" : "pwa_icon_512";
+  const { isUploading, handleIconUpload, clearIcon } = usePWAIconUpload(form, fieldName as keyof GalleryFormValues, size);
+  const iconPath = form.watch(fieldName);
 
   return (
-    <FormField
-      control={form.control}
-      name={fieldName}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel className="flex items-center gap-2">
-            {`PWA Icon ${size}×${size}`}
-            <span className="text-sm text-muted-foreground font-normal">
-              (PNG only)
-            </span>
-          </FormLabel>
-          <FormControl>
-            <div className="space-y-4">
-              {field.value ? (
-                <PWAIconPreview 
-                  filePath={field.value} 
-                  size={size} 
-                  onClear={clearIcon}
-                />
-              ) : (
-                <PWAIconUploadButton
-                  isUploading={isUploading}
-                  uploadId={uploadId}
-                  onFileSelect={handleIconUpload}
-                  accept="image/png"
-                />
-              )}
-            </div>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h4 className="text-sm font-medium">{size}x{size} Icon</h4>
+      </div>
+      
+      {iconPath ? (
+        <PWAIconPreview 
+          iconPath={iconPath} 
+          size={size} 
+          onClear={clearIcon}
+        />
+      ) : (
+        <PWAIconUploadButton
+          isUploading={isUploading}
+          uploadId={`pwa-icon-${size}`}
+          onFileSelect={handleIconUpload}
+          accept="image/png"
+        />
       )}
-    />
+    </div>
   );
 };
