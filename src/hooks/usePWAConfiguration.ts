@@ -53,41 +53,49 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
         console.warn("No 512x512 PWA icon found in storefront configuration");
       }
 
-      // Create array of screenshots
+      // Create array of screenshots with proper error handling
       const screenshots = [];
       
       if (storefront.screenshot_desktop) {
-        const desktopUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.screenshot_desktop).data.publicUrl;
-        console.log("Adding desktop screenshot:", {
-          path: storefront.screenshot_desktop,
-          fullUrl: desktopUrl
-        });
-        
-        screenshots.push({
-          src: desktopUrl,
-          sizes: "1920x1080",
-          type: "image/png",
-          form_factor: "wide",
-          label: "Desktop view"
-        });
+        try {
+          const desktopUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.screenshot_desktop).data.publicUrl;
+          console.log("Adding desktop screenshot:", {
+            path: storefront.screenshot_desktop,
+            fullUrl: desktopUrl
+          });
+          
+          screenshots.push({
+            src: desktopUrl,
+            sizes: "1920x1080",
+            type: "image/png",
+            form_factor: "wide",
+            label: "Desktop view"
+          });
+        } catch (error) {
+          console.error("Error processing desktop screenshot:", error);
+        }
       } else {
         console.warn("No desktop screenshot found in storefront configuration");
       }
       
       if (storefront.screenshot_mobile) {
-        const mobileUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.screenshot_mobile).data.publicUrl;
-        console.log("Adding mobile screenshot:", {
-          path: storefront.screenshot_mobile,
-          fullUrl: mobileUrl
-        });
-        
-        screenshots.push({
-          src: mobileUrl,
-          sizes: "390x844",
-          type: "image/png",
-          form_factor: "narrow",
-          label: "Mobile view"
-        });
+        try {
+          const mobileUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.screenshot_mobile).data.publicUrl;
+          console.log("Adding mobile screenshot:", {
+            path: storefront.screenshot_mobile,
+            fullUrl: mobileUrl
+          });
+          
+          screenshots.push({
+            src: mobileUrl,
+            sizes: "390x844",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "Mobile view"
+          });
+        } catch (error) {
+          console.error("Error processing mobile screenshot:", error);
+        }
       } else {
         console.warn("No mobile screenshot found in storefront configuration");
       }
