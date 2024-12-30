@@ -5,7 +5,6 @@ import { GalleryDescriptionField } from "../GalleryDescriptionField";
 import { FormField, FormItem, FormControl } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { GallerySiteLogoField } from "../GallerySiteLogoField";
 
 type StorefrontBasicInfoProps = {
@@ -25,27 +24,6 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
       <div className="space-y-4">
         <GalleryNameField form={form} />
         <GalleryDescriptionField form={form} />
-        
-        <FormField
-          control={form.control}
-          name="show_description"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <Label className="text-base">Show description</Label>
-                <div className="text-sm text-muted-foreground">
-                  Display description below the header
-                </div>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
       </div>
 
       <div className="space-y-4 border-t pt-6">
