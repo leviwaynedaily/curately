@@ -84,7 +84,7 @@ export const ProductDetailsDialog = ({
         <div className="grid md:grid-cols-2 gap-4">
           <div className="relative">
             <ProductMediaCarousel 
-              media={product.media || []}
+              media={product.product_media || []}
               allowDownload={allowDownload}
             />
             {allowDownload && (
