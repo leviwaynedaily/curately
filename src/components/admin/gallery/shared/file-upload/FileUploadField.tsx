@@ -68,7 +68,7 @@ export const FileUploadField = ({
           )}
           <FormControl>
             <div className="space-y-4">
-              {fieldValue ? (
+              {typeof fieldValue === 'string' && fieldValue ? (
                 <FileUploadPreview
                   filePath={fieldValue}
                   onClear={handleClearFile}
