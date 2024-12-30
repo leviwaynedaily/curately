@@ -157,7 +157,17 @@ export const ProductDetailsDialog = ({
           </div>
           
           <div className="p-4 space-y-3 bg-white">
-            {renderField('name', product.name)}
+            <div className="flex items-center gap-2">
+              {renderField('name', product.name)}
+              {product.category && (
+                <Badge 
+                  variant="secondary"
+                  className="rounded-full px-3 py-1 text-xs bg-gray-100/80 text-gray-600 hover:bg-gray-100"
+                >
+                  {product.category}
+                </Badge>
+              )}
+            </div>
             {product.price !== null && renderField('price', product.price, 'number')}
             {product.description && renderField('description', product.description, 'textarea')}
             
@@ -168,18 +178,12 @@ export const ProductDetailsDialog = ({
                   <Badge 
                     key={tag.id}
                     variant="secondary"
-                    className="text-xs"
+                    className="rounded-full px-3 py-1 text-xs bg-gray-100/80 text-gray-600 hover:bg-gray-100"
                   >
                     {tag.name}
                   </Badge>
                 ))}
               </div>
-            )}
-            
-            {product.category && (
-              <p className="text-xs text-gray-500 uppercase tracking-wide">
-                Category: {product.category}
-              </p>
             )}
           </div>
         </div>
