@@ -12,6 +12,8 @@ type StorefrontBasicInfoProps = {
   form: UseFormReturn<GalleryFormValues>;
 };
 
+type HeaderDisplayType = "text" | "logo";
+
 export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
   console.log("StorefrontBasicInfo render:", {
     isDirty: form.formState.isDirty,
@@ -49,7 +51,7 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
             <FormItem className="space-y-1">
               <FormControl>
                 <RadioGroup
-                  onValueChange={(value) => {
+                  onValueChange={(value: HeaderDisplayType) => {
                     console.log("Radio group value changed to:", value);
                     field.onChange(value);
                     // Ensure the form knows it's dirty
@@ -58,7 +60,7 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
                       shouldTouch: true
                     });
                   }}
-                  value={field.value || "text"}
+                  value={(field.value as HeaderDisplayType) || "text"}
                   className="flex flex-col space-y-1"
                 >
                   <div className="flex items-center space-x-2">
