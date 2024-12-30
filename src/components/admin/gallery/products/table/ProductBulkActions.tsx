@@ -1,23 +1,12 @@
-import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Copy, Loader2, Trash, Edit } from "lucide-react";
-import { Product } from "../../../gallery/products/types";
-import { BulkActionButton } from "./bulk-actions/BulkActionButton";
-import { BulkCategoryUpdate } from "./bulk-actions/BulkCategoryUpdate";
-import { supabase } from "@/integrations/supabase/client";
+import { Product } from "../types";
+import { BulkActionMenu } from "./bulk-actions/BulkActionMenu";
+import { useBulkActions } from "./bulk-actions/useBulkActions";
 
 type ProductBulkActionsProps = {
   selectedProducts: Set<string>;
-  onDuplicate: (productIds: string[]) => void;
-  onDelete: (productIds: string[]) => void;
+  onDuplicate: (productIds: string[]) => Promise<void>;
+  onDelete: (productIds: string[]) => Promise<void>;
   products: Product[];
-  onSelectAll?: (checked: boolean) => void;
 };
 
 export const ProductBulkActions = ({
@@ -26,141 +15,21 @@ export const ProductBulkActions = ({
   onDelete,
   products,
 }: ProductBulkActionsProps) => {
-  const [isDuplicating, setIsDuplicating] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [showCategoryDialog, setShowCategoryDialog] = useState(false);
-  const { toast } = useToast();
-
-  // Get unique categories from products
-  const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean)));
-
-  const handleDuplicate = async () => {
-    console.log("Duplicating selected products:", Array.from(selectedProducts));
-    setIsDuplicating(true);
-    try {
-      await onDuplicate(Array.from(selectedProducts));
-      toast({ description: `Successfully duplicated ${selectedProducts.size} products` });
-    } catch (error) {
-      console.error("Error duplicating products:", error);
-      toast({
-        variant: "destructive",
-        description: "Failed to duplicate products",
-      });
-    } finally {
-      setIsDuplicating(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    console.log("Deleting selected products:", Array.from(selectedProducts));
-    if (!confirm(`Are you sure you want to delete ${selectedProducts.size} products? This action cannot be undone.`)) {
-      return;
-    }
-    
-    setIsDeleting(true);
-    try {
-      await onDelete(Array.from(selectedProducts));
-      toast({ description: `Successfully deleted ${selectedProducts.size} products` });
-    } catch (error) {
-      console.error("Error deleting products:", error);
-      toast({
-        variant: "destructive",
-        description: "Failed to delete products",
-      });
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  // Only render if there are products selected
-  if (selectedProducts.size === 0) return null;
+  const {
+    isDeleting,
+    isDuplicating,
+    handleDelete,
+    handleDuplicate,
+  } = useBulkActions(selectedProducts, onDelete, onDuplicate);
 
   return (
     <div className="flex items-center gap-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <BulkActionButton selectedCount={selectedProducts.size} />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem 
-            onClick={handleDuplicate}
-            disabled={isDuplicating}
-            className="flex items-center"
-          >
-            {isDuplicating ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Duplicating...
-              </>
-            ) : (
-              <>
-                <Copy className="h-4 w-4 mr-2" />
-                Duplicate Selected ({selectedProducts.size})
-              </>
-            )}
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            onClick={() => setShowCategoryDialog(true)}
-            disabled={isUpdating}
-            className="flex items-center"
-          >
-            <Edit className="h-4 w-4 mr-2" />
-            Change Category
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            className="text-destructive flex items-center"
-            onClick={handleDelete}
-            disabled={isDeleting}
-          >
-            {isDeleting ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Deleting...
-              </>
-            ) : (
-              <>
-                <Trash className="h-4 w-4 mr-2" />
-                Delete Selected ({selectedProducts.size})
-              </>
-            )}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <BulkCategoryUpdate
-        categories={categories}
-        isUpdating={isUpdating}
-        onUpdateCategory={async (category) => {
-          console.log("Updating category for products:", Array.from(selectedProducts));
-          if (!category.trim()) return;
-          
-          setIsUpdating(true);
-          try {
-            const { error } = await supabase
-              .from("products")
-              .update({ category })
-              .in("id", Array.from(selectedProducts));
-
-            if (error) throw error;
-
-            toast({ description: `Successfully updated category for ${selectedProducts.size} products` });
-            setShowCategoryDialog(false);
-            window.location.reload(); // Refresh to show updated data
-          } catch (error) {
-            console.error("Error updating products:", error);
-            toast({
-              variant: "destructive",
-              description: "Failed to update products",
-            });
-          } finally {
-            setIsUpdating(false);
-          }
-        }}
-        showDialog={showCategoryDialog}
-        setShowDialog={setShowCategoryDialog}
+      <BulkActionMenu
+        selectedCount={selectedProducts.size}
+        isDeleting={isDeleting}
+        isDuplicating={isDuplicating}
+        onDelete={handleDelete}
+        onDuplicate={handleDuplicate}
       />
     </div>
   );
