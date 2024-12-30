@@ -70,10 +70,12 @@ export const ProductTableRow = ({
   };
 
   const handleRowClick = (e: React.MouseEvent) => {
-    // Don't open form if clicking on a button or checkbox
+    // Don't open form if clicking on a button, checkbox, or any action elements
     if (
       e.target instanceof HTMLElement && 
-      (e.target.closest('button') || e.target.closest('[role="checkbox"]'))
+      (e.target.closest('button') || 
+       e.target.closest('[role="checkbox"]') ||
+       e.target.closest('[data-prevent-row-click="true"]'))
     ) {
       return;
     }
@@ -168,7 +170,7 @@ export const ProductTableRow = ({
         </TableCell>
 
         <TableCell>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" data-prevent-row-click="true">
             <ProductActions
               product={product}
               isEditing={isEditing}
