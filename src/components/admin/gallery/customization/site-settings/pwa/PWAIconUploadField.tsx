@@ -22,7 +22,7 @@ export const PWAIconUploadField = ({ form, size }: PWAIconUploadFieldProps) => {
       
       {iconPath ? (
         <PWAIconPreview 
-          iconPath={iconPath} 
+          filePath={iconPath} 
           size={size} 
           onClear={clearIcon}
         />
