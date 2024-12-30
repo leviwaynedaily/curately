@@ -35,7 +35,7 @@ export const ProductTableMedia = ({ productId }: ProductTableMediaProps) => {
         <div className="w-10 h-10 bg-muted animate-pulse rounded" />
       ) : primaryMedia ? (
         <img
-          src={supabase.storage.from("storefront_products").getPublicUrl(primaryMedia).data.publicUrl}
+          src={supabase.storage.from("gallery_images").getPublicUrl(primaryMedia).data.publicUrl}
           alt=""
           className="w-10 h-10 object-cover rounded"
         />
