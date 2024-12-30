@@ -1,98 +1,75 @@
+import { MoreHorizontal, Pencil, Store, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Package, ExternalLink } from "lucide-react";
+import { Storefront } from "@/types/storefront";
 
-type GalleryTableProps = {
-  galleries: any[];
-  onEdit: (gallery: any) => void;
-  onDelete: (gallery: any) => void;
-};
+interface GalleryTableProps {
+  galleries: Storefront[];
+  onDeleteClick: (gallery: Storefront) => void;
+}
 
-export const GalleryTable = ({ galleries, onEdit, onDelete }: GalleryTableProps) => {
+export const GalleryTable = ({ galleries, onDeleteClick }: GalleryTableProps) => {
   const navigate = useNavigate();
 
-  console.log("GalleryTable render, galleries:", galleries);
-
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Business</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Created</TableHead>
-          <TableHead>ID</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {galleries.map((gallery) => (
-          <TableRow key={gallery.id}>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                {gallery.header_display === "logo" && gallery.site_logo && (
-                  <img 
-                    src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${gallery.site_logo}`} 
-                    alt={`${gallery.name} logo`} 
-                    className="h-8 w-auto object-contain"
-                  />
-                )}
-                <span>{gallery.name}</span>
-              </div>
-            </TableCell>
-            <TableCell>{gallery.businesses?.name}</TableCell>
-            <TableCell>{gallery.status}</TableCell>
-            <TableCell>
-              {new Date(gallery.created_at).toLocaleDateString()}
-            </TableCell>
-            <TableCell>
-              <span className="font-mono text-sm text-muted-foreground">
-                {gallery.id}
-              </span>
-            </TableCell>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate(`/admin/storefront/${gallery.id}`)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate(`/admin/products/${gallery.id}`)}
-                >
-                  <Package className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => window.open(`/storefront/${gallery.id}`, '_blank')}
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onDelete(gallery)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="rounded-md border">
+      <table className="w-full">
+        <thead>
+          <tr className="border-b bg-muted/50">
+            <th className="p-4 text-left font-medium">Name</th>
+            <th className="p-4 text-left font-medium">Status</th>
+            <th className="p-4 text-right font-medium">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {galleries.map((gallery) => (
+            <tr key={gallery.id} className="border-b">
+              <td className="p-4">{gallery.name}</td>
+              <td className="p-4">{gallery.status}</td>
+              <td className="p-4 text-right">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() =>
+                        navigate(`/admin/storefront/${gallery.id}`)
+                      }
+                    >
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Edit Storefront
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        navigate(`/admin/products-new/${gallery.id}`)
+                      }
+                    >
+                      <Store className="mr-2 h-4 w-4 text-accent" />
+                      Products (New)
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => onDeleteClick(gallery)}
+                      className="text-destructive"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
