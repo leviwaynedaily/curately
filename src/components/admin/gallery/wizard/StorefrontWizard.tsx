@@ -1,17 +1,10 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { gallerySchema } from "@/lib/validations/gallery";
+import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
+import { WizardNameStep } from "./steps/WizardNameStep";
+import { WizardDescriptionStep } from "./steps/WizardDescriptionStep";
+import { useStorefrontWizard } from "./hooks/useStorefrontWizard";
 
 type StorefrontWizardProps = {
   isOpen: boolean;
@@ -19,76 +12,19 @@ type StorefrontWizardProps = {
   businessId?: string;
 };
 
-export const StorefrontWizard = ({ isOpen, onClose, businessId }: StorefrontWizardProps) => {
-  const [step, setStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  const form = useForm({
-    resolver: zodResolver(gallerySchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      business_id: businessId || "",
-      status: "active",
-    },
-  });
-
-  const handleSubmit = async (values: any) => {
-    console.log("Submitting wizard form with values:", values);
-    setIsSubmitting(true);
-
-    try {
-      const { data, error } = await supabase
-        .from("storefronts")
-        .insert({
-          ...values,
-          business_id: businessId,
-          status: "active"
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error("Error creating storefront:", error);
-        throw error;
-      }
-
-      console.log("Storefront created successfully:", data);
-      
-      // Invalidate the storefronts query to refresh the list
-      queryClient.invalidateQueries({ queryKey: ["storefronts"] });
-      
-      // Show success message
-      toast({ description: "Storefront created successfully" });
-      
-      // Close the wizard
-      onClose();
-      
-      // Navigate to the edit page
-      if (data?.id) {
-        console.log("Navigating to edit page for storefront:", data.id);
-        navigate(`/admin/storefront/${data.id}`);
-      }
-    } catch (error) {
-      console.error("Error creating storefront:", error);
-      toast({
-        variant: "destructive",
-        description: "There was an error creating the storefront",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const nextStep = async () => {
-    const currentStepValid = await form.trigger(step === 1 ? ["name"] : ["description"]);
-    if (currentStepValid) {
-      setStep(step + 1);
-    }
-  };
+export const StorefrontWizard = ({
+  isOpen,
+  onClose,
+  businessId,
+}: StorefrontWizardProps) => {
+  const {
+    form,
+    step,
+    isSubmitting,
+    nextStep,
+    previousStep,
+    handleSubmit,
+  } = useStorefrontWizard(businessId, onClose);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -98,48 +34,16 @@ export const StorefrontWizard = ({ isOpen, onClose, businessId }: StorefrontWiza
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            {step === 1 && (
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter storefront name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            {step === 2 && (
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Enter storefront description"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {step === 1 && <WizardNameStep form={form} />}
+            {step === 2 && <WizardDescriptionStep form={form} />}
 
             <div className="flex justify-between pt-4">
               {step > 1 && (
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setStep(step - 1)}
+                  onClick={previousStep}
                 >
                   Previous
                 </Button>
