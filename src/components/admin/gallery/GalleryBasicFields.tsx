@@ -16,7 +16,9 @@ type GalleryBasicFieldsProps = {
 export const GalleryBasicFields = ({ form }: GalleryBasicFieldsProps) => {
   console.log("GalleryBasicFields render:", {
     headerDisplay: form.watch("header_display"),
-    showDescription: form.watch("show_description")
+    showDescription: form.watch("show_description"),
+    siteLogo: form.watch("site_logo"),
+    formValues: form.getValues()
   });
 
   return (
@@ -61,7 +63,7 @@ export const GalleryBasicFields = ({ form }: GalleryBasicFieldsProps) => {
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  defaultValue={field.value || "text"}
+                  value={field.value || "text"}
                   className="flex flex-col space-y-1"
                 >
                   <div className="flex items-center space-x-2">
