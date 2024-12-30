@@ -5,7 +5,6 @@ import { GalleryFormValues } from "@/lib/validations/gallery";
 import { GalleryPasswordSettings } from "./GalleryPasswordSettings";
 import { GalleryVerificationText } from "./GalleryVerificationText";
 import { VerificationLogoField } from "./VerificationLogoField";
-import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type GalleryVerificationFieldsProps = {
@@ -16,6 +15,12 @@ export const GalleryVerificationFields = ({ form }: GalleryVerificationFieldsPro
   const isVerificationEnabled = form.watch("verification_enabled");
   const isAgeVerificationEnabled = form.watch("age_verification_enabled");
   const isPasswordRequired = form.watch("password_required");
+
+  console.log("Verification fields state:", {
+    isVerificationEnabled,
+    isAgeVerificationEnabled,
+    isPasswordRequired
+  });
 
   return (
     <div className="space-y-6">
