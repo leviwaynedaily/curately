@@ -8,6 +8,7 @@ import { ProductBulkActions } from "./table/ProductBulkActions";
 import { ProductMediaDialog } from "./ProductMediaDialog";
 import { ProductTablePagination } from "./table/pagination/ProductTablePagination";
 import { useProductTableState } from "./hooks/useProductTableState";
+import { useEffect } from "react";
 
 type ProductTableProps = {
   storefrontId: string;
@@ -76,6 +77,23 @@ export const ProductTable = ({
   const handleSingleDelete = async (id: string) => {
     return handleBulkDelete([id]);
   };
+
+  // Add keyboard event listener for delete key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check if Delete key is pressed and there are selected products
+      if (e.key === 'Delete' && selectedProducts.size > 0) {
+        console.log('Delete key pressed with selected products:', Array.from(selectedProducts));
+        // Confirm before deleting
+        if (window.confirm(`Are you sure you want to delete ${selectedProducts.size} selected products?`)) {
+          handleBulkDelete(Array.from(selectedProducts));
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedProducts]);
 
   return (
     <div className="space-y-4">
