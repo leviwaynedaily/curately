@@ -6,12 +6,15 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 import { useGalleryForm } from "@/hooks/useGalleryForm";
 import { StorefrontLayout } from "@/components/admin/gallery/edit/StorefrontLayout";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useNavigate } from "react-router-dom";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
   const isMobile = useIsMobile();
   const [showPreview, setShowPreview] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const navigate = useNavigate();
   
   console.log("StorefrontEdit render:", {
     storefrontId,
@@ -19,14 +22,48 @@ const StorefrontEdit = () => {
     showPreview
   });
 
+  // First, fetch the user's business
+  const { data: userBusiness, isLoading: isLoadingBusiness } = useQuery({
+    queryKey: ["user-business"],
+    queryFn: async () => {
+      console.log("Fetching user's business");
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        console.log("No authenticated user found");
+        return null;
+      }
+
+      const { data: business, error } = await supabase
+        .from("businesses")
+        .select("*")
+        .eq("owner_id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching business:", error);
+        return null;
+      }
+
+      console.log("Found business:", business);
+      return business;
+    }
+  });
+
   const { data: storefront, isLoading, refetch } = useQuery({
     queryKey: ["storefront", storefrontId],
     queryFn: async () => {
       // If this is a new storefront, return a template object without querying the database
       if (storefrontId === "new") {
-        console.log("Creating new storefront template");
+        if (!userBusiness) {
+          console.log("No business found for new storefront");
+          return null;
+        }
+        
+        console.log("Creating new storefront template with business_id:", userBusiness.id);
         return {
           id: undefined,
+          business_id: userBusiness.id,
           name: "New Storefront",
           status: "active",
           show_description: true,
@@ -64,7 +101,7 @@ const StorefrontEdit = () => {
       console.log("Storefront data fetched:", data);
       return data;
     },
-    enabled: !!storefrontId,
+    enabled: !!storefrontId && (!isLoadingBusiness || storefrontId !== "new"),
   });
 
   const { form, handleSubmit } = useGalleryForm({
@@ -90,8 +127,21 @@ const StorefrontEdit = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingBusiness) {
     return <AdminLayout>Loading...</AdminLayout>;
+  }
+
+  if (!userBusiness && storefrontId === "new") {
+    return (
+      <AdminLayout>
+        <Alert>
+          <AlertDescription>
+            You need to create a business before you can create a storefront.
+            Please go back and create a business first.
+          </AlertDescription>
+        </Alert>
+      </AdminLayout>
+    );
   }
 
   if (!storefront) {
