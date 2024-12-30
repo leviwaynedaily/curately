@@ -72,13 +72,11 @@ export const CategoryTagManagement = ({ storefrontId }: CategoryTagManagementPro
     if (!newCategory.trim()) return;
 
     try {
-      // Simply update an existing product to add the new category
-      const { data, error } = await supabase
-        .from("products")
-        .update({ category: newCategory.trim() })
-        .eq("storefront_id", storefrontId)
-        .select()
-        .single();
+      console.log("Adding new category:", newCategory.trim());
+      
+      const { error } = await supabase
+        .from("categories")
+        .insert({ name: newCategory.trim() });
 
       if (error) throw error;
 
