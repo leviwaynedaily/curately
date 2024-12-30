@@ -1,6 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useGalleryForm } from "@/hooks/useGalleryForm";
 import { GalleryFormContent } from "./gallery/GalleryFormContent";
+import { GalleryFormValues } from "@/lib/validations/gallery";
+import { Storefront } from "@/types/storefront";
 
 type GalleryFormProps = {
   isOpen: boolean;
@@ -34,6 +36,10 @@ export const GalleryForm = ({
     }
   };
 
+  const onSubmit = async (values: GalleryFormValues) => {
+    await handleSubmit(values);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogClose}>
       <DialogContent className="max-h-[90vh] overflow-hidden flex flex-col">
@@ -44,7 +50,7 @@ export const GalleryForm = ({
           <GalleryFormContent
             form={form}
             isLoading={isLoading}
-            onSubmit={handleSubmit}
+            onSubmit={onSubmit}
             onClose={onClose}
             galleryId={gallery?.id}
           />
