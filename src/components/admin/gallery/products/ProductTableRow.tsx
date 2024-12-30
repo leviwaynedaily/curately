@@ -90,7 +90,7 @@ export const ProductTableRow = ({
           <Checkbox
             checked={selected}
             onCheckedChange={onToggleSelect}
-            className="border-2 border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+            className="border-2 border-gray-300 data-[state=checked]:bg-transparent data-[state=checked]:border-primary"
           />
         </TableCell>
         
