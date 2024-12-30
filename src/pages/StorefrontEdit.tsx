@@ -34,14 +34,20 @@ const StorefrontEdit = () => {
         return null;
       }
 
+      console.log("Querying business for user:", user.id);
       const { data: business, error } = await supabase
         .from("businesses")
         .select("*")
         .eq("owner_id", user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching business:", error);
+        return null;
+      }
+
+      if (!business) {
+        console.log("No business found for user:", user.id);
         return null;
       }
 
