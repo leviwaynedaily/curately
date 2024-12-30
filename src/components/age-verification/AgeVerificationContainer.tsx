@@ -28,7 +28,7 @@ export const AgeVerificationContainer = ({
   const { data: storefront, isLoading } = useQuery({
     queryKey: ["storefronts", id],
     queryFn: async () => {
-      console.log("Fetching storefront:", id);
+      console.log("Fetching storefront verification settings:", id);
       const { data, error } = await supabase
         .from("storefronts")
         .select("*")
@@ -40,18 +40,29 @@ export const AgeVerificationContainer = ({
         throw error;
       }
 
-      console.log("Storefront data:", data);
+      console.log("Storefront verification settings:", {
+        age_verification_enabled: data.age_verification_enabled,
+        password_required: data.password_required,
+        password: data.password
+      });
+      
       return data;
     },
   });
 
   const handleVerify = (password?: string) => {
+    console.log("Verifying access with:", {
+      passwordRequired: storefront?.password_required,
+      passwordProvided: !!password
+    });
+
     if (storefront?.password_required && password !== storefront?.password) {
       const errorMessage = "Incorrect password";
       setError(errorMessage);
       onError?.(errorMessage);
       return;
     }
+
     setError(null);
     onError?.(null);
     onVerified();
@@ -65,9 +76,12 @@ export const AgeVerificationContainer = ({
     );
   }
 
+  if (!storefront) {
+    return null;
+  }
+
   return (
     <div className="fixed inset-0 z-50">
-      {/* Semi-transparent overlay with blur effect */}
       <div 
         className="absolute inset-0 backdrop-blur-md"
         style={{
