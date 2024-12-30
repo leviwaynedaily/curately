@@ -30,7 +30,7 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
           control={form.control}
           name="header_display"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-1">
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
