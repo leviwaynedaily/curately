@@ -1,4 +1,6 @@
 export const getStorefrontFilePath = (storefrontId: string, fileType: string, fileExt: string) => {
+  console.log("Generating file path:", { storefrontId, fileType, fileExt });
+  
   // Settings files (logos, PWA icons, screenshots)
   if (fileType.startsWith('pwa_icon_')) {
     const size = fileType.split('_')[2]; // Extract 192 or 512

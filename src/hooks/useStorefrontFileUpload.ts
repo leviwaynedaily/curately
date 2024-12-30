@@ -59,7 +59,7 @@ export const useStorefrontFileUpload = (storefrontId: string | undefined) => {
 
       console.log("File uploaded and storefront updated successfully:", { filePath });
       toast({
-        description: `${fileType} uploaded successfully`
+        description: `File uploaded successfully`
       });
 
       return filePath;

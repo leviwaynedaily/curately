@@ -37,9 +37,12 @@ export const FileUploadField = ({
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !storefrontId) return;
+    if (!file || !storefrontId) {
+      console.log("No file selected or missing storefrontId:", { file, storefrontId });
+      return;
+    }
 
-    console.log("Starting file upload:", { fileName: file.name, fileType });
+    console.log("Starting file upload:", { fileName: file.name, fileType, storefrontId });
 
     try {
       const filePath = await uploadFile(file, fileType);
@@ -51,7 +54,7 @@ export const FileUploadField = ({
         shouldValidate: true
       });
     } catch (error) {
-      console.error(`${fileType} upload failed:`, error);
+      console.error("File upload failed:", error);
     } finally {
       // Reset the input value to allow uploading the same file again
       const input = document.getElementById(uploadId) as HTMLInputElement;
