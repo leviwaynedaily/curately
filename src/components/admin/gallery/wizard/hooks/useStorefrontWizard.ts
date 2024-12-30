@@ -114,12 +114,14 @@ export const useStorefrontWizard = (businessId: string | undefined, onClose: () 
     }
   };
 
+  const onSubmit = form.handleSubmit(handleSubmit);
+
   return {
     form,
     step,
     isSubmitting,
     nextStep,
     previousStep,
-    handleSubmit: form.handleSubmit(handleSubmit),
+    onSubmit,
   };
 };

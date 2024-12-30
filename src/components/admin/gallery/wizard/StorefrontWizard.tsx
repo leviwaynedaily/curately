@@ -23,7 +23,7 @@ export const StorefrontWizard = ({
     isSubmitting,
     nextStep,
     previousStep,
-    handleSubmit,
+    onSubmit,
   } = useStorefrontWizard(businessId, onClose);
 
   console.log("StorefrontWizard render:", { step, isSubmitting, isOpen });
@@ -36,7 +36,7 @@ export const StorefrontWizard = ({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={onSubmit} className="space-y-4">
             {step === 1 && <WizardNameStep form={form} />}
             {step === 2 && <WizardDescriptionStep form={form} />}
 
