@@ -2,18 +2,18 @@ import { Table } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductTableHeader } from "./ProductTableHeader";
-import { ProductTableBody } from "./table/ProductTableBody";
+import { ProductTableBody } from "./ProductTableBody";
 import { Product } from "./types";
-import { ProductBulkActions } from "./table/ProductBulkActions";
+import { ProductBulkActions } from "./ProductBulkActions";
 import { ProductMediaDialog } from "./ProductMediaDialog";
 import { ProductTablePagination } from "./table/pagination/ProductTablePagination";
-import { useProductTableState } from "./table/hooks/useProductTableState";
+import { useProductTableState } from "./hooks/useProductTableState";
 
 type ProductTableProps = {
   storefrontId: string;
   products: Product[];
   onProductUpdate: () => void;
-  onDuplicate: (productIds: string[]) => void;
+  onDuplicate: (productIds: string[]) => Promise<void>;
 };
 
 export const ProductTable = ({
@@ -73,7 +73,7 @@ export const ProductTable = ({
   };
 
   // Create a wrapper function to convert single ID to array
-  const handleSingleDelete = (id: string) => {
+  const handleSingleDelete = async (id: string) => {
     return handleBulkDelete([id]);
   };
 

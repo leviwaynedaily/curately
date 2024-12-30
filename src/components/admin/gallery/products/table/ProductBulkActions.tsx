@@ -7,6 +7,7 @@ type ProductBulkActionsProps = {
   onDuplicate: (productIds: string[]) => Promise<void>;
   onDelete: (productIds: string[]) => Promise<void>;
   products: Product[];
+  onSelectAll: (checked: boolean) => void;
 };
 
 export const ProductBulkActions = ({
@@ -14,6 +15,7 @@ export const ProductBulkActions = ({
   onDuplicate,
   onDelete,
   products,
+  onSelectAll,
 }: ProductBulkActionsProps) => {
   const {
     isDeleting,
