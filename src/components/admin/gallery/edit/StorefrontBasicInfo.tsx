@@ -39,6 +39,15 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
     return () => subscription.unsubscribe();
   }, [form]);
 
+  // Initialize header_display if undefined
+  useEffect(() => {
+    const currentHeaderDisplay = form.getValues("header_display");
+    if (!currentHeaderDisplay || typeof currentHeaderDisplay === 'object') {
+      console.log("Initializing header_display to default value 'text'");
+      form.setValue("header_display", "text", { shouldDirty: false });
+    }
+  }, [form]);
+
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -54,13 +63,12 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
                   onValueChange={(value: HeaderDisplayType) => {
                     console.log("Radio group value changed to:", value);
                     field.onChange(value);
-                    // Ensure the form knows it's dirty
                     form.setValue("header_display", value, {
                       shouldDirty: true,
                       shouldTouch: true
                     });
                   }}
-                  value={(field.value as HeaderDisplayType) || "text"}
+                  value={field.value as HeaderDisplayType || "text"}
                   className="flex flex-col space-y-1"
                 >
                   <div className="flex items-center space-x-2">
