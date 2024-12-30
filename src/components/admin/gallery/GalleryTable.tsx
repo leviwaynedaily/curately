@@ -1,91 +1,94 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Package, Pencil, Store, Trash } from "lucide-react";
+import { Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { GalleryDeleteDialog } from "./GalleryDeleteDialog";
-import { useState } from "react";
 import { Storefront } from "@/types/storefront";
 
 type GalleryTableProps = {
   galleries: Storefront[];
-  onDelete: (id: string) => void;
+  onEdit: (gallery: Storefront) => void;
+  onDelete: (gallery: Storefront) => void;
 };
 
-export const GalleryTable = ({ galleries, onDelete }: GalleryTableProps) => {
+export const GalleryTable = ({ galleries, onEdit, onDelete }: GalleryTableProps) => {
   const navigate = useNavigate();
-  const [galleryToDelete, setGalleryToDelete] = useState<Storefront | null>(null);
 
   return (
-    <div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Business</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+    <div className="border rounded-lg overflow-hidden">
+      <table className="w-full">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Name
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Business
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Status
+            </th>
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
           {galleries.map((gallery) => (
-            <TableRow key={gallery.id}>
-              <TableCell>{gallery.name}</TableCell>
-              <TableCell>
-                {gallery.businesses?.name}
-              </TableCell>
-              <TableCell>{gallery.status}</TableCell>
-              <TableCell className="text-right">
-                <div className="flex justify-end gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => navigate(`/storefront/${gallery.id}`)}
-                  >
-                    <Store className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => navigate(`/admin/products/${gallery.id}`)}
-                  >
-                    <Package className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => navigate(`/admin/products-new/${gallery.id}`)}
-                  >
-                    <Package className="h-4 w-4 text-accent" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => navigate(`/admin/storefront/${gallery.id}`)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setGalleryToDelete(gallery)}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
+            <tr key={gallery.id}>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm font-medium text-gray-900">
+                  {gallery.name}
                 </div>
-              </TableCell>
-            </TableRow>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-500">
+                  {gallery.businesses?.name}
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <span
+                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    gallery.status === "active"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {gallery.status}
+                </span>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate(`/admin/products/${gallery.id}`)}
+                >
+                  <Package className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate(`/admin/products-new/${gallery.id}`)}
+                >
+                  <Package className="h-4 w-4 text-blue-500" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onEdit(gallery)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onDelete(gallery)}
+                >
+                  Delete
+                </Button>
+              </td>
+            </tr>
           ))}
-        </TableBody>
-      </Table>
-
-      <GalleryDeleteDialog
-        gallery={galleryToDelete}
-        onClose={() => setGalleryToDelete(null)}
-        onConfirm={(id) => {
-          onDelete(id);
-          setGalleryToDelete(null);
-        }}
-      />
+        </tbody>
+      </table>
     </div>
   );
 };

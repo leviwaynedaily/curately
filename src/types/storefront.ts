@@ -33,6 +33,9 @@ export type Storefront = {
   header_display?: "text" | "logo";
   screenshot_desktop?: string;
   screenshot_mobile?: string;
+  businesses?: {
+    name: string;
+  };
 };
 
 export type StorefrontImage = {
