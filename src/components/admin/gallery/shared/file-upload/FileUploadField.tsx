@@ -33,7 +33,6 @@ export const FileUploadField = ({
 
     try {
       const filePath = await uploadFile(file, fileType);
-      
       form.setValue(fieldName, filePath, {
         shouldDirty: true,
         shouldTouch: true,
@@ -45,15 +44,14 @@ export const FileUploadField = ({
   };
 
   const handleClearFile = async () => {
-    if (typeof fieldValue === 'string') {
+    if (typeof fieldValue === 'string' && fieldValue) {
       await deleteFile(fieldValue);
+      form.setValue(fieldName, "", {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true
+      });
     }
-    
-    form.setValue(fieldName, "", {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true
-    });
   };
 
   return (
@@ -62,7 +60,7 @@ export const FileUploadField = ({
       name={fieldName}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label}</FormLabel>
+          {label && <FormLabel>{label}</FormLabel>}
           {description && (
             <div className="text-sm text-muted-foreground mb-2">
               {description}
@@ -70,7 +68,7 @@ export const FileUploadField = ({
           )}
           <FormControl>
             <div className="space-y-4">
-              {typeof fieldValue === 'string' && fieldValue ? (
+              {fieldValue ? (
                 <FileUploadPreview
                   filePath={fieldValue}
                   onClear={handleClearFile}

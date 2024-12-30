@@ -32,9 +32,9 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <Label className="text-base">Show description on storefront</Label>
+                <Label className="text-base">Show description</Label>
                 <div className="text-sm text-muted-foreground">
-                  Display your storefront description below the header
+                  Display description below the header
                 </div>
               </div>
               <FormControl>
@@ -49,45 +49,43 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
       </div>
 
       <div className="space-y-4 border-t pt-6">
-        <h4 className="text-sm font-medium">Header Display</h4>
-        <div className="text-sm text-muted-foreground mb-2">
-          Choose how you want your storefront header to be displayed
-        </div>
         <FormField
           control={form.control}
           name="header_display"
           render={({ field }) => (
             <FormItem>
+              <div className="mb-4">
+                <Label className="text-base">Header Display</Label>
+                <div className="text-sm text-muted-foreground">
+                  Choose how to display your storefront header
+                </div>
+              </div>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  defaultValue={field.value || "text"}
+                  value={field.value || "text"}
                   className="flex flex-col space-y-1"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="text" id="header-text" />
-                    <Label htmlFor="header-text">Display storefront name as text</Label>
+                    <Label htmlFor="header-text">Display name as text</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="logo" id="header-logo" />
-                    <Label htmlFor="header-logo">Use logo instead of text</Label>
+                    <Label htmlFor="header-logo">Use logo</Label>
                   </div>
                 </RadioGroup>
               </FormControl>
             </FormItem>
           )}
         />
-      </div>
 
-      {form.watch("header_display") === "logo" && (
-        <div className="space-y-4">
-          <h4 className="text-sm font-medium">Storefront Logo</h4>
-          <div className="text-sm text-muted-foreground mb-2">
-            This logo will be displayed in your main storefront header instead of the text name
+        {form.watch("header_display") === "logo" && (
+          <div className="mt-4">
+            <GallerySiteLogoField form={form} />
           </div>
-          <GallerySiteLogoField form={form} />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
