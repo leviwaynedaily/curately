@@ -50,12 +50,23 @@ export const AgeVerificationContainer = ({
     },
   });
 
-  const handleVerify = (password?: string) => {
+  const handleVerify = (password?: string, ageVerified?: boolean) => {
     console.log("Verifying access with:", {
       passwordRequired: storefront?.password_required,
-      passwordProvided: !!password
+      passwordProvided: !!password,
+      ageVerificationEnabled: storefront?.age_verification_enabled,
+      ageVerified
     });
 
+    // Check age verification if enabled
+    if (storefront?.age_verification_enabled && !ageVerified) {
+      const errorMessage = "Please confirm your age to continue";
+      setError(errorMessage);
+      onError?.(errorMessage);
+      return;
+    }
+
+    // Check password if required
     if (storefront?.password_required && password !== storefront?.password) {
       const errorMessage = "Incorrect password";
       setError(errorMessage);
@@ -96,12 +107,13 @@ export const AgeVerificationContainer = ({
           <AgeVerificationForm
             isLoading={isLoading}
             onVerify={handleVerify}
-            headingText={storefront?.heading_text || "Age Verification Required"}
+            headingText={storefront?.heading_text || "Verification Required"}
             subheadingText={storefront?.subheading_text || ""}
             verificationText={verificationText || storefront?.age_verification_text || ""}
             buttonText={buttonText || storefront?.button_text || "Enter"}
             accentColor={storefront?.accent_color}
             passwordRequired={storefront?.password_required}
+            ageVerificationEnabled={storefront?.age_verification_enabled}
             error={error}
           />
         </div>
