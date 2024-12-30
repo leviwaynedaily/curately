@@ -16,7 +16,8 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
     isDirty: form.formState.isDirty,
     dirtyFields: form.formState.dirtyFields,
     headerDisplay: form.watch("header_display"),
-    showDescription: form.watch("show_description")
+    showDescription: form.watch("show_description"),
+    formValues: form.getValues()
   });
 
   return (
@@ -32,7 +33,8 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  value={field.value || "text"}
+                  defaultValue={field.value}
+                  value={field.value}
                   className="flex flex-col space-y-1"
                 >
                   <div className="flex items-center space-x-2">
