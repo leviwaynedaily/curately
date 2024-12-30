@@ -83,10 +83,17 @@ export const ProductDetailsDialog = ({
       <DialogContent className="max-w-3xl p-0 gap-0">
         <div className="grid md:grid-cols-2 gap-4">
           <div className="relative">
-            <ProductMediaCarousel product={product} />
+            <ProductMediaCarousel 
+              media={product.media || []}
+              allowDownload={allowDownload}
+            />
             {allowDownload && (
               <div className="absolute bottom-4 right-4">
-                <ProductCardActions product={product} />
+                <ProductCardActions 
+                  product={product}
+                  onEdit={() => {}} // Add empty handlers since these actions aren't used in the dialog
+                  onDelete={() => {}}
+                />
               </div>
             )}
           </div>
