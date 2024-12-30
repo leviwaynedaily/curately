@@ -14,8 +14,8 @@ import {
 
 type ProductTableToolbarSectionProps = {
   selectedProducts: Set<string>;
-  onDuplicate: (productIds: string[]) => void;
-  onDelete: (productIds: string[]) => void;
+  onDuplicate: (productIds: string[]) => Promise<void>;
+  onDelete: (productIds: string[]) => Promise<void>;
   products: Product[];
   onSelectAll: (checked: boolean) => void;
   searchTerm: string;
@@ -64,7 +64,6 @@ export const ProductTableToolbarSection = ({
           <DropdownMenuContent>
             <DropdownMenuLabel>Select vendor</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {/* Add vendor options here */}
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -77,7 +76,6 @@ export const ProductTableToolbarSection = ({
           <DropdownMenuContent>
             <DropdownMenuLabel>Select tags</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {/* Add tag options here */}
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -90,7 +88,6 @@ export const ProductTableToolbarSection = ({
           <DropdownMenuContent>
             <DropdownMenuLabel>Select status</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {/* Add status options here */}
           </DropdownMenuContent>
         </DropdownMenu>
 
