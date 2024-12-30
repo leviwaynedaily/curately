@@ -20,7 +20,6 @@ export const StorefrontHeader = ({
     description: storefront.description,
     show_description: storefront.show_description,
     compact,
-    header_display: storefront.header_display,
     has_logo: Boolean(storefront.site_logo),
     site_logo: storefront.site_logo
   });
@@ -28,6 +27,11 @@ export const StorefrontHeader = ({
   const logoUrl = storefront.site_logo
     ? supabase.storage.from("gallery_images").getPublicUrl(storefront.site_logo).data.publicUrl
     : null;
+
+  const shouldShowDescription = !compact && 
+    showDescription && 
+    storefront.description && 
+    storefront.show_description;
 
   return (
     <div className={`text-center space-y-2 ${compact ? 'mb-0' : 'mb-8'}`}>
@@ -50,7 +54,7 @@ export const StorefrontHeader = ({
           {storefront.name}
         </h1>
       )}
-      {storefront.description && storefront.show_description && showDescription && !compact && (
+      {shouldShowDescription && (
         <p 
           className="text-base max-w-2xl mx-auto"
           style={{ color: storefront.secondary_font_color || '#4B5563' }}
