@@ -18,29 +18,27 @@ export const GalleryVerificationFields = ({ form }: GalleryVerificationFieldsPro
 
   return (
     <div className="space-y-6">
-      {/* Step 1: Enable Verification */}
-      <div>
-        <FormField
-          control={form.control}
-          name="verification_enabled"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <FormLabel className="text-base">Enable Verification</FormLabel>
-                <FormDescription>
-                  Show a verification prompt before allowing access to the gallery
-                </FormDescription>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-      </div>
+      {/* Step 1: Main Verification Toggle */}
+      <FormField
+        control={form.control}
+        name="verification_enabled"
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <FormLabel className="text-base">Enable Verification</FormLabel>
+              <FormDescription>
+                Show a verification prompt before allowing access to the gallery
+              </FormDescription>
+            </div>
+            <FormControl>
+              <Switch
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
 
       {isVerificationEnabled && (
         <div className="space-y-6 animate-in slide-in-from-top duration-300">
