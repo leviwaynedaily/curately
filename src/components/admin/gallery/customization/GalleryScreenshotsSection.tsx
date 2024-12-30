@@ -7,6 +7,12 @@ type GalleryScreenshotsSectionProps = {
 };
 
 export const GalleryScreenshotsSection = ({ form }: GalleryScreenshotsSectionProps) => {
+  console.log("GalleryScreenshotsSection render:", {
+    desktopScreenshot: form.watch("screenshot_desktop"),
+    mobileScreenshot: form.watch("screenshot_mobile"),
+    formValues: form.getValues()
+  });
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
