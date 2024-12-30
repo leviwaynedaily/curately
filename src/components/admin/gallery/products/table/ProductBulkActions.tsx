@@ -40,6 +40,13 @@ export const ProductBulkActions = ({
     setIsDuplicating(true);
     try {
       await onDuplicate(Array.from(selectedProducts));
+      toast({ description: `Successfully duplicated ${selectedProducts.size} products` });
+    } catch (error) {
+      console.error("Error duplicating products:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to duplicate products",
+      });
     } finally {
       setIsDuplicating(false);
     }
@@ -47,9 +54,20 @@ export const ProductBulkActions = ({
 
   const handleDelete = async () => {
     console.log("Deleting selected products:", Array.from(selectedProducts));
+    if (!confirm(`Are you sure you want to delete ${selectedProducts.size} products? This action cannot be undone.`)) {
+      return;
+    }
+    
     setIsDeleting(true);
     try {
       await onDelete(Array.from(selectedProducts));
+      toast({ description: `Successfully deleted ${selectedProducts.size} products` });
+    } catch (error) {
+      console.error("Error deleting products:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to delete products",
+      });
     } finally {
       setIsDeleting(false);
     }
@@ -78,7 +96,7 @@ export const ProductBulkActions = ({
             ) : (
               <>
                 <Copy className="h-4 w-4 mr-2" />
-                Duplicate
+                Duplicate Selected ({selectedProducts.size})
               </>
             )}
           </DropdownMenuItem>
@@ -105,7 +123,7 @@ export const ProductBulkActions = ({
             ) : (
               <>
                 <Trash className="h-4 w-4 mr-2" />
-                Delete
+                Delete Selected ({selectedProducts.size})
               </>
             )}
           </DropdownMenuItem>
