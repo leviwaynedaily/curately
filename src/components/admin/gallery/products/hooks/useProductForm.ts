@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Product } from "../types";
 import { useProductFileUpload } from "@/hooks/useProductFileUpload";
-import { useProductMedia } from "./useProductMedia";
+import { useProductMedia } from "@/hooks/useProductMedia";
 
 export const useProductForm = (
   storefrontId: string,
