@@ -1,4 +1,4 @@
-import { Table } from "@/components/ui/table";
+import { Table, TableBody } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductTableHeader } from "../ProductTableHeader";
@@ -30,7 +30,9 @@ export const ProductTable = ({
     selectedProduct,
     setSelectedProduct,
     sortField,
+    setSortField,
     sortDirection,
+    setSortDirection,
     searchTerm,
     setSearchTerm,
     showHiddenFields,
@@ -46,7 +48,6 @@ export const ProductTable = ({
     setPageSize,
     handleSelectAll,
     handleToggleProduct,
-    handleSort,
   } = useProductTableState(products);
   
   const { toast } = useToast();
@@ -71,41 +72,16 @@ export const ProductTable = ({
     }
   };
 
-  const filteredAndSortedProducts = products
-    .filter(product => {
-      const matchesSearch = 
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category?.toLowerCase().includes(searchTerm.toLowerCase());
+  // Create a wrapper function to convert single ID to array
+  const handleSingleDelete = async (id: string): Promise<void> => {
+    return handleBulkDelete([id]);
+  };
 
-      const matchesCategory = !selectedCategory || product.category === selectedCategory;
-      const matchesTag = !selectedTag || (product.tags && product.tags.some(tag => tag.name === selectedTag));
-
-      return matchesSearch && matchesCategory && matchesTag;
-    })
-    .sort((a, b) => {
-      if (sortField) {
-        const aValue = a[sortField];
-        const bValue = b[sortField];
-
-        if (aValue === null || aValue === undefined) return 1;
-        if (bValue === null || bValue === undefined) return -1;
-
-        const comparison = 
-          typeof aValue === 'string' 
-            ? aValue.localeCompare(bValue as string)
-            : (aValue as number) - (bValue as number);
-
-        return sortDirection === "asc" ? comparison : -comparison;
-      }
-      return 0;
-    });
-
-  // Pagination calculations
-  const totalPages = Math.ceil(filteredAndSortedProducts.length / pageSize);
-  const startIndex = (page - 1) * pageSize;
-  const paginatedProducts = filteredAndSortedProducts.slice(startIndex, startIndex + pageSize);
+  console.log("ProductTable render:", {
+    selectedProducts: selectedProducts.size,
+    products: products.length,
+    showHiddenFields
+  });
 
   return (
     <div className="space-y-4">
@@ -122,7 +98,7 @@ export const ProductTable = ({
       <div className="rounded-md border overflow-x-auto">
         <Table>
           <ProductTableHeader
-            onSort={handleSort}
+            onSort={setSortField}
             sortField={sortField}
             sortDirection={sortDirection}
             showHiddenFields={showHiddenFields}
@@ -134,34 +110,38 @@ export const ProductTable = ({
             setSelectedCategory={setSelectedCategory}
             selectedTag={selectedTag}
             setSelectedTag={setSelectedTag}
+            allSelected={selectedProducts.size === products.length}
+            onSelectAll={handleSelectAll}
           />
-          <ProductTableBody
-            products={paginatedProducts}
-            editingId={editingId}
-            editedProduct={editedProduct}
-            onEdit={(product) => {
-              setEditingId(product.id);
-              setEditedProduct(product);
-            }}
-            onSave={() => {
-              setEditingId(null);
-              setEditedProduct(null);
-              onProductUpdate();
-            }}
-            onCancel={() => {
-              setEditingId(null);
-              setEditedProduct(null);
-            }}
-            onDelete={(id) => handleBulkDelete([id])}
-            onProductChange={(field, value) => {
-              setEditedProduct(prev => prev ? { ...prev, [field]: value } : null);
-            }}
-            onMediaClick={setSelectedProduct}
-            showHiddenFields={showHiddenFields}
-            selectedProducts={selectedProducts}
-            onToggleProduct={handleToggleProduct}
-            onDuplicate={onDuplicate}
-          />
+          <TableBody>
+            <ProductTableBody
+              products={products}
+              editingId={editingId}
+              editedProduct={editedProduct}
+              onEdit={(product) => {
+                setEditingId(product.id);
+                setEditedProduct(product);
+              }}
+              onSave={() => {
+                setEditingId(null);
+                setEditedProduct(null);
+                onProductUpdate();
+              }}
+              onCancel={() => {
+                setEditingId(null);
+                setEditedProduct(null);
+              }}
+              onDelete={handleSingleDelete}
+              onProductChange={(field, value) => {
+                setEditedProduct(prev => prev ? { ...prev, [field]: value } : null);
+              }}
+              onMediaClick={setSelectedProduct}
+              showHiddenFields={showHiddenFields}
+              selectedProducts={selectedProducts}
+              onToggleProduct={handleToggleProduct}
+              onDuplicate={onDuplicate}
+            />
+          </TableBody>
         </Table>
       </div>
 
@@ -170,7 +150,7 @@ export const ProductTable = ({
         setPage={setPage}
         pageSize={pageSize}
         setPageSize={setPageSize}
-        totalPages={totalPages}
+        totalPages={Math.ceil(products.length / pageSize)}
       />
 
       {selectedProduct && (

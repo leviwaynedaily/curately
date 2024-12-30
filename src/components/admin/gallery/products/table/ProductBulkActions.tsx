@@ -24,6 +24,15 @@ export const ProductBulkActions = ({
     handleDuplicate,
   } = useBulkActions(selectedProducts, onDelete, onDuplicate);
 
+  console.log("ProductBulkActions render:", {
+    selectedCount: selectedProducts.size,
+    totalProducts: products.length
+  });
+
+  if (selectedProducts.size === 0 && products.length === 0) {
+    return null;
+  }
+
   return (
     <div className="flex items-center gap-2">
       <BulkActionMenu

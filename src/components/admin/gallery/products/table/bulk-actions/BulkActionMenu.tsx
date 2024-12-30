@@ -22,7 +22,7 @@ export const BulkActionMenu = ({
   onDelete,
   onDuplicate,
 }: BulkActionMenuProps) => {
-  if (selectedCount === 0) return null;
+  console.log("BulkActionMenu render:", { selectedCount, isDeleting, isDuplicating });
 
   return (
     <DropdownMenu>
@@ -35,7 +35,7 @@ export const BulkActionMenu = ({
       <DropdownMenuContent>
         <DropdownMenuItem 
           onClick={onDuplicate}
-          disabled={isDuplicating}
+          disabled={isDuplicating || selectedCount === 0}
           className="flex items-center"
         >
           {isDuplicating ? (
@@ -54,7 +54,7 @@ export const BulkActionMenu = ({
         <DropdownMenuItem
           className="text-destructive flex items-center"
           onClick={onDelete}
-          disabled={isDeleting}
+          disabled={isDeleting || selectedCount === 0}
         >
           {isDeleting ? (
             <>
