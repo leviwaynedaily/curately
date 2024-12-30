@@ -6,6 +6,7 @@ import { Product } from "./types";
 import { ProductFormFields } from "./form/ProductFormFields";
 import { ProductMediaUpload } from "./form/ProductMediaUpload";
 import { ProductFormActions } from "./form/ProductFormActions";
+import { getProductMediaPath } from "@/utils/storefrontFileUtils";
 
 type ProductFormProps = {
   isOpen: boolean;
@@ -84,10 +85,9 @@ export const ProductForm = ({
     try {
       for (let i = 0; i < mediaFiles.length; i++) {
         const file = mediaFiles[i];
-        const fileExt = file.name.split(".").pop();
-        const filePath = `${productId}/${crypto.randomUUID()}.${fileExt}`;
+        const filePath = getProductMediaPath(storefrontId, productId, file.name);
         
-        console.log(`Uploading file ${i + 1}/${mediaFiles.length}:`, file.name);
+        console.log(`Uploading file ${i + 1}/${mediaFiles.length}:`, filePath);
 
         const { error: uploadError } = await supabase.storage
           .from("gallery_images")
