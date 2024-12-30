@@ -47,9 +47,12 @@ export const FileUploadField = ({
       const filePath = getStorefrontFilePath(storefrontId, fileType, fileExt || 'png');
       console.log(`Uploading ${fileType} to path:`, filePath);
 
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError, data } = await supabase.storage
         .from("gallery_images")
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, file, { 
+          upsert: true,
+          contentType: file.type
+        });
 
       if (uploadError) {
         console.error(`Error uploading ${fileType}:`, uploadError);
@@ -72,6 +75,9 @@ export const FileUploadField = ({
       });
     } finally {
       setIsUploading(false);
+      // Reset the input value to allow uploading the same file again
+      const input = document.getElementById(uploadId) as HTMLInputElement;
+      if (input) input.value = '';
     }
   };
 
@@ -82,6 +88,8 @@ export const FileUploadField = ({
       shouldValidate: true
     });
   };
+
+  const currentValue = form.watch(fieldName);
 
   return (
     <FormField
@@ -96,10 +104,10 @@ export const FileUploadField = ({
             </div>
           )}
           <div className="space-y-4">
-            {field.value && typeof field.value === 'string' && field.value !== "" ? (
+            {currentValue && typeof currentValue === 'string' && currentValue !== "" ? (
               <div className="relative w-40 h-40">
                 <img
-                  src={supabase.storage.from("gallery_images").getPublicUrl(field.value).data.publicUrl}
+                  src={supabase.storage.from("gallery_images").getPublicUrl(currentValue).data.publicUrl}
                   alt={label}
                   className="w-full h-full object-contain rounded-lg border"
                 />
