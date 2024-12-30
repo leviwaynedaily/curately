@@ -1,5 +1,5 @@
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import { StorefrontPreview } from "./StorefrontPreview";
+import { StorefrontPreview } from "@/components/storefront/StorefrontPreview";
 import { StorefrontMainContent } from "./StorefrontMainContent";
 import { UseFormReturn } from "react-hook-form";
 import { GalleryFormValues } from "@/lib/validations/gallery";
@@ -46,13 +46,13 @@ export const StorefrontLayout = ({
 
   return (
     <ResizablePanelGroup direction="horizontal" className="min-h-[calc(100vh-4rem)]">
-      <ResizablePanel defaultSize={50}>
+      <ResizablePanel defaultSize={50} minSize={30}>
         {content}
       </ResizablePanel>
       {showPreview && (
         <>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={50}>
+          <ResizablePanel defaultSize={50} minSize={30}>
             <StorefrontPreview storefrontId={storefrontId} />
           </ResizablePanel>
         </>
