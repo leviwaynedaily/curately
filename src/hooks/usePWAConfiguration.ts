@@ -21,8 +21,13 @@ export const usePWAConfiguration = (storefront: Storefront | null) => {
       });
 
       const manifest = generateManifest();
-      if (!manifest) return;
+      if (!manifest) {
+        console.log("No manifest generated");
+        console.groupEnd();
+        return;
+      }
 
+      console.log("Generated manifest:", manifest);
       const manifestURL = injectManifest(manifest);
       updateMetaTags(manifest);
 

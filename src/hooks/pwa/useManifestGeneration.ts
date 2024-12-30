@@ -10,28 +10,37 @@ export const useManifestGeneration = (storefront: Storefront | null) => {
     
     // Add icons
     if (storefront.pwa_icon_192) {
-      const icon192Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl;
-      icons.push({
-        src: icon192Url,
-        sizes: "192x192",
-        type: "image/png",
-        purpose: "any maskable"
-      });
+      try {
+        const icon192Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_192).data.publicUrl;
+        icons.push({
+          src: icon192Url,
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "any maskable"
+        });
+      } catch (error) {
+        console.error("Error processing PWA icon 192:", error);
+      }
     }
     
     if (storefront.pwa_icon_512) {
-      const icon512Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_512).data.publicUrl;
-      icons.push({
-        src: icon512Url,
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "any maskable"
-      });
+      try {
+        const icon512Url = supabase.storage.from("gallery_images").getPublicUrl(storefront.pwa_icon_512).data.publicUrl;
+        icons.push({
+          src: icon512Url,
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any maskable"
+        });
+      } catch (error) {
+        console.error("Error processing PWA icon 512:", error);
+      }
     }
 
     // Add screenshots
     if (storefront.screenshot_desktop) {
       try {
+        console.log("Processing desktop screenshot:", storefront.screenshot_desktop);
         const desktopUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.screenshot_desktop).data.publicUrl;
         screenshots.push({
           src: desktopUrl,
@@ -47,6 +56,7 @@ export const useManifestGeneration = (storefront: Storefront | null) => {
     
     if (storefront.screenshot_mobile) {
       try {
+        console.log("Processing mobile screenshot:", storefront.screenshot_mobile);
         const mobileUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.screenshot_mobile).data.publicUrl;
         screenshots.push({
           src: mobileUrl,
@@ -63,6 +73,8 @@ export const useManifestGeneration = (storefront: Storefront | null) => {
     const baseUrl = window.location.origin;
     const storefrontPath = `/storefront/${storefront.id}`;
     const fullStorefrontUrl = `${baseUrl}${storefrontPath}`;
+
+    console.log("Generated manifest with screenshots:", { screenshots });
 
     return {
       name: storefront.name,

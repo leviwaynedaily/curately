@@ -1,8 +1,9 @@
-import { Storefront } from '@/types/storefront';
 import { supabase } from '@/integrations/supabase/client';
 
 export const useMetaTags = () => {
   const updateMetaTags = (manifest: any) => {
+    if (!manifest) return;
+
     // Update theme color
     let themeColorMeta = document.querySelector('meta[name="theme-color"]');
     if (!themeColorMeta) {
@@ -20,6 +21,21 @@ export const useMetaTags = () => {
       document.head.appendChild(appleTitleMeta);
     }
     appleTitleMeta.setAttribute('content', manifest.name);
+
+    // Add apple-mobile-web-app-capable
+    let appleCapableMeta = document.querySelector('meta[name="apple-mobile-web-app-capable"]');
+    if (!appleCapableMeta) {
+      appleCapableMeta = document.createElement('meta');
+      appleCapableMeta.setAttribute('name', 'apple-mobile-web-app-capable');
+      document.head.appendChild(appleCapableMeta);
+    }
+    appleCapableMeta.setAttribute('content', 'yes');
+
+    console.log("Updated meta tags with manifest data:", { 
+      theme_color: manifest.theme_color,
+      name: manifest.name,
+      screenshots: manifest.screenshots?.length || 0
+    });
   };
 
   return { updateMetaTags };
