@@ -43,7 +43,7 @@ export const StorefrontHeader = ({
       ) : (
         <h1 
           className={`font-bold ${compact ? 'text-xl' : 'text-3xl'}`}
-          style={{ color: storefront.primary_font_color || '#000000' }}
+          style={{ color: storefront.primary_font_color }}
         >
           {storefront.name}
         </h1>
@@ -52,7 +52,7 @@ export const StorefrontHeader = ({
       {!compact && storefront.show_description && storefront.description && (
         <p 
           className="text-base max-w-2xl mx-auto"
-          style={{ color: storefront.secondary_font_color || '#fef573' }}
+          style={{ color: storefront.secondary_font_color }}
         >
           {storefront.description}
         </p>
