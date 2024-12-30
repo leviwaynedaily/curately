@@ -1,4 +1,4 @@
-import { ProductBulkActions } from "./bulk-actions/ProductBulkActions";
+import { ProductBulkActions } from "../ProductBulkActions";
 import { Product } from "../types";
 
 type ProductTableActionsProps = {
