@@ -22,6 +22,17 @@ const StorefrontEdit = () => {
   const { data: storefront, isLoading, refetch } = useQuery({
     queryKey: ["storefront", storefrontId],
     queryFn: async () => {
+      // If this is a new storefront, return an empty object
+      if (storefrontId === "new") {
+        console.log("Creating new storefront template");
+        return {
+          id: "new",
+          name: "New Storefront",
+          status: "active"
+        };
+      }
+
+      console.log("Fetching existing storefront:", storefrontId);
       const { data, error } = await supabase
         .from("storefronts")
         .select(`
@@ -53,11 +64,8 @@ const StorefrontEdit = () => {
     setIsSaving(true);
     try {
       await handleSubmit(form.getValues());
-      // Reset form state after successful save
       form.reset(form.getValues());
-      // Force refetch the data to update the preview
       await refetch();
-      // Force reload the preview iframe
       const previewIframe = document.querySelector('iframe') as HTMLIFrameElement;
       if (previewIframe) {
         console.log("Reloading preview iframe");
