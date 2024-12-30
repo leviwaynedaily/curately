@@ -13,7 +13,7 @@ type ProductTableProps = {
   storefrontId: string;
   products: Product[];
   onProductUpdate: () => void;
-  onDuplicate: (productIds: string[]) => void;
+  onDuplicate: (productIds: string[]) => Promise<void>;
 };
 
 export const ProductTable = ({
@@ -51,7 +51,7 @@ export const ProductTable = ({
   
   const { toast } = useToast();
 
-  const handleBulkDelete = async (productIds: string[]) => {
+  const handleBulkDelete = async (productIds: string[]): Promise<void> => {
     try {
       const { error } = await supabase
         .from("products")
