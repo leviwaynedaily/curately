@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Product } from "../types";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
-export const useProductTableState = (products: Product[], onProductUpdate: () => void) => {
+export const useProductTableState = (products: Product[]) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedProduct, setEditedProduct] = useState<Product | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -12,7 +10,10 @@ export const useProductTableState = (products: Product[], onProductUpdate: () =>
   const [searchTerm, setSearchTerm] = useState("");
   const [showHiddenFields, setShowHiddenFields] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
-  const { toast } = useToast();
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedTag, setSelectedTag] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -32,39 +33,6 @@ export const useProductTableState = (products: Product[], onProductUpdate: () =>
     setSelectedProducts(newSelection);
   };
 
-  const handleBulkDelete = async (productIds: string[]) => {
-    try {
-      const { error } = await supabase
-        .from("products")
-        .delete()
-        .in("id", productIds);
-
-      if (error) throw error;
-
-      toast({ description: "Products deleted successfully" });
-      setSelectedProducts(new Set());
-      onProductUpdate();
-    } catch (error) {
-      console.error("Error deleting products:", error);
-      toast({
-        variant: "destructive",
-        description: "Failed to delete products",
-      });
-    }
-  };
-
-  const handleEdit = (product: Product) => {
-    console.log("Starting edit for product:", product.id);
-    setEditingId(product.id);
-    setEditedProduct(product);
-  };
-
-  const handleProductChange = (field: keyof Product, value: any) => {
-    setEditedProduct((prev) =>
-      prev ? { ...prev, [field]: value } : null
-    );
-  };
-
   const handleSort = (field: keyof Product) => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -82,17 +50,24 @@ export const useProductTableState = (products: Product[], onProductUpdate: () =>
     selectedProduct,
     setSelectedProduct,
     sortField,
+    setSortField,
     sortDirection,
+    setSortDirection,
     searchTerm,
     setSearchTerm,
     showHiddenFields,
     setShowHiddenFields,
     selectedProducts,
+    selectedCategory,
+    setSelectedCategory,
+    selectedTag,
+    setSelectedTag,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
     handleSelectAll,
     handleToggleProduct,
-    handleBulkDelete,
-    handleEdit,
-    handleProductChange,
     handleSort,
   };
 };

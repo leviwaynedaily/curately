@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Copy, Loader2, Trash, Edit } from "lucide-react";
-import { Product } from "../../types";
+import { Product } from "../../../gallery/products/types";
 import { BulkActionButton } from "./bulk-actions/BulkActionButton";
 import { BulkCategoryUpdate } from "./bulk-actions/BulkCategoryUpdate";
 import { supabase } from "@/integrations/supabase/client";

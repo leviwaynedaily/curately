@@ -30,9 +30,7 @@ export const ProductTable = ({
     selectedProduct,
     setSelectedProduct,
     sortField,
-    setSortField,
     sortDirection,
-    setSortDirection,
     searchTerm,
     setSearchTerm,
     showHiddenFields,
@@ -48,6 +46,7 @@ export const ProductTable = ({
     setPageSize,
     handleSelectAll,
     handleToggleProduct,
+    handleSort,
   } = useProductTableState(products);
   
   const { toast } = useToast();
@@ -116,13 +115,14 @@ export const ProductTable = ({
           onDuplicate={onDuplicate}
           onDelete={handleBulkDelete}
           products={products}
+          onSelectAll={handleSelectAll}
         />
       </div>
 
       <div className="rounded-md border overflow-x-auto">
         <Table>
           <ProductTableHeader
-            onSort={setSortField}
+            onSort={handleSort}
             sortField={sortField}
             sortDirection={sortDirection}
             showHiddenFields={showHiddenFields}
