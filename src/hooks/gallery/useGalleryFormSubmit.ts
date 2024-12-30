@@ -15,7 +15,7 @@ export const useGalleryFormSubmit = (
     // Extract all fields except currentTab
     const { currentTab, ...sanitizedValues } = values;
     
-    // Create submission data object with explicit header_display typing
+    // Create submission data object with explicit typing
     const dataToSubmit = {
       ...sanitizedValues,
       name: values.name,
@@ -25,6 +25,8 @@ export const useGalleryFormSubmit = (
       instructions_button_text: values.instructions_button_text || "Enter Site",
       pwa_icon_192: values.pwa_icon_192 || null,
       pwa_icon_512: values.pwa_icon_512 || null,
+      screenshot_desktop: values.screenshot_desktop || null,
+      screenshot_mobile: values.screenshot_mobile || null,
       show_description: values.show_description,
       header_display: (values.header_display || "text") as "text" | "logo"
     };
@@ -41,7 +43,13 @@ export const useGalleryFormSubmit = (
           .from("storefronts")
           .update(dataToSubmit)
           .eq("id", gallery.id)
-          .select()
+          .select(`
+            *,
+            screenshot_desktop,
+            screenshot_mobile,
+            pwa_icon_192,
+            pwa_icon_512
+          `)
           .single();
 
         if (error) {
@@ -71,7 +79,10 @@ export const useGalleryFormSubmit = (
         result = data as Storefront;
       }
 
+      // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["storefronts"] });
+      queryClient.invalidateQueries({ queryKey: ["storefront", gallery?.id] });
+      
       onClose();
       return result;
     } catch (error) {
