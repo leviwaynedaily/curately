@@ -40,6 +40,10 @@ export const FileUploadField = ({
       });
     } catch (error) {
       console.error(`${fileType} upload failed:`, error);
+    } finally {
+      // Reset the input value to allow uploading the same file again
+      const input = document.getElementById(uploadId) as HTMLInputElement;
+      if (input) input.value = '';
     }
   };
 

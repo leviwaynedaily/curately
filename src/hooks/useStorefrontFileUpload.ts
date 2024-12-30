@@ -7,35 +7,64 @@ export const useStorefrontFileUpload = (storefrontId: string) => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
-  const uploadFile = async (file: File, fileType: string) => {
+  const uploadFile = async (file: File, fileType: string): Promise<string> => {
+    setIsUploading(true);
     try {
-      const fileExt = file.name.split(".").pop() || "";
+      const fileExt = file.name.split(".").pop() || "png";
       const filePath = getStorefrontFilePath(storefrontId, fileType, fileExt);
 
       console.log(`Uploading ${fileType} to path:`, filePath);
 
       const { error: uploadError } = await supabase.storage
         .from("storefront_products")
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, file, {
+          upsert: true,
+          contentType: file.type
+        });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error(`Error uploading ${fileType}:`, uploadError);
+        toast({
+          variant: "destructive",
+          description: `Failed to upload ${fileType}. Please try again.`
+        });
+        throw uploadError;
+      }
+
+      console.log(`${fileType} uploaded successfully to:`, filePath);
+      toast({
+        description: `${fileType} uploaded successfully`
+      });
 
       return filePath;
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error(`${fileType} upload failed:`, error);
       throw error;
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const deleteFile = async (filePath: string) => {
-    if (!filePath) return;
-    
     try {
+      console.log("Deleting file:", filePath);
       const { error } = await supabase.storage
         .from("storefront_products")
         .remove([filePath]);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error deleting file:", error);
+        toast({
+          variant: "destructive",
+          description: "Failed to delete file. Please try again."
+        });
+        throw error;
+      }
+
+      console.log("File deleted successfully");
+      toast({
+        description: "File deleted successfully"
+      });
     } catch (error) {
       console.error("Error deleting file:", error);
       throw error;
@@ -43,9 +72,8 @@ export const useStorefrontFileUpload = (storefrontId: string) => {
   };
 
   return {
-    uploadFile,
-    deleteFile,
     isUploading,
-    setIsUploading
+    uploadFile,
+    deleteFile
   };
 };

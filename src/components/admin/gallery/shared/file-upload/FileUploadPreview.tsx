@@ -10,7 +10,7 @@ type FileUploadPreviewProps = {
 
 export const FileUploadPreview = ({ filePath, onClear, label }: FileUploadPreviewProps) => {
   const imageUrl = supabase.storage
-    .from("gallery_images")
+    .from("storefront_products")
     .getPublicUrl(filePath)
     .data.publicUrl;
 
