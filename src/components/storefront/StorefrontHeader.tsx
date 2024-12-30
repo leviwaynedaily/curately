@@ -52,7 +52,7 @@ export const StorefrontHeader = ({
       {!compact && storefront.show_description && storefront.description && (
         <p 
           className="text-base max-w-2xl mx-auto"
-          style={{ color: storefront.secondary_font_color || '#4B5563' }}
+          style={{ color: storefront.secondary_font_color || '#fef573' }}
         >
           {storefront.description}
         </p>
