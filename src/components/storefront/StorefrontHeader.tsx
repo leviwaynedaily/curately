@@ -15,26 +15,17 @@ export const StorefrontHeader = ({
   compact = false
 }: StorefrontHeaderProps) => {
   console.log("StorefrontHeader render:", { 
-    showDescription, 
+    storefront,
+    showDescription,
     hasDescription: Boolean(storefront.description),
-    description: storefront.description,
     show_description: storefront.show_description,
-    compact,
-    has_logo: Boolean(storefront.site_logo),
-    site_logo: storefront.site_logo
+    description: storefront.description,
+    compact
   });
 
   const logoUrl = storefront.site_logo
     ? supabase.storage.from("gallery_images").getPublicUrl(storefront.site_logo).data.publicUrl
     : null;
-
-  // Only show description if:
-  // 1. Not in compact mode
-  // 2. The storefront has show_description enabled
-  // 3. There is actually a description to show
-  const shouldShowDescription = !compact && 
-    Boolean(storefront.show_description) && 
-    Boolean(storefront.description);
 
   return (
     <div className={`text-center space-y-2 ${compact ? 'mb-0' : 'mb-8'}`}>
@@ -57,7 +48,8 @@ export const StorefrontHeader = ({
           {storefront.name}
         </h1>
       )}
-      {shouldShowDescription && (
+      
+      {!compact && storefront.show_description && storefront.description && (
         <p 
           className="text-base max-w-2xl mx-auto"
           style={{ color: storefront.secondary_font_color || '#4B5563' }}
