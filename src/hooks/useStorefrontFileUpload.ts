@@ -10,10 +10,6 @@ export const useStorefrontFileUpload = (storefrontId: string | undefined) => {
   const uploadFile = async (file: File, fileType: string): Promise<string> => {
     if (!storefrontId) {
       console.error("No storefront ID provided for file upload");
-      toast({
-        variant: "destructive",
-        description: "Unable to upload file - missing storefront ID"
-      });
       throw new Error("Storefront ID is required");
     }
 
@@ -34,18 +30,10 @@ export const useStorefrontFileUpload = (storefrontId: string | undefined) => {
 
       if (uploadError) {
         console.error("Error uploading file:", uploadError);
-        toast({
-          variant: "destructive",
-          description: "Failed to upload file. Please try again."
-        });
         throw uploadError;
       }
 
       console.log("File uploaded successfully:", { filePath });
-      toast({
-        description: "File uploaded successfully"
-      });
-
       return filePath;
     } catch (error) {
       console.error("File upload failed:", error);
@@ -60,23 +48,11 @@ export const useStorefrontFileUpload = (storefrontId: string | undefined) => {
 
     try {
       console.log("Deleting file:", filePath);
-      const { error: deleteError } = await supabase.storage
+      const { error } = await supabase.storage
         .from("gallery_images")
         .remove([filePath]);
 
-      if (deleteError) {
-        console.error("Error deleting file:", deleteError);
-        toast({
-          variant: "destructive",
-          description: "Failed to delete file. Please try again."
-        });
-        throw deleteError;
-      }
-
-      console.log("File deleted successfully");
-      toast({
-        description: "File deleted successfully"
-      });
+      if (error) throw error;
     } catch (error) {
       console.error("Error deleting file:", error);
       throw error;

@@ -66,10 +66,15 @@ export const FileUploadField = ({
       const filePath = await uploadFile(file, fileType);
       console.log("File uploaded successfully, setting form value:", { filePath });
       
+      // Set the form value and mark as dirty to ensure it's included in the next save
       form.setValue(fieldName, filePath, {
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true
+      });
+
+      toast({
+        description: "File uploaded successfully"
       });
     } catch (error) {
       console.error("File upload failed:", error);
