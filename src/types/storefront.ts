@@ -30,9 +30,10 @@ export type Storefront = {
   pwa_icon_192?: string;
   pwa_icon_512?: string;
   show_description?: boolean;
-  header_display?: "text" | "logo";
   screenshot_desktop?: string;
   screenshot_mobile?: string;
+  header_display?: "text" | "logo";
+  verification_enabled?: boolean;
   businesses?: {
     name: string;
   };

@@ -9,7 +9,7 @@ import StorefrontView from "@/pages/StorefrontView";
 import StorefrontEdit from "@/pages/StorefrontEdit";
 import ProductManagement from "@/pages/ProductManagement";
 import NewProductManagement from "@/pages/NewProductManagement";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 import "./App.css";
 
