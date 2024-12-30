@@ -237,6 +237,7 @@ export type Database = {
           created_at: string
           description: string | null
           favicon: string | null
+          header_display: string | null
           heading_text: string | null
           id: string
           instructions_button_text: string | null
@@ -272,6 +273,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           favicon?: string | null
+          header_display?: string | null
           heading_text?: string | null
           id?: string
           instructions_button_text?: string | null
@@ -307,6 +309,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           favicon?: string | null
+          header_display?: string | null
           heading_text?: string | null
           id?: string
           instructions_button_text?: string | null
