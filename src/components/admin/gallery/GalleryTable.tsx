@@ -1,98 +1,91 @@
-import { useNavigate } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Package, ExternalLink } from "lucide-react";
+import { Package, Pencil, Store, Trash } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { GalleryDeleteDialog } from "./GalleryDeleteDialog";
+import { useState } from "react";
+import { Storefront } from "@/types/storefront";
 
 type GalleryTableProps = {
-  galleries: any[];
-  onEdit: (gallery: any) => void;
-  onDelete: (gallery: any) => void;
+  galleries: Storefront[];
+  onDelete: (id: string) => void;
 };
 
-export const GalleryTable = ({ galleries, onEdit, onDelete }: GalleryTableProps) => {
+export const GalleryTable = ({ galleries, onDelete }: GalleryTableProps) => {
   const navigate = useNavigate();
-
-  console.log("GalleryTable render, galleries:", galleries);
+  const [galleryToDelete, setGalleryToDelete] = useState<Storefront | null>(null);
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Business</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Created</TableHead>
-          <TableHead>ID</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {galleries.map((gallery) => (
-          <TableRow key={gallery.id}>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                {gallery.header_display === "logo" && gallery.site_logo && (
-                  <img 
-                    src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${gallery.site_logo}`} 
-                    alt={`${gallery.name} logo`} 
-                    className="h-8 w-auto object-contain"
-                  />
-                )}
-                <span>{gallery.name}</span>
-              </div>
-            </TableCell>
-            <TableCell>{gallery.businesses?.name}</TableCell>
-            <TableCell>{gallery.status}</TableCell>
-            <TableCell>
-              {new Date(gallery.created_at).toLocaleDateString()}
-            </TableCell>
-            <TableCell>
-              <span className="font-mono text-sm text-muted-foreground">
-                {gallery.id}
-              </span>
-            </TableCell>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate(`/admin/storefront/${gallery.id}`)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate(`/admin/products-new/${gallery.id}`)}
-                >
-                  <Package className="h-4 w-4 text-accent" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => window.open(`/storefront/${gallery.id}`, '_blank')}
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onDelete(gallery)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </TableCell>
+    <div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Business</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {galleries.map((gallery) => (
+            <TableRow key={gallery.id}>
+              <TableCell>{gallery.name}</TableCell>
+              <TableCell>
+                {gallery.businesses?.name}
+              </TableCell>
+              <TableCell>{gallery.status}</TableCell>
+              <TableCell className="text-right">
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate(`/storefront/${gallery.id}`)}
+                  >
+                    <Store className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate(`/admin/products/${gallery.id}`)}
+                  >
+                    <Package className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate(`/admin/products-new/${gallery.id}`)}
+                  >
+                    <Package className="h-4 w-4 text-accent" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate(`/admin/storefront/${gallery.id}`)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setGalleryToDelete(gallery)}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <GalleryDeleteDialog
+        gallery={galleryToDelete}
+        onClose={() => setGalleryToDelete(null)}
+        onConfirm={(id) => {
+          onDelete(id);
+          setGalleryToDelete(null);
+        }}
+      />
+    </div>
   );
 };
