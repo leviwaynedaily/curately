@@ -22,13 +22,25 @@ const StorefrontEdit = () => {
   const { data: storefront, isLoading, refetch } = useQuery({
     queryKey: ["storefront", storefrontId],
     queryFn: async () => {
-      // If this is a new storefront, return an empty object
+      // If this is a new storefront, return a template object without querying the database
       if (storefrontId === "new") {
         console.log("Creating new storefront template");
         return {
-          id: "new",
+          id: undefined,
           name: "New Storefront",
-          status: "active"
+          status: "active",
+          show_description: true,
+          primary_color: "#141413",
+          secondary_color: "#E6E4DD",
+          accent_color: "#9b87f5",
+          primary_font_color: "#000000",
+          secondary_font_color: "#6E59A5",
+          accent_font_color: "#8B5CF6",
+          heading_text: "Age Verification Required",
+          subheading_text: "This website contains age-restricted content. By entering, you accept our terms and confirm your legal age to view such content.",
+          age_verification_text: "I confirm that I am 21 years of age or older and agree to the Terms of Service and Privacy Policy.",
+          button_text: "Enter Site",
+          instructions_button_text: "Enter Site"
         };
       }
 
@@ -42,7 +54,7 @@ const StorefrontEdit = () => {
           )
         `)
         .eq("id", storefrontId)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching storefront:", error);
@@ -52,6 +64,7 @@ const StorefrontEdit = () => {
       console.log("Storefront data fetched:", data);
       return data;
     },
+    enabled: !!storefrontId,
   });
 
   const { form, handleSubmit } = useGalleryForm({
@@ -85,6 +98,9 @@ const StorefrontEdit = () => {
     return <AdminLayout>Storefront not found</AdminLayout>;
   }
 
+  // Don't show preview for new storefronts since they don't have an ID yet
+  const shouldShowPreview = showPreview && storefrontId !== "new";
+
   return (
     <AdminLayout>
       <StorefrontLayout
@@ -93,7 +109,7 @@ const StorefrontEdit = () => {
         isSaving={isSaving}
         onSave={handleSave}
         storefrontId={storefrontId!}
-        showPreview={showPreview}
+        showPreview={shouldShowPreview}
         isMobile={isMobile}
       />
     </AdminLayout>
