@@ -1,10 +1,13 @@
 import { Table } from "@/components/ui/table";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { ProductTableHeader } from "../ProductTableHeader";
 import { ProductTableBody } from "./ProductTableBody";
 import { Product } from "../types";
 import { ProductBulkActions } from "./ProductBulkActions";
 import { ProductMediaDialog } from "../ProductMediaDialog";
-import { useProductTableState } from "./hooks/useProductTableState";
+import { ProductTablePagination } from "./pagination/ProductTablePagination";
+import { useProductTableState } from "../hooks/useProductTableState";
 
 type ProductTableProps = {
   storefrontId: string;
@@ -35,6 +38,14 @@ export const ProductTable = ({
     showHiddenFields,
     setShowHiddenFields,
     selectedProducts,
+    selectedCategory,
+    setSelectedCategory,
+    selectedTag,
+    setSelectedTag,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
     handleSelectAll,
     handleToggleProduct,
   } = useProductTableState(products);
@@ -61,11 +72,6 @@ export const ProductTable = ({
     }
   };
 
-  // Create a wrapper function to convert single ID to array
-  const handleSingleDelete = (id: string) => {
-    return handleBulkDelete([id]);
-  };
-
   const filteredAndSortedProducts = products
     .filter(product => {
       const matchesSearch = 
@@ -75,8 +81,6 @@ export const ProductTable = ({
         product.category?.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesCategory = !selectedCategory || product.category === selectedCategory;
-      
-      // Add tag filtering
       const matchesTag = !selectedTag || (product.tags && product.tags.some(tag => tag.name === selectedTag));
 
       return matchesSearch && matchesCategory && matchesTag;
@@ -148,7 +152,7 @@ export const ProductTable = ({
               setEditingId(null);
               setEditedProduct(null);
             }}
-            onDelete={handleSingleDelete}
+            onDelete={(id) => handleBulkDelete([id])}
             onProductChange={(field, value) => {
               setEditedProduct(prev => prev ? { ...prev, [field]: value } : null);
             }}
@@ -160,6 +164,14 @@ export const ProductTable = ({
           />
         </Table>
       </div>
+
+      <ProductTablePagination
+        page={page}
+        setPage={setPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        totalPages={totalPages}
+      />
 
       {selectedProduct && (
         <ProductMediaDialog
