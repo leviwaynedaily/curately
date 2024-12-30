@@ -14,7 +14,9 @@ type StorefrontTabsProps = {
 export const StorefrontTabs = ({ form }: StorefrontTabsProps) => {
   console.log("StorefrontTabs render, form state:", {
     isDirty: form.formState.isDirty,
-    dirtyFields: form.formState.dirtyFields
+    dirtyFields: form.formState.dirtyFields,
+    headerDisplay: form.watch("header_display"),
+    siteLogo: form.watch("site_logo")
   });
 
   return (
