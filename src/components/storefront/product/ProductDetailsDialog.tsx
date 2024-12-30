@@ -2,6 +2,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { Product } from "@/components/admin/gallery/products/types";
 import { formatCurrency } from "@/lib/utils";
@@ -159,6 +160,22 @@ export const ProductDetailsDialog = ({
             {renderField('name', product.name)}
             {product.price !== null && renderField('price', product.price, 'number')}
             {product.description && renderField('description', product.description, 'textarea')}
+            
+            {/* Display tags */}
+            {product.tags && product.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {product.tags.map(tag => (
+                  <Badge 
+                    key={tag.id}
+                    variant="secondary"
+                    className="text-xs"
+                  >
+                    {tag.name}
+                  </Badge>
+                ))}
+              </div>
+            )}
+            
             {product.category && (
               <p className="text-xs text-gray-500 uppercase tracking-wide">
                 Category: {product.category}
