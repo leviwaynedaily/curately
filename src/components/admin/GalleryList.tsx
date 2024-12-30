@@ -8,13 +8,11 @@ import { GalleryTable } from "./gallery/GalleryTable";
 import { GallerySearch } from "./gallery/GallerySearch";
 import { GalleryDeleteDialog } from "./gallery/GalleryDeleteDialog";
 import { useNavigate } from "react-router-dom";
-import { StorefrontWizard } from "./gallery/wizard/StorefrontWizard";
 
 export const GalleryList = ({ businessId }: { businessId?: string }) => {
   const [selectedGallery, setSelectedGallery] = useState<any>(null);
   const [galleryToDelete, setGalleryToDelete] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showWizard, setShowWizard] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -97,14 +95,9 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
     }
   };
 
-  const handleOpenWizard = () => {
-    console.log("Opening wizard");
-    setShowWizard(true);
-  };
-
-  const handleCloseWizard = () => {
-    console.log("Closing wizard");
-    setShowWizard(false);
+  const handleAddStorefront = () => {
+    console.log("Navigating to new storefront page");
+    navigate("/admin/storefront/new");
   };
 
   if (isLoading) {
@@ -115,7 +108,7 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Storefronts</h2>
-        <Button onClick={handleOpenWizard}>Add Storefront</Button>
+        <Button onClick={handleAddStorefront}>Add Storefront</Button>
       </div>
 
       <GallerySearch value={searchQuery} onChange={setSearchQuery} />
@@ -130,12 +123,6 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
         isOpen={!!galleryToDelete}
         onClose={() => setGalleryToDelete(null)}
         onConfirm={handleDelete}
-      />
-
-      <StorefrontWizard
-        isOpen={showWizard}
-        onClose={handleCloseWizard}
-        businessId={businessId}
       />
     </div>
   );
