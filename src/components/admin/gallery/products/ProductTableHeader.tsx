@@ -75,6 +75,7 @@ export const ProductTableHeader = ({
           <Checkbox 
             checked={allSelected}
             onCheckedChange={onSelectAll}
+            className="border-2 border-gray-300 data-[state=checked]:border-primary rounded-sm"
           />
         </TableHead>
         <SortableHeader field="name">
