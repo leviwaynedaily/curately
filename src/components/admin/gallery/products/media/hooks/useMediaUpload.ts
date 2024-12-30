@@ -34,7 +34,7 @@ export const useMediaUpload = (productId: string, onSuccess: () => void) => {
 
         console.log(`Uploading ${mediaType} to storage:`, file.name);
         const { error: uploadError } = await supabase.storage
-          .from("storefront_products")
+          .from("gallery_images")
           .upload(filePath, file);
 
         if (uploadError) {
