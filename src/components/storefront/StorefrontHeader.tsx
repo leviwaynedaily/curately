@@ -23,12 +23,16 @@ export const StorefrontHeader = ({
     hasDescription: Boolean(storefront.description),
     description: storefront.description,
     show_description: storefront.show_description,
-    compact
+    compact,
+    header_display: storefront.header_display,
+    has_logo: Boolean(logoUrl)
   });
+
+  const shouldShowLogo = storefront.header_display === "logo" && logoUrl;
 
   return (
     <div className={`text-center space-y-2 ${compact ? 'mb-0' : 'mb-8'}`}>
-      {logoUrl ? (
+      {shouldShowLogo ? (
         <div className="flex justify-center">
           <img
             src={logoUrl}

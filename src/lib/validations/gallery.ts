@@ -28,6 +28,7 @@ export const gallerySchema = z.object({
   instructions_content: z.string().optional(),
   instructions_button_text: z.string().optional().default("Enter Site"),
   show_description: z.boolean().optional().default(true),
+  header_display: z.enum(["text", "logo"]).default("text"),
   pwa_icon_192: z.string().optional(),
   pwa_icon_512: z.string().optional(),
   screenshot_desktop: z.string().optional(),
