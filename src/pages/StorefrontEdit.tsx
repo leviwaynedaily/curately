@@ -107,7 +107,10 @@ const StorefrontEdit = () => {
         return;
       }
       
+      // Important: Reset the form with the new values to update defaultValues
+      console.log("Save completed, resetting form with new values:", form.getValues());
       form.reset(form.getValues());
+      
       await refetch();
       const previewIframe = document.querySelector('iframe') as HTMLIFrameElement;
       if (previewIframe) {

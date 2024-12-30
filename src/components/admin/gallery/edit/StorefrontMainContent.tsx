@@ -21,9 +21,19 @@ export const StorefrontMainContent = ({
     hasStorefront: !!storefront,
     formIsDirty: form?.formState?.isDirty,
     headerDisplay: form.watch("header_display"),
-    formValues: form.getValues()
+    formValues: form.getValues(),
+    defaultValues: form.formState.defaultValues
   });
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Form submitted with values:", {
+      headerDisplay: form.getValues("header_display"),
+      allValues: form.getValues()
+    });
+    await onSave();
+  };
+  
   return (
     <div className="space-y-6">
       <StorefrontHeader 
@@ -34,10 +44,7 @@ export const StorefrontMainContent = ({
       />
       
       <Form {...form}>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          onSave();
-        }}>
+        <form onSubmit={handleSubmit}>
           <StorefrontTabs form={form} />
         </form>
       </Form>

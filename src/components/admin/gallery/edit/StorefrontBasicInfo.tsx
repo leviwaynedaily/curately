@@ -6,6 +6,7 @@ import { FormField, FormItem, FormControl } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { GallerySiteLogoField } from "../GallerySiteLogoField";
+import { useEffect } from "react";
 
 type StorefrontBasicInfoProps = {
   form: UseFormReturn<GalleryFormValues>;
@@ -22,6 +23,20 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
     defaultValues: form.formState.defaultValues
   });
 
+  // Monitor header_display changes
+  useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => {
+      if (name === "header_display") {
+        console.log("header_display changed:", {
+          newValue: value.header_display,
+          type,
+          formValues: form.getValues()
+        });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -37,6 +52,11 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
                   onValueChange={(value) => {
                     console.log("Radio group value changed to:", value);
                     field.onChange(value);
+                    // Ensure the form knows it's dirty
+                    form.setValue("header_display", value, {
+                      shouldDirty: true,
+                      shouldTouch: true
+                    });
                   }}
                   value={field.value || "text"}
                   className="flex flex-col space-y-1"
