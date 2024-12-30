@@ -25,10 +25,15 @@ export const usePWAIconUpload = (
         throw new Error('Please upload a PNG file');
       }
 
-      const storefrontId = form.getValues("id");
+      // Get storefront ID from form values instead of relying on the id field
+      const storefrontId = form.getValues("id") || window.location.pathname.split('/').pop();
+      
       if (!storefrontId) {
+        console.error("No storefront ID available");
         throw new Error("Storefront ID is required");
       }
+
+      console.log(`Uploading PWA icon for storefront:`, { storefrontId, size });
 
       const fileExt = file.name.split(".").pop();
       const filePath = getStorefrontFilePath(storefrontId, `pwa_icon_${size}`, fileExt || 'png');
