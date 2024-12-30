@@ -20,6 +20,7 @@ export const useProductForm = (
     sku: "",
     category: "",
     stock_quantity: "0",
+    tags: [] as string[],
   });
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -33,6 +34,7 @@ export const useProductForm = (
         sku: product.sku || "",
         category: product.category || "",
         stock_quantity: product.stock_quantity?.toString() || "0",
+        tags: product.tags?.map(tag => tag.name) || [],
       });
 
       if (product.product_media) {
@@ -47,6 +49,14 @@ export const useProductForm = (
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setFormData(prev => ({ ...prev, category: value }));
+  };
+
+  const handleTagsChange = (tags: string[]) => {
+    setFormData(prev => ({ ...prev, tags }));
   };
 
   const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,6 +122,8 @@ export const useProductForm = (
     console.log("Submitting product form with data:", formData);
 
     try {
+      let productId: string;
+
       if (product) {
         const { error } = await supabase
           .from("products")
@@ -126,9 +138,17 @@ export const useProductForm = (
           .eq("id", product.id);
 
         if (error) throw error;
+        productId = product.id;
+
+        // Update tags
+        const { error: deleteError } = await supabase
+          .from("product_tags")
+          .delete()
+          .eq("product_id", productId);
+
+        if (deleteError) throw deleteError;
 
         console.log("Product updated successfully");
-        toast({ description: "Product updated successfully" });
       } else {
         const { data: newProduct, error } = await supabase
           .from("products")
@@ -146,16 +166,54 @@ export const useProductForm = (
           .single();
 
         if (error) throw error;
+        productId = newProduct.id;
 
         console.log("Product created successfully:", newProduct);
-
-        if (mediaFiles.length > 0) {
-          await uploadMedia(newProduct.id);
-        }
-
-        toast({ description: "Product created successfully" });
       }
 
+      // Handle tags
+      if (formData.tags.length > 0) {
+        // Get or create tags
+        for (const tagName of formData.tags) {
+          // First try to get existing tag
+          let { data: existingTags } = await supabase
+            .from("tags")
+            .select("id")
+            .eq("name", tagName)
+            .single();
+
+          let tagId;
+          if (existingTags) {
+            tagId = existingTags.id;
+          } else {
+            // Create new tag if it doesn't exist
+            const { data: newTag, error: createTagError } = await supabase
+              .from("tags")
+              .insert({ name: tagName })
+              .select()
+              .single();
+
+            if (createTagError) throw createTagError;
+            tagId = newTag.id;
+          }
+
+          // Create product_tag association
+          const { error: tagAssocError } = await supabase
+            .from("product_tags")
+            .insert({
+              product_id: productId,
+              tag_id: tagId
+            });
+
+          if (tagAssocError) throw tagAssocError;
+        }
+      }
+
+      if (mediaFiles.length > 0) {
+        await uploadMedia(productId);
+      }
+
+      toast({ description: product ? "Product updated successfully" : "Product created successfully" });
       onProductCreated();
       onClose();
     } catch (error) {
@@ -175,6 +233,8 @@ export const useProductForm = (
     uploadingMedia,
     previewUrls,
     handleChange,
+    handleCategoryChange,
+    handleTagsChange,
     handleMediaSelect,
     removeMedia,
     handleSubmit,

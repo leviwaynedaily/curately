@@ -26,6 +26,8 @@ export const ProductForm = ({
     uploadingMedia,
     previewUrls,
     handleChange,
+    handleCategoryChange,
+    handleTagsChange,
     handleMediaSelect,
     removeMedia,
     handleSubmit,
@@ -40,7 +42,10 @@ export const ProductForm = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <ProductFormFields
             formData={formData}
+            storefrontId={storefrontId}
             handleChange={handleChange}
+            onCategoryChange={handleCategoryChange}
+            onTagsChange={handleTagsChange}
           />
           
           <ProductMediaUpload
