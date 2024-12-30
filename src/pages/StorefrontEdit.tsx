@@ -8,25 +8,29 @@ import { useGalleryForm } from "@/hooks/useGalleryForm";
 import { StorefrontLayout } from "@/components/admin/gallery/edit/StorefrontLayout";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const StorefrontEdit = () => {
   const { storefrontId } = useParams();
   const isMobile = useIsMobile();
   const [showPreview, setShowPreview] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
   const navigate = useNavigate();
   
   console.log("StorefrontEdit render:", {
     storefrontId,
     isMobile,
-    showPreview
+    showPreview,
+    selectedBusinessId
   });
 
-  // First, fetch the user's business
-  const { data: userBusiness, isLoading: isLoadingBusiness } = useQuery({
-    queryKey: ["user-business"],
+  // First, check if user is platform admin
+  const { data: userProfile } = useQuery({
+    queryKey: ["user-profile"],
     queryFn: async () => {
-      console.log("Fetching user's business");
+      console.log("Fetching user profile");
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -34,42 +38,63 @@ const StorefrontEdit = () => {
         return null;
       }
 
-      console.log("Querying business for user:", user.id);
-      const { data: business, error } = await supabase
-        .from("businesses")
+      const { data: profile, error } = await supabase
+        .from("profiles")
         .select("*")
-        .eq("owner_id", user.id)
+        .eq("id", user.id)
         .maybeSingle();
 
       if (error) {
-        console.error("Error fetching business:", error);
+        console.error("Error fetching profile:", error);
         return null;
       }
 
-      if (!business) {
-        console.log("No business found for user:", user.id);
-        return null;
-      }
-
-      console.log("Found business:", business);
-      return business;
+      console.log("User profile:", profile);
+      return profile;
     }
+  });
+
+  // Fetch all businesses if platform admin, otherwise just user's business
+  const { data: businesses, isLoading: isLoadingBusinesses } = useQuery({
+    queryKey: ["businesses", userProfile?.role],
+    queryFn: async () => {
+      if (!userProfile) return null;
+
+      console.log("Fetching businesses for role:", userProfile.role);
+      let query = supabase.from("businesses").select("*");
+      
+      if (userProfile.role !== "platform_admin") {
+        query = query.eq("owner_id", userProfile.id);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error fetching businesses:", error);
+        return null;
+      }
+
+      console.log("Fetched businesses:", data);
+      return data;
+    },
+    enabled: !!userProfile
   });
 
   const { data: storefront, isLoading, refetch } = useQuery({
     queryKey: ["storefront", storefrontId],
     queryFn: async () => {
-      // If this is a new storefront, return a template object without querying the database
+      // If this is a new storefront, return a template object
       if (storefrontId === "new") {
-        if (!userBusiness) {
-          console.log("No business found for new storefront");
+        if (!selectedBusinessId && !businesses?.[0]?.id) {
+          console.log("No business selected for new storefront");
           return null;
         }
         
-        console.log("Creating new storefront template with business_id:", userBusiness.id);
+        const businessId = selectedBusinessId || businesses?.[0]?.id;
+        console.log("Creating new storefront template with business_id:", businessId);
         return {
           id: undefined,
-          business_id: userBusiness.id,
+          business_id: businessId,
           name: "New Storefront",
           status: "active",
           show_description: true,
@@ -107,7 +132,7 @@ const StorefrontEdit = () => {
       console.log("Storefront data fetched:", data);
       return data;
     },
-    enabled: !!storefrontId && (!isLoadingBusiness || storefrontId !== "new"),
+    enabled: !!storefrontId && (!isLoadingBusinesses || storefrontId !== "new"),
   });
 
   const { form, handleSubmit } = useGalleryForm({
@@ -133,11 +158,11 @@ const StorefrontEdit = () => {
     }
   };
 
-  if (isLoading || isLoadingBusiness) {
+  if (isLoading || isLoadingBusinesses) {
     return <AdminLayout>Loading...</AdminLayout>;
   }
 
-  if (!userBusiness && storefrontId === "new") {
+  if (!businesses?.length) {
     return (
       <AdminLayout>
         <Alert>
@@ -148,6 +173,42 @@ const StorefrontEdit = () => {
         </Alert>
       </AdminLayout>
     );
+  }
+
+  // Show business selector for new storefronts if platform admin
+  if (storefrontId === "new" && userProfile?.role === "platform_admin") {
+    if (!selectedBusinessId) {
+      return (
+        <AdminLayout>
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold">Select a Business</h2>
+            <div className="max-w-md">
+              <Select
+                value={selectedBusinessId || ""}
+                onValueChange={(value) => setSelectedBusinessId(value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a business" />
+                </SelectTrigger>
+                <SelectContent>
+                  {businesses?.map((business) => (
+                    <SelectItem key={business.id} value={business.id}>
+                      {business.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button 
+              onClick={() => setSelectedBusinessId(businesses[0].id)}
+              disabled={!businesses?.length}
+            >
+              Continue
+            </Button>
+          </div>
+        </AdminLayout>
+      );
+    }
   }
 
   if (!storefront) {
