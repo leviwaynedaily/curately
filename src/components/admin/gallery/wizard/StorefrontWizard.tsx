@@ -26,6 +26,8 @@ export const StorefrontWizard = ({
     handleSubmit,
   } = useStorefrontWizard(businessId, onClose);
 
+  console.log("StorefrontWizard render:", { step, isSubmitting });
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>

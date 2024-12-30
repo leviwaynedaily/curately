@@ -5,37 +5,45 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { gallerySchema } from "@/lib/validations/gallery";
+import { gallerySchema, type GalleryFormValues } from "@/lib/validations/gallery";
 
-export const useStorefrontWizard = (businessId?: string, onClose: () => void) => {
+export const useStorefrontWizard = (businessId: string | undefined, onClose: () => void) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm({
+  console.log("Initializing storefront wizard with businessId:", businessId);
+
+  const form = useForm<GalleryFormValues>({
     resolver: zodResolver(gallerySchema),
     defaultValues: {
       name: "",
       description: "",
       business_id: businessId || "",
       status: "active",
+      show_description: true,
     },
   });
 
   const nextStep = async () => {
+    console.log("Attempting to move to next step");
     const currentStepValid = await form.trigger(step === 1 ? ["name"] : ["description"]);
     if (currentStepValid) {
+      console.log("Step validation successful, moving to next step");
       setStep(step + 1);
+    } else {
+      console.log("Step validation failed");
     }
   };
 
   const previousStep = () => {
+    console.log("Moving to previous step");
     setStep(step - 1);
   };
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: GalleryFormValues) => {
     console.log("Submitting wizard form with values:", values);
     setIsSubmitting(true);
 

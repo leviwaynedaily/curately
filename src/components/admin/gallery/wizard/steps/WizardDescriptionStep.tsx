@@ -19,6 +19,7 @@ export const WizardDescriptionStep = ({ form }: WizardDescriptionStepProps) => {
             <Textarea
               placeholder="Enter storefront description"
               {...field}
+              value={field.value || ""}
             />
           </FormControl>
           <FormMessage />
