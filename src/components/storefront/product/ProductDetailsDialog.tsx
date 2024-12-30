@@ -1,159 +1,94 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
 import { Product } from "@/components/admin/gallery/products/types";
-import { formatCurrency } from "@/lib/utils";
 import { ProductMediaCarousel } from "./ProductMediaCarousel";
-import { useState } from "react";
+import { formatCurrency } from "@/lib/utils";
+import { ProductCardActions } from "./ProductCardActions";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
 
 type ProductDetailsDialogProps = {
   product: Product | null;
   onClose: () => void;
   allowDownload?: boolean;
   accentColor?: string;
+  secondaryColor?: string;
 };
-
-type EditableFields = {
-  [K in keyof Product]: Product[K] extends string | number | null ? K : never;
-}[keyof Product];
 
 export const ProductDetailsDialog = ({ 
   product, 
   onClose,
   allowDownload = false,
-  accentColor = '#8B5CF6'
+  accentColor = "#000000",
+  secondaryColor = "#000000"
 }: ProductDetailsDialogProps) => {
-  const [editingField, setEditingField] = useState<EditableFields | null>(null);
-  const [editedProduct, setEditedProduct] = useState<Product | null>(null);
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const [tags, setTags] = useState<Array<{ id: string; name: string }>>([]);
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      if (product) {
+        const { data, error } = await supabase
+          .from('product_tags')
+          .select(`
+            tag_id,
+            tags (
+              id,
+              name
+            )
+          `)
+          .eq('product_id', product.id);
+
+        if (!error && data) {
+          const formattedTags = data.map(item => ({
+            id: item.tags.id,
+            name: item.tags.name
+          }));
+          setTags(formattedTags);
+        }
+      }
+    };
+
+    fetchTags();
+  }, [product]);
 
   if (!product) return null;
 
-  const handleDoubleClick = (field: EditableFields) => {
-    setEditingField(field);
-    setEditedProduct(product);
-  };
+  const renderField = (label: string, value: any, type: 'text' | 'number' | 'textarea' = 'text') => {
+    if (value === null || value === undefined) return null;
 
-  const handleChange = (field: EditableFields, value: string | number) => {
-    setEditedProduct(prev => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        [field]: value
-      };
-    });
-  };
-
-  const handleSave = async () => {
-    if (!editedProduct || !editingField) return;
-
-    try {
-      console.log("Saving product update:", { field: editingField, value: editedProduct[editingField] });
-      const { error } = await supabase
-        .from('products')
-        .update({
-          [editingField]: editedProduct[editingField]
-        })
-        .eq('id', product.id);
-
-      if (error) throw error;
-
-      console.log("Product updated successfully");
-      toast({ description: "Product updated successfully" });
-      queryClient.invalidateQueries({ queryKey: ['products', product.storefront_id] });
-      setEditingField(null);
-    } catch (error) {
-      console.error('Error updating product:', error);
-      toast({
-        variant: "destructive",
-        description: "Failed to update product"
-      });
+    let displayValue = value;
+    if (type === 'number' && typeof value === 'number') {
+      displayValue = formatCurrency(value);
     }
-  };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSave();
-    } else if (e.key === 'Escape') {
-      setEditingField(null);
-    }
-  };
-
-  const renderField = (field: EditableFields, value: string | number | null, type: 'text' | 'number' | 'textarea' = 'text') => {
-    if (editingField === field) {
-      if (type === 'textarea') {
-        return (
-          <Textarea
-            value={editedProduct?.[field]?.toString() || ''}
-            onChange={(e) => handleChange(field, e.target.value)}
-            onBlur={handleSave}
-            onKeyDown={handleKeyDown}
-            className="w-full min-h-[60px]"
-            autoFocus
-          />
-        );
-      }
-      return (
-        <Input
-          type={type}
-          value={editedProduct?.[field]?.toString() || ''}
-          onChange={(e) => handleChange(field, type === 'number' ? parseFloat(e.target.value) : e.target.value)}
-          onBlur={handleSave}
-          onKeyDown={handleKeyDown}
-          className="w-full"
-          autoFocus
-        />
-      );
-    }
-    
-    if (field === 'price' && typeof value === 'number') {
-      return (
-        <p 
-          className="text-lg font-bold cursor-pointer" 
-          style={{ color: accentColor }}
-          onDoubleClick={() => handleDoubleClick(field)}
-        >
-          {formatCurrency(value)}
-        </p>
-      );
-    }
-    
     return (
-      <p 
-        className={`${field === 'name' ? 'text-xl font-semibold' : 'text-sm text-gray-600'} cursor-pointer`}
-        onDoubleClick={() => handleDoubleClick(field)}
-      >
-        {value}
-      </p>
+      <div className="space-y-1.5">
+        {type === 'textarea' ? (
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">
+            {displayValue}
+          </p>
+        ) : (
+          <p className={`${label === 'price' ? 'text-lg font-semibold' : 'text-base'}`} style={{ 
+            color: label === 'price' ? accentColor : 'inherit' 
+          }}>
+            {displayValue}
+          </p>
+        )}
+      </div>
     );
   };
 
   return (
-    <Dialog open={!!product} onOpenChange={onClose}>
-      <DialogContent className="max-w-md p-0 overflow-hidden rounded-lg border shadow-lg">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-3 top-3 z-50 rounded-full bg-white/80 hover:bg-white/90 backdrop-blur-sm transition-all duration-200"
-          onClick={onClose}
-        >
-          <X className="h-4 w-4" style={{ color: accentColor }} />
-        </Button>
-
-        <div>
-          <div className="aspect-square w-full overflow-hidden">
-            <ProductMediaCarousel 
-              media={product.product_media || []}
-              allowDownload={allowDownload}
-            />
+    <Dialog open={!!product} onOpenChange={() => onClose()}>
+      <DialogContent className="max-w-3xl p-0 gap-0">
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="relative">
+            <ProductMediaCarousel product={product} />
+            {allowDownload && (
+              <div className="absolute bottom-4 right-4">
+                <ProductCardActions product={product} />
+              </div>
+            )}
           </div>
           
           <div className="p-4 space-y-3 bg-white">
@@ -162,7 +97,12 @@ export const ProductDetailsDialog = ({
               {product.category && (
                 <Badge 
                   variant="secondary"
-                  className="rounded-full px-3 py-1 text-xs bg-gray-100/80 text-gray-600 hover:bg-gray-100"
+                  className="rounded-full px-3 py-1 text-xs whitespace-nowrap"
+                  style={{ 
+                    backgroundColor: `${secondaryColor}15`,
+                    color: secondaryColor,
+                    border: `1px solid ${secondaryColor}30`
+                  }}
                 >
                   {product.category}
                 </Badge>
@@ -171,10 +111,9 @@ export const ProductDetailsDialog = ({
             {product.price !== null && renderField('price', product.price, 'number')}
             {product.description && renderField('description', product.description, 'textarea')}
             
-            {/* Display tags */}
-            {product.tags && product.tags.length > 0 && (
+            {tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-2">
-                {product.tags.map(tag => (
+                {tags.map(tag => (
                   <Badge 
                     key={tag.id}
                     variant="secondary"
