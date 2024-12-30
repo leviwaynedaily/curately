@@ -15,7 +15,7 @@ export const useProductFileUpload = (storefrontId: string, productId: string) =>
       console.log(`Uploading ${mediaType} to path:`, filePath);
 
       const { error: uploadError } = await supabase.storage
-        .from("storefront_products")
+        .from("gallery_images")
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
@@ -33,8 +33,9 @@ export const useProductFileUpload = (storefrontId: string, productId: string) =>
 
   const deleteFile = async (filePath: string) => {
     try {
+      console.log("Deleting file:", filePath);
       const { error } = await supabase.storage
-        .from("storefront_products")
+        .from("gallery_images")
         .remove([filePath]);
 
       if (error) throw error;

@@ -25,6 +25,7 @@ export const getStorefrontFilePath = (storefrontId: string, fileType: string, fi
 };
 
 export const getProductMediaPath = (storefrontId: string, productId: string, fileName: string) => {
+  console.log("Generating product media path:", { storefrontId, productId, fileName });
   const fileExt = fileName.split('.').pop();
   const uniqueId = crypto.randomUUID();
   return `${storefrontId}/products/${productId}/${uniqueId}.${fileExt}`;

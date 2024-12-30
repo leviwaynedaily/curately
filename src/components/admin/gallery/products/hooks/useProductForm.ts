@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Product } from "../types";
-import { getProductMediaPath } from "@/utils/storefrontFileUtils";
+import { useProductFileUpload } from "@/hooks/useProductFileUpload";
+import { useProductMedia } from "./useProductMedia";
 
 export const useProductForm = (
   storefrontId: string,
@@ -24,6 +25,8 @@ export const useProductForm = (
   });
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const { uploadFile, deleteFile } = useProductFileUpload(storefrontId, product?.id || '');
+  const { optimizeMedia } = useProductMedia(product?.id || '');
 
   useEffect(() => {
     if (product) {
@@ -82,22 +85,16 @@ export const useProductForm = (
     try {
       for (let i = 0; i < mediaFiles.length; i++) {
         const file = mediaFiles[i];
-        const filePath = getProductMediaPath(storefrontId, productId, file.name);
+        const { filePath, mediaType } = await uploadFile(file);
         
         console.log(`Uploading file ${i + 1}/${mediaFiles.length}:`, filePath);
-
-        const { error: uploadError } = await supabase.storage
-          .from("gallery_images")
-          .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
 
         const { error: dbError } = await supabase
           .from("product_media")
           .insert({
             product_id: productId,
             file_path: filePath,
-            media_type: file.type.startsWith("video/") ? "video" : "image",
+            media_type: mediaType,
             is_primary: i === 0,
             title: file.name,
           });
@@ -140,14 +137,6 @@ export const useProductForm = (
         if (error) throw error;
         productId = product.id;
 
-        // Update tags
-        const { error: deleteError } = await supabase
-          .from("product_tags")
-          .delete()
-          .eq("product_id", productId);
-
-        if (deleteError) throw deleteError;
-
         console.log("Product updated successfully");
       } else {
         const { data: newProduct, error } = await supabase
@@ -169,44 +158,6 @@ export const useProductForm = (
         productId = newProduct.id;
 
         console.log("Product created successfully:", newProduct);
-      }
-
-      // Handle tags
-      if (formData.tags.length > 0) {
-        // Get or create tags
-        for (const tagName of formData.tags) {
-          // First try to get existing tag
-          let { data: existingTags } = await supabase
-            .from("tags")
-            .select("id")
-            .eq("name", tagName)
-            .single();
-
-          let tagId;
-          if (existingTags) {
-            tagId = existingTags.id;
-          } else {
-            // Create new tag if it doesn't exist
-            const { data: newTag, error: createTagError } = await supabase
-              .from("tags")
-              .insert({ name: tagName })
-              .select()
-              .single();
-
-            if (createTagError) throw createTagError;
-            tagId = newTag.id;
-          }
-
-          // Create product_tag association
-          const { error: tagAssocError } = await supabase
-            .from("product_tags")
-            .insert({
-              product_id: productId,
-              tag_id: tagId
-            });
-
-          if (tagAssocError) throw tagAssocError;
-        }
       }
 
       if (mediaFiles.length > 0) {
