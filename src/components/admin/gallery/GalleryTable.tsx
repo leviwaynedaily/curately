@@ -70,9 +70,9 @@ export const GalleryTable = ({ galleries, onEdit, onDelete }: GalleryTableProps)
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => navigate(`/admin/products/${gallery.id}`)}
+                  onClick={() => navigate(`/admin/products-new/${gallery.id}`)}
                 >
-                  <Package className="h-4 w-4" />
+                  <Package className="h-4 w-4 text-accent" />
                 </Button>
                 <Button
                   variant="ghost"
