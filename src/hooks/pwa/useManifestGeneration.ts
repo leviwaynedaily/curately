@@ -37,11 +37,12 @@ export const useManifestGeneration = (storefront: Storefront | null) => {
       }
     }
 
-    // Add screenshots
+    // Add screenshots - following the same pattern as icons
     if (storefront.screenshot_desktop) {
       try {
         console.log("Processing desktop screenshot:", storefront.screenshot_desktop);
         const desktopUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.screenshot_desktop).data.publicUrl;
+        console.log("Generated desktop screenshot URL:", desktopUrl);
         screenshots.push({
           src: desktopUrl,
           sizes: "1920x1080",
@@ -58,6 +59,7 @@ export const useManifestGeneration = (storefront: Storefront | null) => {
       try {
         console.log("Processing mobile screenshot:", storefront.screenshot_mobile);
         const mobileUrl = supabase.storage.from("gallery_images").getPublicUrl(storefront.screenshot_mobile).data.publicUrl;
+        console.log("Generated mobile screenshot URL:", mobileUrl);
         screenshots.push({
           src: mobileUrl,
           sizes: "390x844",
