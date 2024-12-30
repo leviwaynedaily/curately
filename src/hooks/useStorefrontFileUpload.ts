@@ -9,11 +9,13 @@ export const useStorefrontFileUpload = (storefrontId: string) => {
 
   const uploadFile = async (file: File, fileType: string): Promise<string> => {
     setIsUploading(true);
+    console.log("Starting file upload:", { storefrontId, fileType });
+
     try {
       const fileExt = file.name.split(".").pop() || "png";
       const filePath = getStorefrontFilePath(storefrontId, fileType, fileExt);
 
-      console.log(`Uploading ${fileType} to path:`, filePath);
+      console.log("Uploading file to path:", filePath);
 
       const { error: uploadError } = await supabase.storage
         .from("storefront_products")
@@ -23,7 +25,7 @@ export const useStorefrontFileUpload = (storefrontId: string) => {
         });
 
       if (uploadError) {
-        console.error(`Error uploading ${fileType}:`, uploadError);
+        console.error("Error uploading file:", uploadError);
         toast({
           variant: "destructive",
           description: `Failed to upload ${fileType}. Please try again.`
@@ -31,14 +33,14 @@ export const useStorefrontFileUpload = (storefrontId: string) => {
         throw uploadError;
       }
 
-      console.log(`${fileType} uploaded successfully to:`, filePath);
+      console.log("File uploaded successfully to:", filePath);
       toast({
         description: `${fileType} uploaded successfully`
       });
 
       return filePath;
     } catch (error) {
-      console.error(`${fileType} upload failed:`, error);
+      console.error("File upload failed:", error);
       throw error;
     } finally {
       setIsUploading(false);

@@ -27,12 +27,24 @@ export const FileUploadField = ({
   const uploadId = `${fieldName}-upload`;
   const fieldValue = form.watch(fieldName);
 
+  console.log("FileUploadField render:", {
+    fieldName,
+    fileType,
+    storefrontId,
+    currentValue: fieldValue,
+    isUploading
+  });
+
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !storefrontId) return;
 
+    console.log("Starting file upload:", { fileName: file.name, fileType });
+
     try {
       const filePath = await uploadFile(file, fileType);
+      console.log("File uploaded successfully:", { filePath });
+      
       form.setValue(fieldName, filePath, {
         shouldDirty: true,
         shouldTouch: true,
@@ -49,6 +61,7 @@ export const FileUploadField = ({
 
   const handleClearFile = async () => {
     if (typeof fieldValue === 'string' && fieldValue) {
+      console.log("Deleting file:", { fieldName, filePath: fieldValue });
       await deleteFile(fieldValue);
       form.setValue(fieldName, "", {
         shouldDirty: true,
