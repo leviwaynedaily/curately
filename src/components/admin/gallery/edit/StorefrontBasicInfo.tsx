@@ -23,16 +23,13 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
     <div className="space-y-6">
       <div className="space-y-4">
         <GalleryNameField form={form} />
-        <GalleryDescriptionField form={form} />
-      </div>
-
-      <div className="space-y-4 border-t pt-6">
+        
         <FormField
           control={form.control}
           name="header_display"
           render={({ field }) => (
             <FormItem>
-              <div className="mb-4">
+              <div className="mb-2">
                 <Label className="text-base">Header Display</Label>
                 <div className="text-sm text-muted-foreground">
                   Choose how to display your storefront header
@@ -59,10 +56,14 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
         />
 
         {form.watch("header_display") === "logo" && (
-          <div className="mt-4">
+          <div className="mt-2">
             <GallerySiteLogoField form={form} />
           </div>
         )}
+
+        <div className="pt-4">
+          <GalleryDescriptionField form={form} />
+        </div>
       </div>
     </div>
   );
