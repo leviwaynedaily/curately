@@ -272,6 +272,7 @@ export type Database = {
           status: string | null
           subheading_text: string | null
           updated_at: string
+          verification_enabled: boolean | null
         }
         Insert: {
           accent_color?: string | null
@@ -308,6 +309,7 @@ export type Database = {
           status?: string | null
           subheading_text?: string | null
           updated_at?: string
+          verification_enabled?: boolean | null
         }
         Update: {
           accent_color?: string | null
@@ -344,6 +346,7 @@ export type Database = {
           status?: string | null
           subheading_text?: string | null
           updated_at?: string
+          verification_enabled?: boolean | null
         }
         Relationships: [
           {
