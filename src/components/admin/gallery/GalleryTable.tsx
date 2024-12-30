@@ -1,14 +1,9 @@
-import { useNavigate } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody } from "@/components/ui/table";
+import { GalleryTableHeader } from "./GalleryTableHeader";
+import { GalleryTableRow } from "./GalleryTableRow";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Package, ExternalLink } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 type GalleryTableProps = {
   galleries: any[];
@@ -16,83 +11,49 @@ type GalleryTableProps = {
   onDelete: (gallery: any) => void;
 };
 
-export const GalleryTable = ({ galleries, onEdit, onDelete }: GalleryTableProps) => {
-  const navigate = useNavigate();
-
-  console.log("GalleryTable render, galleries:", galleries);
+export const GalleryTable = ({
+  galleries,
+  onEdit,
+  onDelete,
+}: GalleryTableProps) => {
+  const [showHiddenFields, setShowHiddenFields] = useState(false);
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Business</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Created</TableHead>
-          <TableHead>ID</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {galleries.map((gallery) => (
-          <TableRow key={gallery.id}>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                {gallery.header_display === "logo" && gallery.site_logo && (
-                  <img 
-                    src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${gallery.site_logo}`} 
-                    alt={`${gallery.name} logo`} 
-                    className="h-8 w-auto object-contain"
-                  />
-                )}
-                <span>{gallery.name}</span>
-              </div>
-            </TableCell>
-            <TableCell>{gallery.businesses?.name}</TableCell>
-            <TableCell>{gallery.status}</TableCell>
-            <TableCell>
-              {new Date(gallery.created_at).toLocaleDateString()}
-            </TableCell>
-            <TableCell>
-              <span className="font-mono text-sm text-muted-foreground">
-                {gallery.id}
-              </span>
-            </TableCell>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate(`/admin/storefront/${gallery.id}`)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate(`/admin/products/${gallery.id}`)}
-                >
-                  <Package className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => window.open(`/storefront/${gallery.id}`, '_blank')}
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onDelete(gallery)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowHiddenFields(!showHiddenFields)}
+          className="flex items-center gap-2"
+        >
+          {showHiddenFields ? (
+            <>
+              <EyeOff className="h-4 w-4" />
+              Hide Fields
+            </>
+          ) : (
+            <>
+              <Eye className="h-4 w-4" />
+              Show Hidden Fields
+            </>
+          )}
+        </Button>
+      </div>
+      <Table>
+        <GalleryTableHeader showHiddenFields={showHiddenFields} />
+        <TableBody>
+          {galleries?.map((gallery) => (
+            <GalleryTableRow
+              key={gallery.id}
+              gallery={gallery}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              showHiddenFields={showHiddenFields}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
