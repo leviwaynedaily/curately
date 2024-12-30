@@ -19,7 +19,9 @@ export const StorefrontMainContent = ({
 }: StorefrontMainContentProps) => {
   console.log("StorefrontMainContent render:", {
     hasStorefront: !!storefront,
-    formIsDirty: form?.formState?.isDirty
+    formIsDirty: form?.formState?.isDirty,
+    headerDisplay: form.watch("header_display"),
+    formValues: form.getValues()
   });
 
   return (
@@ -32,7 +34,10 @@ export const StorefrontMainContent = ({
       />
       
       <Form {...form}>
-        <form>
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          onSave();
+        }}>
           <StorefrontTabs form={form} />
         </form>
       </Form>
