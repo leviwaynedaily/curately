@@ -25,6 +25,8 @@ export const CategoryTagManagement = ({ storefrontId }: CategoryTagManagementPro
   const { data: categories = [] } = useQuery({
     queryKey: ["categories", storefrontId],
     queryFn: async () => {
+      console.log("Fetching products for storefront:", storefrontId);
+      
       const { data: products } = await supabase
         .from("products")
         .select("category")
@@ -70,10 +72,13 @@ export const CategoryTagManagement = ({ storefrontId }: CategoryTagManagementPro
     if (!newCategory.trim()) return;
 
     try {
-      const { error } = await supabase
+      // Simply update an existing product to add the new category
+      const { data, error } = await supabase
         .from("products")
         .update({ category: newCategory.trim() })
-        .eq("id", "placeholder");
+        .eq("storefront_id", storefrontId)
+        .select()
+        .single();
 
       if (error) throw error;
 
