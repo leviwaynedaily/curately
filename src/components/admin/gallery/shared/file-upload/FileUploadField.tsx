@@ -4,6 +4,7 @@ import { GalleryFormValues } from "@/lib/validations/gallery";
 import { FileUploadButton } from "./FileUploadButton";
 import { FileUploadPreview } from "./FileUploadPreview";
 import { useStorefrontFileUpload } from "@/hooks/useStorefrontFileUpload";
+import { useToast } from "@/components/ui/use-toast";
 
 type FileUploadFieldProps = {
   form: UseFormReturn<GalleryFormValues>;
@@ -22,7 +23,8 @@ export const FileUploadField = ({
   description,
   accept = "image/*"
 }: FileUploadFieldProps) => {
-  // Get storefrontId directly from form values
+  const { toast } = useToast();
+  // Get storefrontId from form values, but don't require it
   const storefrontId = form.getValues("id");
   const { isUploading, uploadFile, deleteFile } = useStorefrontFileUpload(storefrontId);
   const uploadId = `${fieldName}-upload`;
@@ -44,8 +46,22 @@ export const FileUploadField = ({
       return;
     }
 
+    // For new storefronts, store the file temporarily
     if (!storefrontId) {
-      console.error("Missing storefrontId in form values:", form.getValues());
+      console.log("New storefront - storing file temporarily");
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Data = reader.result as string;
+        form.setValue(fieldName, base64Data, {
+          shouldDirty: true,
+          shouldTouch: true,
+          shouldValidate: true
+        });
+        toast({
+          description: "File selected and will be uploaded when the storefront is created"
+        });
+      };
+      reader.readAsDataURL(file);
       return;
     }
 
@@ -76,6 +92,17 @@ export const FileUploadField = ({
 
   const handleClearFile = async () => {
     if (typeof fieldValue === 'string' && fieldValue) {
+      // If it's a base64 string (temporary file), just clear it
+      if (fieldValue.startsWith('data:')) {
+        form.setValue(fieldName, "", {
+          shouldDirty: true,
+          shouldTouch: true,
+          shouldValidate: true
+        });
+        return;
+      }
+
+      // Otherwise delete from storage
       console.log("Deleting file:", { fieldName, filePath: fieldValue });
       await deleteFile(fieldValue);
       form.setValue(fieldName, "", {

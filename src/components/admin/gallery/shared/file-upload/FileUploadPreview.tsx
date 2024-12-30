@@ -9,10 +9,13 @@ type FileUploadPreviewProps = {
 };
 
 export const FileUploadPreview = ({ filePath, onClear, label }: FileUploadPreviewProps) => {
-  const imageUrl = supabase.storage
-    .from("gallery_images")
-    .getPublicUrl(filePath)
-    .data.publicUrl;
+  // If the file is a base64 string (temporary file), use it directly
+  const imageUrl = filePath.startsWith('data:') 
+    ? filePath 
+    : supabase.storage
+        .from("gallery_images")
+        .getPublicUrl(filePath)
+        .data.publicUrl;
 
   return (
     <div className="relative w-40 h-40">
