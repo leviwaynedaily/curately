@@ -98,7 +98,15 @@ const StorefrontEdit = () => {
     console.log("Starting save with form values:", form.getValues());
     setIsSaving(true);
     try {
-      await handleSubmit(form.getValues());
+      const result = await handleSubmit(form.getValues());
+      
+      // If this was a new storefront, navigate to its edit page
+      if (storefrontId === "new" && result?.id) {
+        console.log("New storefront created, navigating to:", result.id);
+        navigate(`/admin/storefront/${result.id}`, { replace: true });
+        return;
+      }
+      
       form.reset(form.getValues());
       await refetch();
       const previewIframe = document.querySelector('iframe') as HTMLIFrameElement;

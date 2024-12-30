@@ -34,6 +34,8 @@ export const useGalleryFormSubmit = (
     });
     
     try {
+      let result;
+      
       if (gallery?.id) {
         console.log("Updating existing storefront:", gallery.id);
         
@@ -41,7 +43,8 @@ export const useGalleryFormSubmit = (
           .from("storefronts")
           .update(dataToSubmit)
           .eq("id", gallery.id)
-          .select();
+          .select()
+          .single();
 
         if (error) {
           console.error("Error updating storefront:", error);
@@ -50,13 +53,15 @@ export const useGalleryFormSubmit = (
         
         console.log("Storefront updated successfully. Response:", data);
         toast({ description: "Storefront updated successfully" });
+        result = data;
       } else {
         console.log("Creating new storefront");
         
         const { data, error } = await supabase
           .from("storefronts")
           .insert(dataToSubmit)
-          .select();
+          .select()
+          .single();
 
         if (error) {
           console.error("Error creating storefront:", error);
@@ -65,10 +70,12 @@ export const useGalleryFormSubmit = (
         
         console.log("Storefront created successfully. Response:", data);
         toast({ description: "Storefront created successfully" });
+        result = data;
       }
 
       queryClient.invalidateQueries({ queryKey: ["storefronts"] });
       onClose();
+      return result;
     } catch (error) {
       console.error("Error saving storefront:", error);
       toast({
