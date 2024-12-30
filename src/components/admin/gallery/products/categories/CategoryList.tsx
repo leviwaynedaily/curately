@@ -17,11 +17,11 @@ export type CategoryListProps = {
   onEditSave: (oldName: string, newName: string) => void;
   onDelete: (name: string) => void;
   onEditValueChange: (value: string) => void;
-  storefrontId: string; // Added this prop
+  storefrontId: string;
 };
 
 export const CategoryList = ({
-  categories,
+  categories = [],
   editingCategory,
   editValue,
   onEditStart,

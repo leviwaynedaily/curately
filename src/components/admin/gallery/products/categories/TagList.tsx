@@ -18,11 +18,11 @@ type TagListProps = {
   onEditSave: (id: string, newName: string) => void;
   onDelete: (id: string) => void;
   onEditValueChange: (value: string) => void;
-  storefrontId: string; // Added this prop
+  storefrontId: string;
 };
 
 export const TagList = ({
-  tags,
+  tags = [],
   editingTag,
   editValue,
   onEditStart,
