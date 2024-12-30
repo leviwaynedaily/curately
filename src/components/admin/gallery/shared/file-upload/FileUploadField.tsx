@@ -22,6 +22,7 @@ export const FileUploadField = ({
   description,
   accept = "image/*"
 }: FileUploadFieldProps) => {
+  // Get storefrontId directly from form values
   const storefrontId = form.getValues("id");
   const { isUploading, uploadFile, deleteFile } = useStorefrontFileUpload(storefrontId);
   const uploadId = `${fieldName}-upload`;
@@ -32,21 +33,32 @@ export const FileUploadField = ({
     fileType,
     storefrontId,
     currentValue: fieldValue,
-    isUploading
+    isUploading,
+    formValues: form.getValues()
   });
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !storefrontId) {
-      console.log("No file selected or missing storefrontId:", { file, storefrontId });
+    if (!file) {
+      console.log("No file selected");
       return;
     }
 
-    console.log("Starting file upload:", { fileName: file.name, fileType, storefrontId });
+    if (!storefrontId) {
+      console.error("Missing storefrontId in form values:", form.getValues());
+      return;
+    }
+
+    console.log("Starting file upload:", { 
+      fileName: file.name, 
+      fileType, 
+      storefrontId,
+      formValues: form.getValues() 
+    });
 
     try {
       const filePath = await uploadFile(file, fileType);
-      console.log("File uploaded successfully:", { filePath });
+      console.log("File uploaded successfully, setting form value:", { filePath });
       
       form.setValue(fieldName, filePath, {
         shouldDirty: true,

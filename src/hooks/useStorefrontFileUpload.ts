@@ -18,7 +18,7 @@ export const useStorefrontFileUpload = (storefrontId: string | undefined) => {
     }
 
     setIsUploading(true);
-    console.log("Starting file upload:", { storefrontId, fileType, fileName: file.name });
+    console.log("Starting file upload in hook:", { storefrontId, fileType, fileName: file.name });
 
     try {
       const fileExt = file.name.split(".").pop() || "png";
@@ -41,25 +41,9 @@ export const useStorefrontFileUpload = (storefrontId: string | undefined) => {
         throw uploadError;
       }
 
-      // Update the storefront record with the new file path
-      const updateData = { [fileType]: filePath };
-      const { error: updateError } = await supabase
-        .from("storefronts")
-        .update(updateData)
-        .eq("id", storefrontId);
-
-      if (updateError) {
-        console.error("Error updating storefront with file path:", updateError);
-        toast({
-          variant: "destructive",
-          description: "Failed to save file reference. Please try again."
-        });
-        throw updateError;
-      }
-
-      console.log("File uploaded and storefront updated successfully:", { filePath });
+      console.log("File uploaded successfully:", { filePath });
       toast({
-        description: `File uploaded successfully`
+        description: "File uploaded successfully"
       });
 
       return filePath;
