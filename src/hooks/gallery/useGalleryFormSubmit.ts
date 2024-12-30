@@ -15,7 +15,7 @@ export const useGalleryFormSubmit = (
     // Extract all fields except currentTab
     const { currentTab, ...sanitizedValues } = values;
     
-    // Create submission data object with explicit PWA icon fields
+    // Create submission data object with explicit header_display typing
     const dataToSubmit = {
       ...sanitizedValues,
       name: values.name,
@@ -25,14 +25,11 @@ export const useGalleryFormSubmit = (
       instructions_button_text: values.instructions_button_text || "Enter Site",
       pwa_icon_192: values.pwa_icon_192 || null,
       pwa_icon_512: values.pwa_icon_512 || null,
-      show_description: values.show_description
+      show_description: values.show_description,
+      header_display: (values.header_display || "text") as "text" | "logo"
     };
 
     console.log("Submitting storefront data:", dataToSubmit);
-    console.log("PWA icons in submission:", {
-      pwa_icon_192: dataToSubmit.pwa_icon_192,
-      pwa_icon_512: dataToSubmit.pwa_icon_512
-    });
     
     try {
       let result: Storefront | null = null;
@@ -54,7 +51,7 @@ export const useGalleryFormSubmit = (
         
         console.log("Storefront updated successfully. Response:", data);
         toast({ description: "Storefront updated successfully" });
-        result = data;
+        result = data as Storefront;
       } else {
         console.log("Creating new storefront");
         
@@ -71,7 +68,7 @@ export const useGalleryFormSubmit = (
         
         console.log("Storefront created successfully. Response:", data);
         toast({ description: "Storefront created successfully" });
-        result = data;
+        result = data as Storefront;
       }
 
       queryClient.invalidateQueries({ queryKey: ["storefronts"] });
