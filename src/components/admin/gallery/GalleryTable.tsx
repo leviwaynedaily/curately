@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, ExternalLink } from "lucide-react";
+import { Edit, Trash2, Package } from "lucide-react";
 
 type GalleryTableProps = {
   galleries: any[];
@@ -72,7 +72,7 @@ export const GalleryTable = ({ galleries, onEdit, onDelete }: GalleryTableProps)
                   size="icon"
                   onClick={() => navigate(`/admin/products/${gallery.id}`)}
                 >
-                  <ExternalLink className="h-4 w-4" />
+                  <Package className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
