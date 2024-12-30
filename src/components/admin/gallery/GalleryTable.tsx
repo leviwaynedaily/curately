@@ -29,6 +29,7 @@ export const GalleryTable = ({ galleries, onEdit, onDelete }: GalleryTableProps)
           <TableHead>Business</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Created</TableHead>
+          <TableHead>ID</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -51,6 +52,11 @@ export const GalleryTable = ({ galleries, onEdit, onDelete }: GalleryTableProps)
             <TableCell>{gallery.status}</TableCell>
             <TableCell>
               {new Date(gallery.created_at).toLocaleDateString()}
+            </TableCell>
+            <TableCell>
+              <span className="font-mono text-sm text-muted-foreground">
+                {gallery.id}
+              </span>
             </TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
