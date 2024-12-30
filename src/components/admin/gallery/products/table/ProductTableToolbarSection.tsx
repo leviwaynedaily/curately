@@ -3,7 +3,7 @@ import { ProductBulkActions } from "./ProductBulkActions";
 import { Product } from "../types";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Filter, Star, ArrowUpDown } from "lucide-react";
+import { Filter, Star, ArrowUpDown, Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +22,7 @@ type ProductTableToolbarSectionProps = {
   setSearchTerm: (term: string) => void;
   statusFilter: string;
   setStatusFilter: (status: string) => void;
+  onAddProduct?: () => void;
 };
 
 export const ProductTableToolbarSection = ({
@@ -34,9 +35,40 @@ export const ProductTableToolbarSection = ({
   setSearchTerm,
   statusFilter,
   setStatusFilter,
+  onAddProduct,
 }: ProductTableToolbarSectionProps) => {
+  console.log("ProductTableToolbarSection render:", {
+    selectedCount: selectedProducts.size,
+    totalProducts: products.length,
+    hasAddHandler: !!onAddProduct
+  });
+
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {selectedProducts.size > 0 && (
+            <ProductBulkActions
+              selectedProducts={selectedProducts}
+              onDuplicate={onDuplicate}
+              onDelete={onDelete}
+              products={products}
+              onSelectAll={onSelectAll}
+            />
+          )}
+        </div>
+        
+        {onAddProduct && (
+          <Button 
+            onClick={onAddProduct}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add product
+          </Button>
+        )}
+      </div>
+
       <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full">
         <TabsList>
           <TabsTrigger value="all">All</TabsTrigger>
@@ -103,14 +135,6 @@ export const ProductTableToolbarSection = ({
           <ArrowUpDown className="h-4 w-4" /> Sort
         </Button>
       </div>
-
-      <ProductBulkActions
-        selectedProducts={selectedProducts}
-        onDuplicate={onDuplicate}
-        onDelete={onDelete}
-        products={products}
-        onSelectAll={onSelectAll}
-      />
     </div>
   );
 };

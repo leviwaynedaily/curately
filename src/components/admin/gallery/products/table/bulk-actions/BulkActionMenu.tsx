@@ -27,16 +27,16 @@ export const BulkActionMenu = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="secondary" size="sm" className="gap-2">
           <MoreHorizontal className="h-4 w-4" />
-          Selected ({selectedCount})
+          {selectedCount} selected
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent align="start">
         <DropdownMenuItem 
           onClick={onDuplicate}
           disabled={isDuplicating || selectedCount === 0}
-          className="flex items-center"
+          className="flex items-center cursor-pointer"
         >
           {isDuplicating ? (
             <>
@@ -52,7 +52,7 @@ export const BulkActionMenu = ({
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className="text-destructive flex items-center"
+          className="text-destructive flex items-center cursor-pointer"
           onClick={onDelete}
           disabled={isDeleting || selectedCount === 0}
         >
