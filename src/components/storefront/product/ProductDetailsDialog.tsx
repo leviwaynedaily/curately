@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/components/admin/gallery/products/types";
 import { ProductMediaCarousel } from "./ProductMediaCarousel";
@@ -22,7 +22,7 @@ export const ProductDetailsDialog = ({
   onClose,
   allowDownload = false,
   accentColor = "#000000",
-  secondaryColor = "#000000"
+  secondaryColor = "#666666"
 }: ProductDetailsDialogProps) => {
   const [tags, setTags] = useState<Array<{ id: string; name: string }>>([]);
 
@@ -66,13 +66,17 @@ export const ProductDetailsDialog = ({
     return (
       <div className="space-y-1.5">
         {type === 'textarea' ? (
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">
+          <p 
+            className="text-sm leading-relaxed whitespace-pre-wrap"
+            style={{ color: secondaryColor }}
+          >
             {displayValue}
           </p>
         ) : (
-          <p className={`${label === 'price' ? 'text-lg font-semibold' : 'text-base'}`} style={{ 
-            color: label === 'price' ? accentColor : 'inherit' 
-          }}>
+          <p 
+            className={`${label === 'price' ? 'text-lg font-semibold' : 'text-base'}`}
+            style={{ color: label === 'price' ? accentColor : 'inherit' }}
+          >
             {displayValue}
           </p>
         )}
@@ -83,6 +87,7 @@ export const ProductDetailsDialog = ({
   return (
     <Dialog open={!!product} onOpenChange={() => onClose()}>
       <DialogContent className="max-w-3xl p-0 gap-0">
+        <DialogTitle className="sr-only">Product Details: {product.name}</DialogTitle>
         <Button
           variant="ghost"
           size="icon"
