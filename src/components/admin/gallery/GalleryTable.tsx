@@ -23,20 +23,13 @@ export const GalleryTable = ({
       <div className="flex justify-end">
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
           onClick={() => setShowHiddenFields(!showHiddenFields)}
-          className="flex items-center gap-2"
         >
           {showHiddenFields ? (
-            <>
-              <EyeOff className="h-4 w-4" />
-              Hide Fields
-            </>
+            <EyeOff className="h-4 w-4" />
           ) : (
-            <>
-              <Eye className="h-4 w-4" />
-              Show Hidden Fields
-            </>
+            <Eye className="h-4 w-4" />
           )}
         </Button>
       </div>
