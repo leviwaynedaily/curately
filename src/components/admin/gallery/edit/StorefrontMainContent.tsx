@@ -31,7 +31,18 @@ export const StorefrontMainContent = ({
       headerDisplay: form.getValues("header_display"),
       allValues: form.getValues()
     });
+    
+    // Save the current values before saving
+    const currentValues = form.getValues();
+    
     await onSave();
+    
+    // Reset the form with the saved values to maintain state
+    form.reset(currentValues, {
+      keepValues: true,
+      keepDirty: false,
+      keepDefaultValues: true
+    });
   };
   
   return (
