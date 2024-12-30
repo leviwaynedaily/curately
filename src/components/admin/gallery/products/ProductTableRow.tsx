@@ -90,8 +90,10 @@ export const ProductTableRow = ({
           <Checkbox
             checked={selected}
             onCheckedChange={onToggleSelect}
+            className="border-2 border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
           />
         </TableCell>
+        
         <TableCell>
           <div className="flex items-center gap-2">
             <ProductTableMedia productId={product.id} />
