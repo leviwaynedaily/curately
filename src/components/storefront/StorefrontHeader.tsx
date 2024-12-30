@@ -29,11 +29,9 @@ export const StorefrontHeader = ({
     ? supabase.storage.from("gallery_images").getPublicUrl(storefront.site_logo).data.publicUrl
     : null;
 
-  const shouldShowLogo = storefront.header_display === "logo" && logoUrl;
-
   return (
     <div className={`text-center space-y-2 ${compact ? 'mb-0' : 'mb-8'}`}>
-      {shouldShowLogo ? (
+      {logoUrl ? (
         <div className="flex justify-center">
           <img
             src={logoUrl}
