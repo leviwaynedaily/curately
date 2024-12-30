@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { GalleryFormValues } from "@/lib/validations/gallery";
 import { QueryClient } from "@tanstack/react-query";
+import { Storefront } from "@/types/storefront";
 
 export const useGalleryFormSubmit = (
   toast: (props: { description: string; variant?: "default" | "destructive" }) => void,
@@ -8,7 +9,7 @@ export const useGalleryFormSubmit = (
   onClose: () => void,
   gallery?: { id: string }
 ) => {
-  const handleSubmit = async (values: GalleryFormValues) => {
+  const handleSubmit = async (values: GalleryFormValues): Promise<Storefront | null> => {
     console.log("Starting gallery form submission with values:", values);
 
     // Extract all fields except currentTab
@@ -34,7 +35,7 @@ export const useGalleryFormSubmit = (
     });
     
     try {
-      let result;
+      let result: Storefront | null = null;
       
       if (gallery?.id) {
         console.log("Updating existing storefront:", gallery.id);

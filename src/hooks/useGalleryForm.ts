@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { gallerySchema, type GalleryFormValues } from "@/lib/validations/gallery";
 import { getDefaultValues } from "./gallery/useGalleryFormDefaults";
 import { useGalleryFormSubmit } from "./gallery/useGalleryFormSubmit";
+import { Storefront } from "@/types/storefront";
 
 type UseGalleryFormProps = {
   onClose: () => void;
@@ -74,12 +75,13 @@ export const useGalleryForm = ({ onClose, businessId, gallery }: UseGalleryFormP
     }
   }, [gallery, form, businessId]);
 
-  const handleSubmit = async (values: GalleryFormValues) => {
+  const handleSubmit = async (values: GalleryFormValues): Promise<Storefront | null> => {
     console.log("Submitting form with values:", values);
     setIsLoading(true);
     try {
-      await useGalleryFormSubmit(toast, queryClient, onClose, gallery)(values);
+      const result = await useGalleryFormSubmit(toast, queryClient, onClose, gallery)(values);
       console.log("Form submitted successfully");
+      return result;
     } finally {
       setIsLoading(false);
     }
