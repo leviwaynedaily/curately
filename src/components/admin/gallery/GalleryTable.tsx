@@ -19,6 +19,8 @@ type GalleryTableProps = {
 export const GalleryTable = ({ galleries, onEdit, onDelete }: GalleryTableProps) => {
   const navigate = useNavigate();
 
+  console.log("GalleryTable render, galleries:", galleries);
+
   return (
     <Table>
       <TableHeader>
@@ -33,7 +35,18 @@ export const GalleryTable = ({ galleries, onEdit, onDelete }: GalleryTableProps)
       <TableBody>
         {galleries.map((gallery) => (
           <TableRow key={gallery.id}>
-            <TableCell>{gallery.name}</TableCell>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                {gallery.header_display === "logo" && gallery.site_logo && (
+                  <img 
+                    src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${gallery.site_logo}`} 
+                    alt={`${gallery.name} logo`} 
+                    className="h-8 w-auto object-contain"
+                  />
+                )}
+                <span>{gallery.name}</span>
+              </div>
+            </TableCell>
             <TableCell>{gallery.businesses?.name}</TableCell>
             <TableCell>{gallery.status}</TableCell>
             <TableCell>
