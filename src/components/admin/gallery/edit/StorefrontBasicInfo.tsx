@@ -29,12 +29,6 @@ export const StorefrontBasicInfo = ({ form }: StorefrontBasicInfoProps) => {
           name="header_display"
           render={({ field }) => (
             <FormItem>
-              <div className="mb-2">
-                <Label className="text-base">Header Display</Label>
-                <div className="text-sm text-muted-foreground">
-                  Choose how to display your storefront header
-                </div>
-              </div>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
