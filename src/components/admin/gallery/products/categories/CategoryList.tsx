@@ -4,18 +4,19 @@ import { Input } from "@/components/ui/input";
 import { Pencil, Trash2, Check, X } from "lucide-react";
 
 type Category = {
+  id: string;
   name: string;
-  productCount?: number;
+  storefront_id: string;
 };
 
 type CategoryListProps = {
   categories: Category[];
   editingCategory: string | null;
   editValue: string;
-  onEditStart: (name: string) => void;
+  onEditStart: (id: string, name: string) => void;
   onEditCancel: () => void;
-  onEditSave: (oldName: string, newName: string) => void;
-  onDelete: (name: string) => void;
+  onEditSave: (id: string, newName: string) => void;
+  onDelete: (id: string) => void;
   onEditValueChange: (value: string) => void;
 };
 
@@ -34,15 +35,14 @@ export const CategoryList = ({
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
-          <TableHead>Products</TableHead>
           <TableHead className="w-[100px]">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {categories.map((category) => (
-          <TableRow key={category.name}>
+        {categories?.map((category) => (
+          <TableRow key={category.id}>
             <TableCell>
-              {editingCategory === category.name ? (
+              {editingCategory === category.id ? (
                 <div className="flex gap-2">
                   <Input
                     value={editValue}
@@ -50,7 +50,7 @@ export const CategoryList = ({
                   />
                   <Button
                     size="icon"
-                    onClick={() => onEditSave(category.name, editValue)}
+                    onClick={() => onEditSave(category.id, editValue)}
                   >
                     <Check className="h-4 w-4" />
                   </Button>
@@ -66,22 +66,19 @@ export const CategoryList = ({
                 category.name
               )}
             </TableCell>
-            <TableCell>{category.productCount}</TableCell>
             <TableCell>
               <div className="flex gap-2">
                 <Button
                   size="icon"
                   variant="outline"
-                  onClick={() => {
-                    onEditStart(category.name);
-                  }}
+                  onClick={() => onEditStart(category.id, category.name)}
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
                 <Button
                   size="icon"
                   variant="outline"
-                  onClick={() => onDelete(category.name)}
+                  onClick={() => onDelete(category.id)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

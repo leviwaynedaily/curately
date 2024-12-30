@@ -49,21 +49,32 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          storefront_id: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
+          storefront_id?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          storefront_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "categories_storefront_id_fkey"
+            columns: ["storefront_id"]
+            isOneToOne: false
+            referencedRelation: "storefronts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       product_media: {
         Row: {
