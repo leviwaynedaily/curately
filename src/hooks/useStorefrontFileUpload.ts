@@ -3,12 +3,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { getStorefrontFilePath } from "@/utils/storefrontFileUtils";
 
-export const useStorefrontFileUpload = (storefrontId: string) => {
+export const useStorefrontFileUpload = (storefrontId: string | undefined) => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
   const uploadFile = async (file: File, fileType: string): Promise<string> => {
     if (!storefrontId) {
+      console.error("No storefront ID provided for file upload");
+      toast({
+        variant: "destructive",
+        description: "Unable to upload file - missing storefront ID"
+      });
       throw new Error("Storefront ID is required");
     }
 
@@ -62,7 +67,7 @@ export const useStorefrontFileUpload = (storefrontId: string) => {
       console.error("File upload failed:", error);
       throw error;
     } finally {
-      setIsUploading(false);  // Fixed: Changed setIsLoading to setIsUploading
+      setIsUploading(false);
     }
   };
 
