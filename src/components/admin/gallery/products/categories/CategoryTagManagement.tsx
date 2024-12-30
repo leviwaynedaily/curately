@@ -14,11 +14,6 @@ type CategoryTagManagementProps = {
 export const CategoryTagManagement = ({ storefrontId }: CategoryTagManagementProps) => {
   const [newCategory, setNewCategory] = useState("");
   const [newTag, setNewTag] = useState("");
-  const [editingCategory, setEditingCategory] = useState<string | null>(null);
-  const [editingTag, setEditingTag] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState("");
-  const [categories, setCategories] = useState<{ name: string; productCount?: number }[]>([]);
-  const [tags, setTags] = useState<{ id: string; name: string; productCount?: number }[]>([]);
   const { toast } = useToast();
 
   const handleAddCategory = async () => {
@@ -33,9 +28,16 @@ export const CategoryTagManagement = ({ storefrontId }: CategoryTagManagementPro
 
       if (error) throw error;
 
+      // Update products with the new category
+      const { error: productsError } = await supabase
+        .from("products")
+        .update({ category: newCategory.trim() })
+        .eq("storefront_id", storefrontId);
+
+      if (productsError) throw productsError;
+
       toast({ description: "Category added successfully" });
       setNewCategory("");
-      // Refresh categories list here
     } catch (error) {
       console.error("Error adding category:", error);
       toast({
@@ -57,7 +59,6 @@ export const CategoryTagManagement = ({ storefrontId }: CategoryTagManagementPro
 
       toast({ description: "Tag added successfully" });
       setNewTag("");
-      // Refresh tags list here
     } catch (error) {
       console.error("Error adding tag:", error);
       toast({
@@ -65,34 +66,6 @@ export const CategoryTagManagement = ({ storefrontId }: CategoryTagManagementPro
         description: "Failed to add tag",
       });
     }
-  };
-
-  const handleEditCategory = (name: string) => {
-    setEditingCategory(name);
-    setEditValue(name);
-  };
-
-  const handleEditTag = (id: string, name: string) => {
-    setEditingTag(id);
-    setEditValue(name);
-  };
-
-  const handleEditCategorySave = async (oldName: string, newName: string) => {
-    // Implementation for saving category edits
-    setEditingCategory(null);
-  };
-
-  const handleEditTagSave = async (id: string, newName: string) => {
-    // Implementation for saving tag edits
-    setEditingTag(null);
-  };
-
-  const handleDeleteCategory = async (name: string) => {
-    // Implementation for deleting category
-  };
-
-  const handleDeleteTag = async (id: string) => {
-    // Implementation for deleting tag
   };
 
   const handleKeyPress = (
@@ -136,31 +109,11 @@ export const CategoryTagManagement = ({ storefrontId }: CategoryTagManagementPro
         </TabsList>
 
         <TabsContent value="categories">
-          <CategoryList
-            categories={categories}
-            editingCategory={editingCategory}
-            editValue={editValue}
-            onEditStart={handleEditCategory}
-            onEditCancel={() => setEditingCategory(null)}
-            onEditSave={handleEditCategorySave}
-            onDelete={handleDeleteCategory}
-            onEditValueChange={setEditValue}
-            storefrontId={storefrontId}
-          />
+          <CategoryList storefrontId={storefrontId} />
         </TabsContent>
 
         <TabsContent value="tags">
-          <TagList
-            tags={tags}
-            editingTag={editingTag}
-            editValue={editValue}
-            onEditStart={handleEditTag}
-            onEditCancel={() => setEditingTag(null)}
-            onEditSave={handleEditTagSave}
-            onDelete={handleDeleteTag}
-            onEditValueChange={setEditValue}
-            storefrontId={storefrontId}
-          />
+          <TagList storefrontId={storefrontId} />
         </TabsContent>
       </Tabs>
     </div>

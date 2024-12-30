@@ -8,7 +8,7 @@ type Category = {
   productCount?: number;
 };
 
-export type CategoryListProps = {
+type CategoryListProps = {
   categories: Category[];
   editingCategory: string | null;
   editValue: string;
@@ -17,11 +17,10 @@ export type CategoryListProps = {
   onEditSave: (oldName: string, newName: string) => void;
   onDelete: (name: string) => void;
   onEditValueChange: (value: string) => void;
-  storefrontId: string;
 };
 
 export const CategoryList = ({
-  categories = [],
+  categories,
   editingCategory,
   editValue,
   onEditStart,
