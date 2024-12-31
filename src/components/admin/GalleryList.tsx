@@ -8,11 +8,10 @@ import { GalleryTable } from "./gallery/GalleryTable";
 import { GallerySearch } from "./gallery/GallerySearch";
 import { GalleryDeleteDialog } from "./gallery/GalleryDeleteDialog";
 import { useNavigate } from "react-router-dom";
-import { Storefront } from "@/types/storefront";
 
 export const GalleryList = ({ businessId }: { businessId?: string }) => {
-  const [selectedGallery, setSelectedGallery] = useState<Storefront | null>(null);
-  const [galleryToDelete, setGalleryToDelete] = useState<Storefront | null>(null);
+  const [selectedGallery, setSelectedGallery] = useState<any>(null);
+  const [galleryToDelete, setGalleryToDelete] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -47,18 +46,12 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
         throw error;
       }
 
-      // Cast the header_display to the correct type
-      const typedData = data?.map(item => ({
-        ...item,
-        header_display: (item.header_display || 'text') as 'text' | 'logo'
-      })) as Storefront[];
-
-      console.log("Storefronts fetched:", typedData);
-      return typedData;
+      console.log("Storefronts fetched:", data);
+      return data;
     },
   });
 
-  const handleEdit = (gallery: Storefront) => {
+  const handleEdit = (gallery: any) => {
     setSelectedGallery(gallery);
     navigate(`/admin/storefront/${gallery.id}`);
   };
