@@ -32,7 +32,7 @@ export type Storefront = {
   show_description?: boolean;
   screenshot_desktop?: string;
   screenshot_mobile?: string;
-  header_display?: "text" | "logo";
+  header_display?: string;  // Changed from "text" | "logo" to string to match database
   verification_enabled?: boolean;
   businesses?: {
     name: string;

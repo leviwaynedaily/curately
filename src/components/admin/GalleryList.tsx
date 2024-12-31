@@ -8,10 +8,11 @@ import { GalleryTable } from "./gallery/GalleryTable";
 import { GallerySearch } from "./gallery/GallerySearch";
 import { GalleryDeleteDialog } from "./gallery/GalleryDeleteDialog";
 import { useNavigate } from "react-router-dom";
+import { Storefront } from "@/types/storefront";
 
 export const GalleryList = ({ businessId }: { businessId?: string }) => {
-  const [selectedGallery, setSelectedGallery] = useState<any>(null);
-  const [galleryToDelete, setGalleryToDelete] = useState<any>(null);
+  const [selectedGallery, setSelectedGallery] = useState<Storefront | null>(null);
+  const [galleryToDelete, setGalleryToDelete] = useState<Storefront | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -47,11 +48,11 @@ export const GalleryList = ({ businessId }: { businessId?: string }) => {
       }
 
       console.log("Storefronts fetched:", data);
-      return data;
+      return data as Storefront[];
     },
   });
 
-  const handleEdit = (gallery: any) => {
+  const handleEdit = (gallery: Storefront) => {
     setSelectedGallery(gallery);
     navigate(`/admin/storefront/${gallery.id}`);
   };
