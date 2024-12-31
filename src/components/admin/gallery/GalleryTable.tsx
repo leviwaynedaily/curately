@@ -1,94 +1,98 @@
-import { Button } from "@/components/ui/button";
-import { Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Storefront } from "@/types/storefront";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Edit, Trash2, Package, ExternalLink } from "lucide-react";
 
 type GalleryTableProps = {
-  galleries: Storefront[];
-  onEdit: (gallery: Storefront) => void;
-  onDelete: (gallery: Storefront) => void;
+  galleries: any[];
+  onEdit: (gallery: any) => void;
+  onDelete: (gallery: any) => void;
 };
 
 export const GalleryTable = ({ galleries, onEdit, onDelete }: GalleryTableProps) => {
   const navigate = useNavigate();
 
+  console.log("GalleryTable render, galleries:", galleries);
+
   return (
-    <div className="border rounded-lg overflow-hidden">
-      <table className="w-full">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Name
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Business
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Status
-            </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {galleries.map((gallery) => (
-            <tr key={gallery.id}>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm font-medium text-gray-900">
-                  {gallery.name}
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-gray-500">
-                  {gallery.businesses?.name}
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span
-                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    gallery.status === "active"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {gallery.status}
-                </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead>Business</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Created</TableHead>
+          <TableHead>ID</TableHead>
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {galleries.map((gallery) => (
+          <TableRow key={gallery.id}>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                {gallery.header_display === "logo" && gallery.site_logo && (
+                  <img 
+                    src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/gallery_images/${gallery.site_logo}`} 
+                    alt={`${gallery.name} logo`} 
+                    className="h-8 w-auto object-contain"
+                  />
+                )}
+                <span>{gallery.name}</span>
+              </div>
+            </TableCell>
+            <TableCell>{gallery.businesses?.name}</TableCell>
+            <TableCell>{gallery.status}</TableCell>
+            <TableCell>
+              {new Date(gallery.created_at).toLocaleDateString()}
+            </TableCell>
+            <TableCell>
+              <span className="font-mono text-sm text-muted-foreground">
+                {gallery.id}
+              </span>
+            </TableCell>
+            <TableCell>
+              <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="icon"
+                  onClick={() => navigate(`/admin/storefront/${gallery.id}`)}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => navigate(`/admin/products/${gallery.id}`)}
                 >
                   <Package className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
-                  size="sm"
-                  onClick={() => navigate(`/admin/products-new/${gallery.id}`)}
+                  size="icon"
+                  onClick={() => window.open(`/storefront/${gallery.id}`, '_blank')}
                 >
-                  <Package className="h-4 w-4 text-blue-500" />
+                  <ExternalLink className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
-                  size="sm"
-                  onClick={() => onEdit(gallery)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
+                  size="icon"
                   onClick={() => onDelete(gallery)}
                 >
-                  Delete
+                  <Trash2 className="h-4 w-4" />
                 </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };

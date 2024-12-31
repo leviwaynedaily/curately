@@ -1,13 +1,20 @@
 import { useProducts } from "@/hooks/useProducts";
+import { ProductTableHeader } from "./table/ProductTableHeader";
 import { ProductTableContent } from "./table/ProductTableContent";
 import { ProductTableToolbar } from "./table/ProductTableToolbar";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { Product } from "../gallery/products/types";
 import { supabase } from "@/integrations/supabase/client";
 
-export const NewProductTable = ({ storefrontId }: { storefrontId: string }) => {
+type NewProductTableProps = {
+  storefrontId: string;
+};
+
+export const NewProductTable = ({ storefrontId }: NewProductTableProps) => {
   const { products, isLoading, refetch } = useProducts(storefrontId);
   const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+  const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
   const handleBulkDelete = async (productIds: string[]) => {
@@ -31,51 +38,24 @@ export const NewProductTable = ({ storefrontId }: { storefrontId: string }) => {
     }
   };
 
-  const handleBulkDuplicate = async (productIds: string[]) => {
+  const handleDuplicate = async (productIds: string[]) => {
     try {
-      for (const productId of productIds) {
-        const product = products.find(p => p.id === productId);
-        if (!product) continue;
-
-        const { data: newProduct, error: productError } = await supabase
+      const productsToClone = products.filter(p => productIds.includes(p.id));
+      
+      for (const product of productsToClone) {
+        const { error } = await supabase
           .from("products")
           .insert({
             ...product,
             id: undefined,
             name: `${product.name} (Copy)`,
-            created_at: undefined,
-            updated_at: undefined
-          })
-          .select()
-          .single();
+            storefront_id: storefrontId,
+          });
 
-        if (productError) throw productError;
-
-        // Duplicate media if exists
-        const { data: mediaData } = await supabase
-          .from("product_media")
-          .select("*")
-          .eq("product_id", productId);
-
-        if (mediaData) {
-          for (const media of mediaData) {
-            const { error: mediaError } = await supabase
-              .from("product_media")
-              .insert({
-                ...media,
-                id: undefined,
-                product_id: newProduct.id,
-                created_at: undefined,
-                updated_at: undefined
-              });
-
-            if (mediaError) throw mediaError;
-          }
-        }
+        if (error) throw error;
       }
 
       toast({ description: "Products duplicated successfully" });
-      setSelectedProducts(new Set());
       refetch();
     } catch (error) {
       console.error("Error duplicating products:", error);
@@ -86,20 +66,65 @@ export const NewProductTable = ({ storefrontId }: { storefrontId: string }) => {
     }
   };
 
+  const handleProductUpdate = async (product: Product) => {
+    try {
+      const { error } = await supabase
+        .from("products")
+        .update(product)
+        .eq("id", product.id);
+
+      if (error) throw error;
+
+      toast({ description: "Product updated successfully" });
+      refetch();
+    } catch (error) {
+      console.error("Error updating product:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to update product",
+      });
+    }
+  };
+
   return (
     <div className="space-y-4">
       <ProductTableToolbar
         selectedProducts={selectedProducts}
+        onDuplicate={handleDuplicate}
         onDelete={handleBulkDelete}
-        onDuplicate={handleBulkDuplicate}
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
       />
-      <ProductTableContent
-        products={products}
-        isLoading={isLoading}
-        selectedProducts={selectedProducts}
-        setSelectedProducts={setSelectedProducts}
-        onRefetch={refetch}
-      />
+      
+      <div className="bg-white rounded-lg border shadow-sm">
+        <ProductTableHeader
+          products={products}
+          selectedProducts={selectedProducts}
+          onSelectAll={(checked) => {
+            if (checked) {
+              setSelectedProducts(new Set(products.map(p => p.id)));
+            } else {
+              setSelectedProducts(new Set());
+            }
+          }}
+        />
+        
+        <ProductTableContent
+          products={products}
+          isLoading={isLoading}
+          selectedProducts={selectedProducts}
+          onToggleSelect={(productId) => {
+            const newSelection = new Set(selectedProducts);
+            if (newSelection.has(productId)) {
+              newSelection.delete(productId);
+            } else {
+              newSelection.add(productId);
+            }
+            setSelectedProducts(newSelection);
+          }}
+          onUpdate={handleProductUpdate}
+        />
+      </div>
     </div>
   );
 };
